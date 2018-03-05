@@ -966,6 +966,9 @@
 					</block>
 				</block>
 				<block>
+					<params>
+						<param name="name" value="id_profile"/>
+					</params>
 					<bind name="visible" value="realmConstants.showProfileInBrowser &amp;&amp; _isInPBS"/>
 					<styleClass value="$ContextMenuListItem"/>
 					<block className="MenuItem">
@@ -2568,8 +2571,8 @@
 												_tkStatus 			? '$FontColorTeamkiller'
 																	: '$FontColorGolden':
 								!_isDead 	?  	_ttkStatus 			? '$FontColorTTK' :
-												_tkStatus 			? '$FontColorTeamkiller':
-												_isInSameDivision 	? '$FontColorGolden' 
+												_isInSameDivision 	? '$FontColorGolden' :
+												_tkStatus 			? '$FontColorTeamkiller'												
 																	: '$FontColorWhite'
 											: '$FontColorAlmostBlack'"/>
 		<style>
@@ -4816,6 +4819,7 @@
 			<backgroundStretchY value="true"/>
 		</style>
 		<bind name="style" value="'backgroundImage'; _path + iconPath"/>
+		<bind name="name" value="'dogTag_' + _path + '_' + $index + '_' + dogTagEntity.dogTagComponent.gpName"/>
 	</block>
 	<block className="DogTagProgressDefault">
 		<style>
@@ -5184,23 +5188,23 @@
 			<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_TOOLTIP_PLAYER_STEREOTYPE_NAME'}"/>
 			<bind name="instance" value="'PlayerNameAndClanTag'; {
 								_isSelf: 			isSelf,
-								_tkStatus: 			_player.tkStatus, 
-								_ttkStatus:			_player.ttkStatus, 
-								_isInSameDivision:  _player.isInSameDivision,
+								_tkStatus: 			_player.tkStatus,
+								_ttkStatus:			_player.ttkStatus,
+								_isInSameDivision:	false,
 								_fontSize:			19,
 								_playerName:		pureName,
 								_clanTag:			clanTag,
-								_color:				clanTagColor,
+								_clanTagColor:		clanTagColor,
 								_isDead:			false,
-								_noClanTagColor:	!(_isInPostBattle)}"/>
+								_noClanTagColor:	_noClanTagColor}"/>
 		</block>
 		<block>
 			<style>
 				<width value="100%f"/>
 			</style>
+			<bind name="visible" value="!_isBot &amp;&amp; !_noLevel"/>
 			<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_TOOLTIP_PLAYER_STEREOTYPE_LEVEL'}"/>
 			<block type="text">
-				<bind name="visible" value="!_isBot"/>
 				<styleClass value="$TextDefaultNM"/>
 				<style>
 					<marginTop value="7px"/>
@@ -5209,9 +5213,12 @@
 				<bind name="text" value="subst('IDS_PLAYER_STEREOTYPE_LEVEL',[], {accountLevel: accountLevel})"/>
 			</block>
 		</block>
-		<bind name="instance" value="'PlayerProgressBar'; rank == 0 &amp;&amp; isSelf &amp;&amp; accountLevel != _maxLevelEnabled &amp;&amp; _currentProgress != null ? {_accountLevel: accountLevel, _currentProgress: _currentProgress, _levelProgress: _levelProgress} : null"/>
+		<bind name="instance" value="'PlayerProgressBar';	rank == 0 &amp;&amp; isSelf &amp;&amp;
+											accountLevel != _maxLevelEnabled &amp;&amp;
+											_currentProgress != null ? {_accountLevel: accountLevel, _currentProgress: _currentProgress,
+																		_levelProgress: _levelProgress} : null"/>
 		<block type="text">
-			<bind name="visible" value="rank != 0 &amp;&amp; !_noRank &amp;&amp; rank != null"/>
+			<bind name="visible" value="!_noRank &amp;&amp; !_isBot &amp;&amp; rank != 0 &amp;&amp; rank != null"/>
 			<styleClass value="$TextDefaultNM"/>
 			<style>
 				<marginTop value="8px"/>
