@@ -615,7 +615,8 @@
 								(game_data.battle_mode_id == 4) ? BattleTypes.RANKED_BATTLE :
 								(game_data.battle_mode_id == 5) ? BattleTypes.CLUB_BATTLE :
 								(game_data.battle_mode_id == 6) ? BattleTypes.PVE_BATTLE :
-								(game_data.battle_mode_id == 8) ? BattleTypes.CLAN_BATTLE
+								(game_data.battle_mode_id == 8) ? BattleTypes.CLAN_BATTLE :
+								(game_data.battle_mode_id == 9) ? BattleTypes.EVENT_BATTLE
 																: BattleTypes.RANDOM_BATTLE"/>
 		<bind name="var" value="{complaintsAvailable: true}"/>
 		<bind name="catch" value="'disableComplaints'; {complaintsAvailable: false}"/>
@@ -1355,6 +1356,100 @@
 					</params>
 					<bind name="input"/>
 					<bind name="focus" value="2;false"/>
+				</block>
+			</block>
+		</block>
+	</block>
+	<block className="ModalWindowUniversalHeader">
+		<style>
+			<marginBottom value="720:32,1080:64ah"/>
+		</style>
+		<bind name="style" value="'width'; _headerWidth ? _headerWidth : '100%'"/>
+		<block>
+			<bind name="visible" value="_header != null"/>
+			<style>
+				<width value="100%"/>
+			</style>
+			<block type="text">
+				<style>
+					<width value="100%"/>
+					<textAlign value="center"/>
+					<marginTop value="12px"/>
+				</style>
+				<styleClass value="$TextDefaultBold21NM"/>
+				<bind name="text" value="toUpperCase(tr(_header))"/>
+			</block>
+			<block>
+				<style>
+					<width value="100%"/>
+					<marginTop value="720:9,1080:11ah"/>
+				</style>
+				<block className="HorizontalDivider">
+					<styleClass value="$PxHorizontalCorrection"/>
+					<style>
+						<width value="100%"/>
+						<height value="3px"/>
+					</style>
+					<block className="divider_h" type="native">
+						<styleClass value="$Fullsize"/>
+					</block>
+				</block>
+			</block>
+		</block>
+		<block>
+			<bind name="visible" value="!_hideBackButton"/>
+			<style>
+				<position value="absolute"/>
+				<top value="7px"/>
+			</style>
+			<bind name="instance" value="'BackButton'; {_text: 'IDS_RETURN_TO_DOCK', _action: 'btn_cancel'}"/>
+		</block>
+		<block>
+			<bind name="visible" value="!_hideCloseButton"/>
+			<style>
+				<position value="absolute"/>
+			</style>
+			<bind name="style" value="'right'; _innerCloseButton ? '60px' : '8px'"/>
+			<block className="ModalWindowCloseIcon">
+				<style>
+					<position value="absolute"/>
+					<right value="0px"/>
+					<top value="13px"/>
+					<flow value="horizontal"/>
+				</style>
+				<bind name="name" value="'btn_cancel'"/>
+				<bind name="input"/>
+				<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_CLOSE'}; 0"/>
+				<block>
+					<style>
+						<backgroundColor value="0x01000000"/>
+					</style>
+					<block>
+						<style>
+							<marginTop value="-3px"/>
+						</style>
+						<block className="hotkey_holder_white_9slice" type="native">
+							<bind name="visible" value="true"/>
+							<block type="text">
+								<style>
+									<marginLeft value="3px"/>
+									<marginRight value="3px"/>
+									<marginTop value="-1px"/>
+									<marginBottom value="-1px"/>
+								</style>
+								<styleClass value="$BlackLabel"/>
+								<text value="ESC"/>
+							</block>
+						</block>
+					</block>
+					<block className="button_close" type="native">
+						<params>
+							<param name="focusable" value="false"/>
+						</params>
+					</block>
+					<style>
+						<flow value="horizontal"/>
+					</style>
 				</block>
 			</block>
 		</block>
@@ -4429,6 +4524,9 @@
 			<flow value="horizontal"/>
 		</style>
 		<styleClass value="$InfoBlockIndent"/>
+		<bind name="primaryEntityDH" value="'crewEntity'; CC.crew; _entity.dataComponent.data"/>
+		<bind name="watchDH" value="'crew'; ['crewEntity.crew.evBasketChanged', 'crewEntity.crew.evLevelUp', 'crewEntity.crew.evExpChanged', 'crewEntity.crew.evShipChanged', 'crewEntity.crew.evSkillsChanged', 'crewEntity.crew.evResetCostChanged', 'crewEntity.crew.evAdaptationUpdated', 'crewEntity.crew.evChanged', 'crewEntity.crew.evRecentnessUpdated']; crewEntity.crew"/>
+		<bind name="watchDH" value="'crew'+'Retraining'; ['crewEntity.crew.evRetrainingUpdated']; crewEntity.retraining"/>
 		<block>
 			<style>
 				<width value="250px"/>
@@ -4451,6 +4549,7 @@
 					<bind name="text" value="_entity.battleResultsEntry.values[0].value"/>
 				</block>
 				<block type="text">
+					<bind name="visible" value="_crew.hasRank == true"/>
 					<style>
 						<width value="100%"/>
 						<marginTop value="-5px"/>
@@ -7666,8 +7765,9 @@
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'gameInfo'; 'initGameInfo,GameInfoUpdateFragsCount,GameVersion'"/>
 		<bind name="controller" value="lesta.dialogs.battle_window_controllers.uss_controllers.ControllerBattleStats"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'slimClientData'"/>
-		<bind name="watch" value="'battleLoadingTabIndex'; (userPrefs.battleLoadingTabIndex == null) ? 2 : userPrefs.battleLoadingTabIndex"/>
-		<bind name="watch" value="'validTabIndex'; 	gameInfo.battleType == BattleTypes.INTRO_MISSION 			? 0 :
+		<bind name="action" value="'addedToStage'; 'setUserPref' ; gameInfo.battleType == BattleTypes.EVENT_BATTLE ? {value: 0, name: 'battleLoadingTabIndex'} : null"/>
+		<bind name="watch" value="'battleLoadingTabIndex';	(userPrefs.battleLoadingTabIndex == null)	? 2 : userPrefs.battleLoadingTabIndex"/>
+		<bind name="watch" value="'validTabIndex'; 	gameInfo.battleType == BattleTypes.INTRO_MISSION			? 0 :
 									!isDynamicDivisionsEnabled &amp;&amp; battleLoadingTabIndex == 3	? 2
 																								: battleLoadingTabIndex"/>
 		<bind name="watch" value="'isDynamicDivisionsEnabled'; (((gameInfo.battleType == BattleTypes.COOPERATIVE_BATTLE) || (gameInfo.battleType == BattleTypes.RANDOM_BATTLE)) &amp;&amp; slimClientData.isFull)"/>
@@ -8225,18 +8325,23 @@
 			<width value="100%"/>
 		</style>
 		<block type="text">
-			<bind name="appear" value="'startShow'; 0.15; 0.4; {alpha: 0, top: 10}; {alpha: 0.7, top: 0}"/>
-			<styleClass value="$BattleLoadingHeader"/>
-			<bind name="text" value="_gameInfo.gameModeId == GameMode.TUTORIAL ? tr('IDS_YOUR_GOAL') : tr('IDS_TEAM_GOALS')"/>
-		</block>
-		<block type="text">
-			<bind name="appear" value="'startShow'; 0.15; 0.47; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+			<bind name="appear" value="'startShow'; 0.15; 0.4; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+			<styleClass value="$TextDefaultBold23NM"/>
 			<style>
 				<width value="100%"/>
 				<marginBottom value="12px"/>
-				<marginLeft value="24px"/>
 			</style>
-			<styleClass value="$BattleLoadingDescription"/>
+			<bind name="text" value="_gameInfo.gameModeId == GameMode.TUTORIAL ? tr('IDS_YOUR_GOAL') : tr('IDS_TEAM_GOALS')"/>
+		</block>
+		<block type="text">
+			<bind name="appear" value="'startShow'; 0.15; 0.47; {alpha: 0, top: 10}; {alpha: 0.85, top: 0}"/>
+			<style>
+				<width value="100%"/>
+				<marginBottom value="24px"/>
+				<leading value="-3"/>
+				<alpha value="0.85"/>
+			</style>
+			<styleClass value="$TextDefault19NM"/>
 			<bind name="text" value="_gameInfo.gameModeDescription"/>
 		</block>
 		<block>
@@ -8249,12 +8354,14 @@
 			<style>
 				<width value="100%"/>
 				<marginTop value="14px"/>
+				<marginBottom value="24px"/>
 			</style>
 			<block type="text">
+				<styleClass value="$TextDefaultBold23NM"/>
 				<style>
-					<alpha value="0.7"/>
+					<width value="100%"/>
+					<marginBottom value="12px"/>
 				</style>
-				<styleClass value="$BattleLoadingHeader"/>
 				<bind name="text" value="tr('IDS_CHARGING_POINTS')"/>
 			</block>
 			<block>
@@ -8264,30 +8371,47 @@
 				<bind name="instance" value="'PointsCharge';  {_battleModeInfo: _battleModeInfo}"/>
 			</block>
 		</block>
+		<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
 		<block>
-			<bind name="visible" value="_gameInfo.gameModeId != GameMode.TUTORIAL"/>
+			<style>
+				<width value="100%"/>
+			</style>
+			<bind name="instance" value="'LocalWeatherDescription'; localWeatherEntity ? {} : null"/>
+		</block>
+		<block type="text">
+			<bind name="visible" value="_gameInfo.battleType == BattleTypes.EVENT_BATTLE"/>
+			<style>
+				<width value="100%"/>
+				<marginTop value="8px"/>
+				<leading value="-3"/>
+			</style>
+			<styleClass value="$TextDefault19NM"/>
+			<bind name="substitute" value="'KEYS'; 6; null; tr('IDS_LOCAL_WEATHER_CHECK_PARAMS_TIP'); '_bg'"/>
+		</block>
+		<block>
+			<bind name="visible" value="_gameInfo.gameModeId == GameMode.FORTS"/>
 			<bind name="appear" value="'startShow'; 0.15; 0.6; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 			<style>
 				<marginTop value="14px"/>
 				<width value="100%"/>
 			</style>
 			<block type="text">
+				<styleClass value="$TextDefaultBold23NM"/>
 				<style>
 					<width value="100%"/>
-					<alpha value="0.7"/>
+					<marginBottom value="12px"/>
 				</style>
-				<styleClass value="$BattleLoadingHeader"/>
-				<bind name="text" value="_gameInfo.gameModeId == GameMode.FORTS 	? tr('IDS_GAMEMODE_FORTS_GOAL_TITLE')
-																: tr('IDS_' + toUpperCase(_selfPlayer.shipTypeIdent) + '_GOAL')"/>
+				<bind name="text" value="tr('IDS_GAMEMODE_FORTS_GOAL_TITLE')"/>
 			</block>
 			<block type="text">
 				<style>
-					<maxWidth value="710"/>
-					<marginLeft value="24px"/>
+					<width value="100%"/>
+					<marginBottom value="24px"/>
+					<leading value="-3"/>
+					<alpha value="0.85"/>
 				</style>
-				<styleClass value="$BattleLoadingDescription"/>
-				<bind name="text" value="_gameInfo.gameModeId == GameMode.FORTS 	? tr('IDS_GAMEMODE_FORTS_GOAL_DESCRIPTION')
-																: tr('IDS_' + toUpperCase(_selfPlayer.shipTypeIdent) + '_GOAL_DESCRIPTION')"/>
+				<styleClass value="$TextDefault19NM"/>
+				<bind name="text" value="tr('IDS_GAMEMODE_FORTS_GOAL_DESCRIPTION')"/>
 				<bind name="substitute" value="''; 5; {	'[icon_1]' : 'icon_ground_artillery_type_1_ally',
 										'[icon_2]' : 'icon_ground_radar_ally',
 										'[icon_3]' : 'icon_ground_artillery_type_1_enemy',
@@ -8450,7 +8574,7 @@
 											_autoSwitchDelay	: 14,
 											_imageWidth			: 900,
 											_imageHeight		: 382,
-											_currentImageIdx 	: currentImageIdx
+											_currentImageIdx 	: (currentImageIdx + 1)
 										}"/>
 	</block>
 	<block className="ClanBattleVS">
@@ -9963,6 +10087,15 @@
 		</block>
 		<block className="notification_panel" type="native">
 			<styleClass value="$FullsizeAbsolute"/>
+		</block>
+		<block className="button_close" type="native">
+			<bind name="visible" value="_showCloseBtn == true"/>
+			<style>
+				<right value="8"/>
+				<top value="7"/>
+				<position value="absolute"/>
+			</style>
+			<bind name="dispatch" value="'buttonClick'; 'hideWrongMessageEv'"/>
 		</block>
 		<block>
 			<styleClass value="$MiddleAligned"/>
@@ -17678,15 +17811,16 @@
 										((selfPlayer.divisionId != 0) &amp;&amp; ((gameInfo.battleType == BattleTypes.RANDOM_BATTLE) ||
 																		  (gameInfo.battleType == BattleTypes.COOPERATIVE_BATTLE) ||
 																		  (gameInfo.battleType == BattleTypes.PVE_BATTLE)))"/>
-		<bind name="watch" value="'showTabBar'; (isDynamicDivisionsEnabled || (gameInfo.gameModeId == GameMode.PVE))"/>
+		<bind name="watch" value="'showTabBar'; (isDynamicDivisionsEnabled || (gameInfo.gameModeId == GameMode.PVE || !!localWeatherEntity))"/>
 		<bind name="collectionDH" value="CC.userPrefs; 'userPrefsCollection'"/>
 		<bind name="entityDH" value="'userPrefsEntity'; userPrefsCollection[0].id"/>
 		<bind name="watchDH" value="'userPrefs'; ['userPrefsEntity.userPrefs.evUserPrefsChanged']; userPrefsEntity.userPrefs.userPrefs"/>
 		<bind name="watch" value="'tabStatsTabIndex'; (userPrefs.tabStatsTabIndex == null) ? 0 : userPrefs.tabStatsTabIndex"/>
-		<bind name="watch" value="'validTabIndex';	((gameInfo.gameModeId == GameMode.TUTORIAL) 						? 0 :
-									((tabStatsTabIndex == 1) &amp;&amp; !(isDynamicDivisionsEnabled))			? 0 :
-									((tabStatsTabIndex == 2) &amp;&amp; (gameInfo.gameModeId != GameMode.PVE))	? 0
-																										: tabStatsTabIndex)"/>
+		<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
+		<bind name="watch" value="'validTabIndex';	((gameInfo.gameModeId == GameMode.TUTORIAL) 												? 0 :
+									((tabStatsTabIndex == 1) &amp;&amp; !(isDynamicDivisionsEnabled))									? 0 :
+									((tabStatsTabIndex == 2) &amp;&amp; (gameInfo.gameModeId != GameMode.PVE &amp;&amp; !localWeatherEntity))	? 0
+																																: tabStatsTabIndex)"/>
 		<bind name="var" value="{isFirstShow: true}"/>
 		<bind name="catch" value="'addedToStage'; {isFirstShow: false}"/>
 		<bind name="appear" value="isFirstShow ? 'addedToStage' : null; 0.1; 0.15; {alpha: 0}; {alpha: 1}"/>
@@ -17708,7 +17842,7 @@
 					</style>
 				</block>
 				<block>
-					<bind name="visible" value="gameInfo.gameModeId == GameMode.PVE"/>
+					<bind name="visible" value="gameInfo.gameModeId == GameMode.PVE || !!localWeatherEntity"/>
 					<block className="MainTabNew">
 						<block className="tab_bar_item" type="native">
 							<bind name="name" value="'itemTab_'+2"/>
@@ -18441,88 +18575,56 @@
 		<bind name="firstEntityDH" value="'pveStateEntity'; CC.pveState"/>
 		<bind name="watchDH" value="'chosenOperationId'; ['']; pveStateEntity.pveState.chosenOperation"/>
 		<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
-		<bind name="watchDH" value="'gpName'; ['localWeatherEntity.localWeather.evChanged']; localWeatherEntity.localWeather.gpName"/>
 		<bind name="primaryEntityDH" value="'operationEntity'; CC.operation; chosenOperationId"/>
 		<style>
 			<width value="100%"/>
 			<marginRight value="80px"/>
 		</style>
 		<block type="text">
-			<bind name="appear" value="'startShow'; 0.15; 0.4; {alpha: 0, top: 10}; {alpha: 0.7, top: 0}"/>
-			<styleClass value="$BattleLoadingHeader"/>
+			<bind name="appear" value="'startShow'; 0.15; 0.4; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+			<styleClass value="$TextDefaultBold23NM"/>
 			<style>
 				<width value="100%"/>
-				<leading value="1"/>
-				<alpha value="0.7"/>
+				<marginBottom value="12px"/>
 			</style>
 			<bind name="text" value="tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_NAME')"/>
 		</block>
 		<block type="text">
-			<bind name="appear" value="'startShow'; 0.15; 0.47; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+			<bind name="appear" value="'startShow'; 0.15; 0.47; {alpha: 0, top: 10}; {alpha: 0.85, top: 0}"/>
 			<style>
 				<width value="100%"/>
-				<marginBottom value="12px"/>
-				<marginLeft value="24px"/>
-				<leading value="1"/>
+				<marginBottom value="24px"/>
+				<leading value="-3"/>
+				<alpha value="0.85"/>
 			</style>
-			<styleClass value="$BattleLoadingDescription"/>
+			<styleClass value="$TextDefault19NM"/>
 			<bind name="text" value="tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_DESCRIPTION')"/>
 		</block>
 		<block type="text">
-			<bind name="appear" value="'startShow'; 0.15; 0.54; {alpha: 0, top: 10}; {alpha: 0.7, top: 0}"/>
-			<styleClass value="$BattleLoadingHeader"/>
+			<bind name="appear" value="'startShow'; 0.15; 0.54; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+			<styleClass value="$TextDefaultBold23NM"/>
 			<style>
 				<width value="100%"/>
-				<leading value="1"/>
-				<alpha value="0.7"/>
+				<marginBottom value="12px"/>
 			</style>
 			<bind name="text" value="'IDS_PVE_OPERATION_GOAL'"/>
 		</block>
 		<block type="text">
-			<bind name="appear" value="'startShow'; 0.15; 0.61; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+			<bind name="appear" value="'startShow'; 0.15; 0.61; {alpha: 0, top: 10}; {alpha: 0.85, top: 0}"/>
 			<style>
 				<width value="100%"/>
-				<marginBottom value="12px"/>
-				<marginLeft value="24px"/>
-				<leading value="1"/>
+				<marginBottom value="24px"/>
+				<leading value="-3"/>
+				<alpha value="0.85"/>
 			</style>
-			<styleClass value="$BattleLoadingDescription"/>
+			<styleClass value="$TextDefault19NM"/>
 			<bind name="text" value="tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_GOAL')"/>
 		</block>
 		<block>
-			<bind name="visible" value="localWeatherEntity ? true : false"/>
 			<style>
 				<width value="100%"/>
 			</style>
-			<bind name="watch" value="'weatherBulletsCount'; gpName == 'PCOW012_Night_Logic' ? 3 : 0"/>
-			<block type="text">
-				<bind name="appear" value="'startShow'; 0.15; 0.61; {alpha: 0, top: 10}; {alpha: 0.7, top: 0}"/>
-				<styleClass value="$BattleLoadingHeader"/>
-				<style>
-					<width value="100%"/>
-					<leading value="1"/>
-					<alpha value="0.7"/>
-				</style>
-				<bind name="text" value="'IDS_LOCAL_WEATHER_HEADER'"/>
-			</block>
-			<block type="text">
-				<bind name="appear" value="'startShow'; 0.15; 0.68; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
-				<style>
-					<width value="100%"/>
-					<marginLeft value="24px"/>
-					<marginBottom value="12px"/>
-					<leading value="1"/>
-				</style>
-				<styleClass value="$TextDefault19NM"/>
-				<bind name="text" value="tr('IDS_LOCAL_WEATHER_DESCRIPTION_' + toUpperCase(gpName))"/>
-			</block>
-			<block>
-				<style>
-					<width value="100%"/>
-					<marginLeft value="24px"/>
-				</style>
-				<bind name="repeat" value="weatherBulletsCount; 'ListWithBulletsElement'; {_width: '400px', _bulletType: _bulletType, _textClass: '$TextDefault19NM', _text: 'IDS_LOCAL_WEATHER_DESCRIPTION_ITEM_' + toUpperCase(gpName) + '_', _bulletIndex: true}"/>
-			</block>
+			<bind name="instance" value="'LocalWeatherDescription'; localWeatherEntity ? {} : null"/>
 		</block>
 	</block>
 	<block className="GalleryViewer">
@@ -21948,7 +22050,6 @@
 					<bind name="style" value="'backgroundImage'; 'url:' + shipInfo.pathPreview"/>
 				</block>
 				<block>
-					<bind name="visible" value="!shipInfo.isEventLike"/>
 					<bind name="style" value="'marginTop'; isOwned ? '-15px' : '0px'"/>
 					<style>
 						<width value="100%"/>
@@ -22142,57 +22243,50 @@
 		</block>
 	</block>
 	<block className="ScenarioBattleStats">
-		<styleClass value="$MiddleAligned"/>
 		<style>
 			<flow value="horizontal"/>
 		</style>
-		<bind name="style" value="'width'; localWeatherEntity ? '1200px' : '600px'"/>
+		<bind name="style" value="'width'; localWeatherEntity &amp;&amp; gameInfo.gameModeId == GameMode.PVE  ? '1000px' : '500px'"/>
 		<bind name="appear" value="'addedToStage'; 0.15; 0.15; {alpha: 0, top: 5}; {alpha: 1, top: 0}"/>
 		<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
+		<styleClass value="$MiddleAligned"/>
 		<block>
-			<style>
-				<marginBottom value="16px"/>
-			</style>
-			<bind name="style" value="'width'; localWeatherEntity ? '500px' : '600px'"/>
 			<block>
-				<style>
-					<width value="100%"/>
-				</style>
-				<bind name="instance" value="'BattleGoal'; {}"/>
+				<bind name="instance" value="'BattleGoal'; gameInfo.gameModeId == GameMode.PVE  ? {} : null"/>
 			</block>
-			<bind name="instance" value="'PVETasksList'; {}"/>
+			<block>
+				<bind name="instance" value="'PVETasksList'; gameInfo.gameModeId == GameMode.PVE  ? {} : null"/>
+			</block>
 		</block>
 		<block>
 			<style>
-				<width value="700px"/>
-				<paddingLeft value="200px"/>
+				<marginLeft value="50px"/>
+				<width value="450px"/>
 			</style>
 			<bind name="instance" value="'LocalWeatherDescription'; localWeatherEntity ? {} : null"/>
 		</block>
 	</block>
 	<block className="BattleGoal">
 		<style>
-			<width value="100%"/>
+			<width value="500px"/>
+			<marginBottom value="24px"/>
 		</style>
 		<bind name="firstEntityDH" value="'pveStateEntity'; CC.pveState"/>
 		<bind name="watchDH" value="'chosenOperationId'; ['']; pveStateEntity.pveState.chosenOperation"/>
 		<bind name="primaryEntityDH" value="'operationEntity'; CC.operation; chosenOperationId"/>
 		<block type="text">
-			<styleClass value="$TextDefaultBold"/>
-			<bind name="class" value="'$FontSizeHeader4'"/>
-			<bind name="class" value="'$FontColorDefault'"/>
 			<style>
 				<marginBottom value="12px"/>
 				<width value="100%"/>
 			</style>
-			<bind name="text" value="IDS_PVE_OPERATION_GOAL"/>
+			<styleClass value="$TextDefaultBold23NM"/>
+			<bind name="text" value="'IDS_PVE_OPERATION_GOAL'"/>
 		</block>
 		<block type="text">
 			<style>
-				<marginBottom value="12px"/>
-				<leading value="1"/>
-				<marginLeft value="17px"/>
 				<width value="100%"/>
+				<leading value="-3"/>
+				<alpha value="0.85"/>
 			</style>
 			<styleClass value="$TextDefault19NM"/>
 			<bind name="text" value="tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_GOAL')"/>
@@ -22204,33 +22298,35 @@
 		</style>
 		<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
 		<bind name="watchDH" value="'gpName'; ['localWeatherEntity.localWeather.evChanged']; localWeatherEntity.localWeather.gpName"/>
-		<bind name="watch" value="'weatherBulletsCount'; gpName == 'PCOW012_Night_Logic' ? 3 : 0"/>
+		<bind name="watch" value="'weatherBulletsCount'; gpName == 'PCOW012_Night_Logic'			? 3 :
+										gpName == 'PCOW013_1April_Hailstorm'	? 3 :
+										gpName == 'PCOW014_1April_Cloudburst'	? 3 :
+										gpName == 'PCOW015_1April_IceCrumbs'	? 0
+																				: 0"/>
 		<block type="text">
-			<styleClass value="$TextDefaultBold"/>
-			<bind name="class" value="'$FontSizeHeader4'"/>
-			<bind name="class" value="'$FontColorDefault'"/>
 			<style>
 				<marginBottom value="12px"/>
 				<width value="100%"/>
 			</style>
-			<bind name="text" value="'IDS_LOCAL_WEATHER_HEADER'"/>
+			<styleClass value="$TextDefaultBold23NM"/>
+			<bind name="text" value="tr(toUpperCase('IDS_LOCAL_WEATHER_SHIP_PARAM_HEADER_' + gpName))"/>
 		</block>
 		<block type="text">
 			<style>
-				<marginBottom value="12px"/>
-				<leading value="1"/>
-				<marginLeft value="17px"/>
 				<width value="100%"/>
+				<marginBottom value="14px"/>
+				<leading value="-3"/>
+				<alpha value="0.85"/>
 			</style>
 			<styleClass value="$TextDefault19NM"/>
-			<bind name="text" value="tr('IDS_LOCAL_WEATHER_DESCRIPTION_' + toUpperCase(gpName))"/>
+			<bind name="text" value="tr(toUpperCase('IDS_LOCAL_WEATHER_DESCRIPTION_' + gpName))"/>
 		</block>
 		<block>
 			<style>
-				<marginLeft value="17px"/>
 				<width value="100%"/>
+				<alpha value="0.85"/>
 			</style>
-			<bind name="repeat" value="weatherBulletsCount; 'ListWithBulletsElement'; {_width: '400px', _bulletType: _bulletType, _textClass: '$TextDefault19NM', _text: ('IDS_LOCAL_WEATHER_DESCRIPTION_ITEM_' + toUpperCase(gpName) + '_'), _bulletIndex: true}"/>
+			<bind name="repeat" value="weatherBulletsCount; 'ListWithBulletsElement'; {_marginBottom: '12px', _bulletType: '-', _textClass: '$TextDefault19NM', _text: ('IDS_LOCAL_WEATHER_DESCRIPTION_ITEM_' + toUpperCase(gpName) + '_'), _bulletIndex: true}"/>
 		</block>
 	</block>
 	<block className="PVETasksList">
@@ -22254,7 +22350,6 @@
 			<block>
 				<style>
 					<width value="100%"/>
-					<marginLeft value="15px"/>
 					<marginBottom value="12px"/>
 				</style>
 				<bind name="collectionRepeatDH" value="CC.task; 'PVETaskItem'; 'category.primary'; {}"/>
@@ -22275,7 +22370,6 @@
 			<block>
 				<style>
 					<width value="100%"/>
-					<marginLeft value="15px"/>
 				</style>
 				<bind name="collectionRepeatDH" value="CC.task; 'PVETaskItem'; 'category.secondary'; {}"/>
 			</block>
@@ -22287,11 +22381,10 @@
 		</style>
 		<block type="text">
 			<style>
+				<marginBottom value="12px"/>
 				<width value="100%"/>
 			</style>
-			<styleClass value="$TextDefaultBold"/>
-			<bind name="class" value="'$FontSizeHeader4'"/>
-			<bind name="class" value="'$FontColorDefault'"/>
+			<styleClass value="$TextDefaultBold23NM"/>
 			<bind name="text" value="_headerText"/>
 		</block>
 	</block>
@@ -22305,17 +22398,14 @@
 		<style>
 			<width value="100%"/>
 			<flow value="horizontal"/>
-			<marginBottom value="4px"/>
+			<marginBottom value="12px"/>
 		</style>
 		<block>
 			<style>
-				<marginRight value="8px"/>
+				<position value="absolute"/>
 			</style>
 			<styleClass value="$MiddleVAligned"/>
 			<block className="icon_task_status" type="native">
-				<style>
-					<marginTop value="2px"/>
-				</style>
 				<bind name="gotoAndStop!" value="status == 2		? 'success' :
 								status == 0 ? 'not_started' :
 								status == 1	? 'not_started'
@@ -22325,31 +22415,15 @@
 		<bind name="watch" value="'taskText'; '&lt;body&gt;' + tr('IDS_BATTLE_TASK_TEXT_' + name) + ((type != null &amp;&amp; type == 1)	? ('&lt;h3&gt; ('+ progressValue + '/' + progressMax + ')&lt;/h3&gt;&lt;/body&gt;')
 																																: '&lt;/body&gt;')"/>
 		<block type="text">
-			<styleClass value="$TextDefault"/>
-			<bind name="class" value="'$FontSizeHeader6'"/>
 			<style>
 				<width value="100%"/>
+				<marginLeft value="24px"/>
 				<leading value="-3"/>
 				<styleSheet value="h3{color: #9CBABA}"/>
 			</style>
+			<bind name="style" value="'alpha'; status == 3 || status == 2  ? 0.5 : 0.85"/>
+			<styleClass value="$TextDefault19NM"/>
 			<bind name="text" value="taskText"/>
-		</block>
-		<block>
-			<bind name="visible" value="	(status != 0) &amp;&amp;
-						(status != 1)"/>
-			<style>
-				<left value="100%"/>
-			</style>
-			<styleClass value="$MiddleVAlignedAbsolutely"/>
-			<block type="text">
-				<style>
-					<marginLeft value="6px"/>
-				</style>
-				<styleClass value="$TextDefaultBold"/>
-				<bind name="class" value="'$FontSizeHeader6'"/>
-				<bind name="class" value="(status == 2 ? '$FontColorHealth' : '$FontColorUnready')"/>
-				<bind name="text" value="(status == 2 ? 'IDS_DONE' : 'IDS_FAILED')"/>
-			</block>
 		</block>
 	</block>
 	<block className="ListWithBullets">
@@ -22360,28 +22434,26 @@
 	</block>
 	<block className="ListWithBulletsElement">
 		<bind name="watch" value="'bulletIndex'; _bulletIndex ? _bulletIndex : false"/>
-		<style>
-			<width value="100%"/>
-		</style>
+		<bind name="style" value="'width'; _width ? _width : '100%'"/>
+		<bind name="style" value="'marginBottom'; _marginBottom ? _marginBottom : '12px'"/>
 		<block>
 			<style>
 				<width value="100%"/>
-				<marginBottom value="6px"/>
 			</style>
 			<block type="text">
+				<bind name="visible" value="_bulletType != 'none'"/>
 				<style>
-					<marginRight value="6px"/>
+					<marginRight value="10px"/>
+					<width value="100%f"/>
 				</style>
 				<bind name="class" value=" _textClass ? _textClass : '$TextDefaultNM'"/>
 				<bind name="text" value="_bulletType ? _bulletType : '??"/>
 			</block>
 			<block type="text">
 				<style>
-					<marginTop value="1px"/>
-					<marginLeft value="4px"/>
-					<leading value="-5"/>
+					<leading value="-3"/>
+					<width value="100%"/>
 				</style>
-				<bind name="style" value="'width'; _width ? _width : '100%'"/>
 				<bind name="class" value=" _textClass ? _textClass : '$TextDefaultNM'"/>
 				<bind name="text" value="_text	? bulletIndex == true	? _text + ($index + 1) 
 														: _text
@@ -22687,7 +22759,8 @@
 								(game_data.battle_mode_id == 4) ? BattleTypes.RANKED_BATTLE :
 								(game_data.battle_mode_id == 5) ? BattleTypes.CLUB_BATTLE :
 								(game_data.battle_mode_id == 6) ? BattleTypes.PVE_BATTLE :
-								(game_data.battle_mode_id == 8) ? BattleTypes.CLAN_BATTLE
+								(game_data.battle_mode_id == 8) ? BattleTypes.CLAN_BATTLE :
+								(game_data.battle_mode_id == 9) ? BattleTypes.EVENT_BATTLE
 																: BattleTypes.RANDOM_BATTLE"/>
 		<block>
 			<bind name="firstEntityDH" value="'dockEventBannerEntity'; CC.dockEventBanner"/>

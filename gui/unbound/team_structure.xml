@@ -2123,6 +2123,15 @@
 		<block className="notification_panel" type="native">
 			<styleClass value="$FullsizeAbsolute"/>
 		</block>
+		<block className="button_close" type="native">
+			<bind name="visible" value="_showCloseBtn == true"/>
+			<style>
+				<right value="8"/>
+				<top value="7"/>
+				<position value="absolute"/>
+			</style>
+			<bind name="dispatch" value="'buttonClick'; 'hideWrongMessageEv'"/>
+		</block>
 		<block>
 			<styleClass value="$MiddleAligned"/>
 			<style>
