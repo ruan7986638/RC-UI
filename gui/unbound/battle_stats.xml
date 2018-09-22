@@ -2359,7 +2359,8 @@
 						<bind name="text" value="gameInfo.gameModeId == GameMode.PVE	?  tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' + 	(isChosenOperationOfTheWeek == true				? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
 																												(chosenDifficulty == 'normal'	? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE') 
 																																								: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
-																	:	(toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE')))"/>
+																	:	gameInfo.battleType == BattleTypes.EVENT_BATTLE	? 'IDS_EVENTBATTLE'
+																														: (toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE')))"/>
 					</block>
 				</block>
 				<block>
@@ -2713,8 +2714,16 @@
 				<style>
 					<marginTop value="9px"/>
 				</style>
-				<bind name="instance" value="'PointsCharge';  {_battleModeInfo: _battleModeInfo}"/>
+				<bind name="instance" value="'PointsCharge';  {_battleModeInfo: _battleModeInfo, _gameInfo: _gameInfo}"/>
 			</block>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+				<marginTop value="9px"/>
+			</style>
+			<bind name="visible" value="_gameInfo.battleType == BattleTypes.EVENT_BATTLE"/>
+			<bind name="instance" value="'PowerupsDescription'; _gameInfo.battleType == BattleTypes.EVENT_BATTLE ? {} : null"/>
 		</block>
 		<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
 		<block>
@@ -2731,7 +2740,7 @@
 				<leading value="-3"/>
 			</style>
 			<styleClass value="$TextDefault19NM"/>
-			<bind name="substitute" value="'KEYS'; 6; null; tr('IDS_LOCAL_WEATHER_CHECK_PARAMS_TIP'); '_bg'"/>
+			<bind name="substitute" value="'KEYS'; 6; null; tr('IDS_POWERUPS_CHECK_PARAMS_TIP'); '_bg'"/>
 		</block>
 		<block>
 			<bind name="visible" value="_gameInfo.gameModeId == GameMode.FORTS"/>
@@ -2762,6 +2771,31 @@
 										'[icon_3]' : 'icon_ground_artillery_type_1_enemy',
 										'[icon_4]' : 'icon_ground_radar_enemy'}"/>
 			</block>
+		</block>
+	</block>
+	<block className="PowerupsDescription">
+		<style>
+			<width value="100%"/>
+			<marginBottom value="12px"/>
+		</style>
+		<block type="text">
+			<styleClass value="$TextDefaultBold23NM"/>
+			<bind name="text" value="tr('IDS_EVENTBATTLE_LOADING_POWERUPS_HEADER')"/>
+		</block>
+		<block type="text">
+			<style>
+				<width value="100%"/>
+				<marginTop value="12px"/>
+			</style>
+			<styleClass value="$TextDefault19NM"/>
+			<bind name="text" value="'IDS_EVENTBATTLE_LOADING_POWERUPS_DESCRIPTION'"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+				<marginTop value="12px"/>
+			</style>
+			<bind name="repeat" value="3; 'ListWithBulletsElement'; {_marginBottom: '12px', _bulletType: '-', _textClass: '$TextDefault19NM', _text: ('IDS_EVENTBATTLE_LOADING_POWERUPS_BULLET_'), _bulletIndex: true}"/>
 		</block>
 	</block>
 	<block className="TeamBattlePage">
@@ -4036,7 +4070,7 @@
 	</block>
 	<block className="TaskBattleStats">
 		<bind name="appear" value="'addedToStage'; 0.15; 0.15; {alpha: 0, top: 5}; {alpha: 1, top: 0}"/>
-		<bind name="style" value="'width'; localWeatherEntity  ? '1000px' : '500px'"/>
+		<bind name="style" value="'width'; localWeatherEntity || (gameInfo.battleType == BattleTypes.EVENT_BATTLE)  ? '1000px' : '500px'"/>
 		<style>
 			<flow value="horizontal"/>
 		</style>
@@ -4056,6 +4090,7 @@
 			</style>
 			<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
 			<bind name="instance" value="'LocalWeatherDescription'; localWeatherEntity ? {} : null"/>
+			<bind name="instance" value="'PowerupsDescription'; gameInfo.battleType == BattleTypes.EVENT_BATTLE ? {} : null"/>
 		</block>
 	</block>
 	<block className="PVEBattleGoal">
@@ -4117,7 +4152,10 @@
 		<bind name="watch" value="'weatherBulletsCount'; gpName == 'PCOW012_Night_Logic'			? 3 :
 										gpName == 'PCOW013_1April_Hailstorm'	? 3 :
 										gpName == 'PCOW014_1April_Cloudburst'	? 3 :
-										gpName == 'PCOW015_1April_IceCrumbs'	? 0
+										gpName == 'PCOW015_1April_IceCrumbs'	? 0 :
+										gpName == 'PCOW019_Fog_Logic'			? 3 :
+										gpName == 'PCOW020_Snow_Logic'			? 3 :
+										gpName == 'PCOW021_Downpour'			? 3
 																				: 0"/>
 		<block type="text">
 			<style>
@@ -4249,9 +4287,9 @@
 			<flow value="horizontal"/>
 		</style>
 		<block>
-			<bind name="visible" value="_battleModeInfo.holdRewards.length &gt; 0"/>
+			<bind name="visible" value="_battleModeInfo.holdRewards.length &gt; 0 "/>
 			<style>
-				<marginRight value="38px"/>
+				<marginRight value="32px"/>
 			</style>
 			<block type="text">
 				<styleClass value="$MiddleAligned"/>
@@ -4265,10 +4303,14 @@
 				</style>
 			</block>
 		</block>
+		<bind name="watch" value="'isSamobranka'; _gameInfo.battleType == BattleTypes.EVENT_BATTLE"/>
+		<block>
+			<bind name="instance" value="'PowerUpPointsCharge'; isSamobranka ? {} : null"/>
+		</block>
 		<block>
 			<bind name="visible" value="_battleModeInfo.buildingRewardList.length &gt; 0 || _battleModeInfo.buildingPenaltyList.length &gt; 0"/>
 			<style>
-				<marginRight value="42px"/>
+				<marginRight value="32px"/>
 			</style>
 			<block type="text">
 				<styleClass value="$MiddleAligned"/>
@@ -4296,7 +4338,7 @@
 		<block>
 			<bind name="visible" value="_battleModeInfo.shipPenaltyList.length &gt; 0"/>
 			<style>
-				<marginRight value="42px"/>
+				<marginRight value="32px"/>
 			</style>
 			<block type="text">
 				<styleClass value="$BattleLoadingDescriptionSmall"/>
@@ -4326,6 +4368,70 @@
 					<flow value="horizontal"/>
 				</style>
 			</block>
+		</block>
+	</block>
+	<block className="PowerUpPointsCharge">
+		<style>
+			<marginRight value="32px"/>
+			<align value="center"/>
+		</style>
+		<block type="text">
+			<styleClass value="$BattleLoadingDescriptionSmall"/>
+			<bind name="text" value="'IDS_EVENTBATTLE_PW_CHARGING_POINTS_HEADER'"/>
+		</block>
+		<block>
+			<block>
+				<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_SHIP_MODIFIER_PARAM_HEADER_PCOM002_REGENERATION'}"/>
+				<style>
+					<width value="44px"/>
+					<height value="44px"/>
+					<backgroundImage value="symbol:icon_powerup_health_active"/>
+					<backgroundStretchY value="true"/>
+					<backgroundStretchX value="true"/>
+				</style>
+			</block>
+			<block>
+				<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_SHIP_MODIFIER_PARAM_HEADER_PCOM003_SHOTDELAY'}"/>
+				<style>
+					<width value="44px"/>
+					<height value="44px"/>
+					<backgroundImage value="symbol:icon_powerup_reload_active"/>
+					<backgroundStretchY value="true"/>
+					<backgroundStretchX value="true"/>
+				</style>
+			</block>
+			<block>
+				<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_SHIP_MODIFIER_PARAM_HEADER_PCOM001_VISIBILITY'}"/>
+				<style>
+					<width value="44px"/>
+					<height value="44px"/>
+					<backgroundImage value="symbol:icon_powerup_visibility_active"/>
+					<backgroundStretchY value="true"/>
+					<backgroundStretchX value="true"/>
+				</style>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+		<block>
+			<style>
+				<marginTop value="-4px"/>
+			</style>
+			<block type="text">
+				<styleClass value="$BattleLoadingDescriptionSmall"/>
+				<bind name="text" value="'IDS_EVENTBATTLE_PW_CHARGING_POINTS_GET'"/>
+			</block>
+			<block type="text">
+				<style>
+					<marginLeft value="8px"/>
+				</style>
+				<styleClass value="$BattleLoadingDescriptionSmall"/>
+				<bind name="text" value="'IDS_EVENTBATTLE_PW_CHARGING_POINTS_LOST'"/>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
 		</block>
 	</block>
 	<block className="HoldPointReward">
@@ -6316,12 +6422,28 @@
 		<block className="icon_warning_orange" type="native"/>
 		<block type="text">
 			<style>
-				<marginTop value="-5px"/>
+				<marginTop value="-4px"/>
 				<marginLeft value="4px"/>
 			</style>
 			<bind name="style" value="'maxWidth'; _maxWidth ? _maxWidth : 180"/>
-			<bind name="style" value="'leading'; _leading ? _leading : 0"/>
 			<styleClass value="$WarningTextOrange"/>
+			<bind name="style" value="'leading'; _leading ? _leading : -3"/>
+			<bind name="text" value="_instructionText"/>
+		</block>
+	</block>
+	<block className="InstructionRestricion">
+		<style>
+			<flow value="horizontal"/>
+		</style>
+		<block className="icon_restrict_red" type="native"/>
+		<block type="text">
+			<style>
+				<marginTop value="-3px"/>
+				<marginLeft value="4px"/>
+			</style>
+			<bind name="style" value="'maxWidth'; _maxWidth ? _maxWidth : 180"/>
+			<styleClass value="$WarningTextRed"/>
+			<bind name="style" value="'leading'; _leading ? _leading : -3"/>
 			<bind name="text" value="_instructionText"/>
 		</block>
 	</block>
@@ -6337,9 +6459,9 @@
 		</block>
 		<block type="text">
 			<styleClass value="$TextHeaderBigDefault"/>
-			<bind name="style" value="'marginLeft'; (_type=='no_icon') ? '0px' : '4px'"/>
-			<bind name="style" value="'leading'; _leading ? _leading : 0"/>
 			<bind name="style" value="'maxWidth'; _maxWidth ? _maxWidth : 180"/>
+			<bind name="style" value="'leading'; _leading ? _leading : 0"/>
+			<bind name="style" value="'marginLeft'; (_type=='no_icon') ? '0px' : '4px'"/>
 			<style>
 				<marginTop value="-2px"/>
 			</style>
@@ -6348,8 +6470,11 @@
 	</block>
 	<block className="MouseInstructionRepeater">
 		<bind name="style" value="'marginBottom'; $index != _lastIndex ? '6px' : '0px'"/>
-		<bind name="instance" value="'MouseInstruction'; _type == 'warning' ? null : { _type: _type, _instructionText: _instructionText, _maxWidth: _maxWidth}"/>
-		<bind name="instance" value="'InstructionWarning'; _type == 'warning' ? {_instructionText: _instructionText, _maxWidth: _maxWidth} : null"/>
+		<bind name="instance" value="'MouseInstruction'; _type == 'warning' || _type == 'restriction'	? null
+																						: { _type: _type, _instructionText: _instructionText,
+																							_maxWidth: _maxWidth, _leading: _leading}"/>
+		<bind name="instance" value="'InstructionWarning'; _type == 'warning' ? {_instructionText: _instructionText, _maxWidth: _maxWidth, _leading: _leading} : null"/>
+		<bind name="instance" value="'InstructionRestricion'; _type == 'restriction' ? {_instructionText: _instructionText, _maxWidth: _maxWidth, _leading: _leading} : null"/>
 	</block>
 	<block className="CheckedLine">
 		<style>
@@ -7397,6 +7522,61 @@
 			<bind name="rotation" value="-2"/>
 			<bind name="gotoAndStop!" value="_issued	? 'issued' : 'not_issued'"/>
 			<innerBind elementName="item.item" name="text" value="'IDS_ISSUED_STAMP'"/>
+		</block>
+	</block>
+	<block className="ColorTransformPicker">
+		<bind name="instance" value="'ColorTransformSlider'; {_maximum : 1, _minimum: 0, _step: 0.01, _value:1, _name:'redMultiplier'}"/>
+		<bind name="instance" value="'ColorTransformSlider'; {_maximum : 1, _minimum: 0, _step: 0.01, _value:1, _name:'greenMultiplier'}"/>
+		<bind name="instance" value="'ColorTransformSlider'; {_maximum : 1, _minimum: 0, _step: 0.01, _value:1, _name:'blueMultiplier'}"/>
+		<bind name="instance" value="'ColorTransformSlider'; {_maximum : 1, _minimum: 0, _step: 0.01, _value:1, _name:'alphaMultiplier'}"/>
+		<bind name="instance" value="'ColorTransformSlider'; {_maximum : 255, _minimum: -255, _step: 1, _value:0, _name:'redOffset'}"/>
+		<bind name="instance" value="'ColorTransformSlider'; {_maximum : 255, _minimum: -255, _step: 1, _value:0, _name:'greenOffset'}"/>
+		<bind name="instance" value="'ColorTransformSlider'; {_maximum : 255, _minimum: -255, _step: 1, _value:0, _name:'blueOffset'}"/>
+		<bind name="instance" value="'ColorTransformSlider'; {_maximum : 255, _minimum: -255, _step: 1, _value:0, _name:'alphaOffset'}"/>
+	</block>
+	<block className="ColorTransformSlider">
+		<style>
+			<marginTop value="20px"/>
+		</style>
+		<block>
+			<bind name="dispatch" value="'value'+varChanged; 'colorTransformChanged'; [_name, value]"/>
+			<block>
+				<style>
+					<maxHeight value="500"/>
+					<overflow value="scroll"/>
+					<backgroundColor value="0x80000000"/>
+				</style>
+				<styleClass value="$DefaultScrollBar"/>
+				<block type="text">
+					<styleClass value="$TextDefault"/>
+					<style>
+						<textColor value="0xffffffff"/>
+						<maxWidth value="600"/>
+						<marginBottom value="3px"/>
+					</style>
+					<bind name="text" value="'_name: ' + (_name)"/>
+				</block>
+			</block>
+			<block>
+				<style>
+					<maxHeight value="500"/>
+					<overflow value="scroll"/>
+					<backgroundColor value="0x80000000"/>
+				</style>
+				<styleClass value="$DefaultScrollBar"/>
+				<block type="text">
+					<styleClass value="$TextDefault"/>
+					<style>
+						<textColor value="0xffffffff"/>
+						<maxWidth value="600"/>
+						<marginBottom value="3px"/>
+					</style>
+					<bind name="text" value="'value: ' + (value)"/>
+				</block>
+			</block>
+			<block>
+				<bind name="mc" value="'slider_default'; ['valueChange']; ['value']; {maximum:_maximum, minimum:_minimum, step:_step, value:_value}"/>
+			</block>
 		</block>
 	</block>
 	<block className="NationFlagsBig">
@@ -8799,7 +8979,7 @@
 				<style>
 					<marginTop value="9px"/>
 				</style>
-				<bind name="instance" value="'PointsCharge';  {_battleModeInfo: battleModeInfo}"/>
+				<bind name="instance" value="'PointsCharge';  {_battleModeInfo: battleModeInfo, _gameInfo: gameInfo}"/>
 			</block>
 			<block>
 				<bind name="firstEntityDH" value="'pveStateEntity'; CC.pveState"/>
@@ -8840,7 +9020,8 @@
 						<bind name="text" value="(gameInfo.gameModeId == GameMode.PVE	?	tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' +	(isChosenOperationOfTheWeek == true 					? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
 																													(chosenDifficulty == 'normal'	? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE')
 																																									: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
-																		:	(toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE'))))"/>
+																		:	gameInfo.battleType == BattleTypes.EVENT_BATTLE	? 'IDS_EVENTBATTLE'
+																															:	(toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE'))))"/>
 					</block>
 				</block>
 			</block>
@@ -9061,12 +9242,13 @@
 		<bind name="entityDH" value="'mapFortPoint'; id"/>
 		<bind name="watchDH" value="'relation'; ['mapFortPoint.relation.evChanged']; mapFortPoint.relation.value"/>
 		<bind name="watchDH" value="'mapVisible'; ['mapFortPoint.visibility.evChanged']; mapFortPoint.visibility.mapVisible"/>
+		<bind name="watch" value="'isVisible'; mapVisible &amp;&amp; !!(mapFortPoint.mapPosition)"/>
 		<style>
 			<position value="absolute"/>
 		</style>
-		<bind name="visible" value="mapVisible"/>
-		<bind name="left" value="mapVisible ? mapFortPoint.mapPosition.position.x * minimapSize : 0"/>
-		<bind name="top" value="mapVisible ? mapFortPoint.mapPosition.position.y * minimapSize : 0"/>
+		<bind name="visible" value="isVisible"/>
+		<bind name="left" value="isVisible ? mapFortPoint.mapPosition.position.x * minimapSize : 0"/>
+		<bind name="top" value="isVisible ? mapFortPoint.mapPosition.position.y * minimapSize : 0"/>
 		<bind name="tooltip" value="'SimpleTooltip'; { tooltipText: tr(toUpperCase('IDS_' + relation + '_' + mapFortPoint.building.type))}"/>
 		<block>
 			<block className="icon_forts_minimap" type="native">
@@ -13645,12 +13827,10 @@
 		</style>
 		<block>
 			<styleClass value="$MiddleVAligned"/>
-			<bind name="instance" value="'ModuleStatusIcon'; _count.Installed &gt; 0																			? { _state: 'installed' } :
-											!(_isExplored) &amp;&amp; !(_isStock)																	? { _state: 'action' } :
-											(_count.Available &gt; 0) &amp;&amp; (_count.toPurchase &gt; 0)											 	? { _state: 'not_enough' } :
-											_count.toPurchase &gt; 0 || (_unableToInstallIncompatibles.length &gt; 0 &amp;&amp; _count.toPurchase == 0)	? { _state: 'action' } :
-											!(_unableToInstallIncompatibles)																? { _state: 'explored' }			
-																																			: null "/>
+			<bind name="instance" value="'ModuleStatusIcon'; _count.Installed &gt; 0								? { _state: 'installed' } :
+											!(_isExplored) &amp;&amp; !(_isStock)						? { _state: 'action' } :
+											(_count.Available &gt; 0) &amp;&amp; (_count.toPurchase &gt; 0)	? { _state: 'not_enough' }
+																								: null "/>
 		</block>
 		<block>
 			<styleClass value="$MiddleVAligned"/>
@@ -13691,7 +13871,7 @@
 																			: '' "/>
 			</block>
 			<block type="text">
-				<styleClass value="$TextSecondary"/>
+				<styleClass value="$TextDefault"/>
 				<bind name="class" value="'$FontColorCompareNegative'"/>
 				<bind name="text" value="(_count.Available &gt; 0) &amp;&amp; (_count.toPurchase &gt; 0) 	? _count.toPurchase
 																			: '' "/>
@@ -13971,7 +14151,7 @@
 				</style>
 			</block>
 			<block type="text">
-				<styleClass value="$TextSecondary"/>
+				<styleClass value="$TextDefault"/>
 				<bind name="class" value="'$FontColorUnready'"/>
 				<style>
 					<marginTop value="3px"/>
@@ -14014,7 +14194,7 @@
 					</style>
 				</block>
 				<block type="text">
-					<styleClass value="$TextSecondary"/>
+					<styleClass value="$TextDefault"/>
 					<bind name="class" value="'$FontColorCompareNegative'"/>
 					<style>
 						<marginTop value="3px"/>
@@ -18061,43 +18241,42 @@
 	</block>
 	<block className="InfopanelButton">
 		<bind name="request" value="'buttonClick'; _request ? _request : null; _request ? _requestParams : null"/>
+		<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: _tooltipIDS}"/>
+		<bind name="name" value="_name"/>
+		<bind name="dispatch" value="'mouseOver'; 'overInfopanelButton'; {InfopanelButtonOverAlpha: 1}"/>
+		<bind name="dispatch" value="'mouseOut'; 'upInfopanelButton'; {InfopanelButtonOverAlpha: 0.6}"/>
+		<bind name="dispatch" value="'mouseDown'; 'downInfopanelButton'; {InfopanelButtonOverAlpha: 0.3}"/>
+		<bind name="style" value="'alpha'; InfopanelButtonOverAlpha"/>
+		<bind name="catch" value="'downInfopanelButton'"/>
+		<bind name="catch" value="'upInfopanelButton'}"/>
+		<bind name="catch" value="'overInfopanelButton'"/>
 		<block className="button_infopanel_no_label" type="native">
-			<bind name="name" value="_name"/>
+			<bind name="style" value="'width'; _width"/>
 			<style>
 				<height value="40px"/>
 			</style>
-			<bind name="style" value="'width'; _width"/>
-			<bind name="dispatch" value="'mouseOver'; 'overInfopanelButton'; {InfopanelButtonOverAlpha: 1}"/>
-			<bind name="dispatch" value="'mouseOut'; 'upInfopanelButton'; {InfopanelButtonOverAlpha: 0.6}"/>
-			<bind name="dispatch" value="'mouseDown'; 'downInfopanelButton'; {InfopanelButtonOverAlpha: 0.3}"/>
 			<block>
 				<style>
+					<width value="100%"/>
 					<height value="100%"/>
-					<alpha value="0.5"/>
-					<mouseEnabled value="false"/>
+					<hitTest value="false"/>
 				</style>
-				<bind name="style" value="'alpha'; InfopanelButtonOverAlpha"/>
-				<bind name="catch" value="'downInfopanelButton'"/>
-				<bind name="catch" value="'upInfopanelButton'}"/>
-				<bind name="catch" value="'overInfopanelButton'"/>
-				<bind name="catch" value="'upInfopanelButton'"/>
 				<block>
 					<styleClass value="$MiddleVAligned"/>
 					<style>
 						<marginLeft value="8"/>
 						<backgroundStretchX value="true"/>
 						<backgroundStretchY value="true"/>
-						<mouseEnabled value="false"/>
 					</style>
 					<bind name="style" value="'width'; _iconWidth"/>
 					<bind name="style" value="'height'; _iconHeight"/>
 					<bind name="style" value="'backgroundImage'; _backgroundImage"/>
 				</block>
 				<block>
+					<styleClass value="$MiddleAligned"/>
+					<styleClass value="$MiddleVAligned"/>
 					<style>
-						<marginTop value="14px"/>
-						<marginLeft value="8"/>
-						<mouseEnabled value="false"/>
+						<position value="absolute"/>
 					</style>
 					<block type="text">
 						<styleClass value="$TextDefaultBoldNM"/>
@@ -18109,7 +18288,6 @@
 				</style>
 			</block>
 		</block>
-		<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: _tooltipIDS}"/>
 	</block>
 	<css name="$TextDockBig">
 		<fontFamily value="$WWSDefaultFontBold"/>
@@ -18688,7 +18866,7 @@
 				<style>
 					<marginTop value="9px"/>
 				</style>
-				<bind name="instance" value="'PointsCharge';  {_battleModeInfo: battleModeInfo}"/>
+				<bind name="instance" value="'PointsCharge';  {_battleModeInfo: battleModeInfo, _gameInfo: gameInfo}"/>
 			</block>
 			<block>
 				<bind name="firstEntityDH" value="'pveStateEntity'; CC.pveState"/>
@@ -18729,7 +18907,8 @@
 						<bind name="text" value="(gameInfo.gameModeId == GameMode.PVE	?	tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' +	(isChosenOperationOfTheWeek == true 					? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
 																													(chosenDifficulty == 'normal'	? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE')
 																																									: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
-																		:	(toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE'))))"/>
+																		:	gameInfo.battleType == BattleTypes.EVENT_BATTLE	? 'IDS_EVENTBATTLE'
+																															:	(toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE'))))"/>
 					</block>
 				</block>
 			</block>
