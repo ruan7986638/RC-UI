@@ -1190,6 +1190,9 @@
 			<bind name="watchDH" value="'visibilityInSmokeRangeBase'; ['visibilityInSmokeRangeBaseEntity.parameter.evChanged']; (format(visibilityInSmokeRangeBaseEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
 			<bind name="primaryEntityDH" value="'visibilityInSmokeRangeGKEntity'; CC.parameter; selfAvatarEntityId + '_' + 'visibilityInSmokeRangeGK'"/>
 			<bind name="watchDH" value="'visibilityInSmokeRangeGK'; ['visibilityInSmokeRangeGKEntity.parameter.evChanged']; (format(visibilityInSmokeRangeGKEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+			<bind name="primaryEntityDH" value="'visibilityRangeUnderwaterEntity'; CC.parameter; selfAvatarEntityId + '_' + 'visibilityRangeUnderwater'"/>
+			<bind name="watchDH" value="'visibilityRangeUnderwater'; ['visibilityRangeUnderwaterEntity.parameter.evChanged']; (format(visibilityRangeUnderwaterEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+			<bind name="watchDH" value="'visibilityRangeUnderwater'+'_vis'; ['visibilityRangeUnderwaterEntity.parameter.evChanged']; visibilityRangeUnderwaterEntity.parameter.currentValue"/>
 			<bind name="primaryEntityDH" value="'aaBaseNearStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaBaseNearState'"/>
 			<bind name="watchDH" value="'aaBaseNearState'; ['aaBaseNearStateEntity.parameter.evChanged']; (format(aaBaseNearStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
 			<bind name="primaryEntityDH" value="'aaCurrentNearStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaCurrentNearState'"/>
@@ -1252,7 +1255,8 @@
 							paramsArr:	[	{title: 'IDS_PARAM_VISIBILITY_GK',								value: visibilityByShipRangeGK,		isInvisible: (shootMGRange_vis == 0)},
 											{title: 'IDS_VISIBILITY_DIST_BY_GK_IN_SMOKE_HUD_TOOLTIP',		value: visibilityInSmokeRangeGK,	isInvisible: (shootMGRange_vis == 0)},
 											{title: 'IDS_PARAM_VISIBILITY_AA',								value: visibilityByShipRangeATBA, 	isInvisible: (aa_vis == 0)},
-											{title: 'IDS_PARAM_VISIBILITY_FIRE',							value: visibilityByShipRangeFire}
+											{title: 'IDS_PARAM_VISIBILITY_FIRE',							value: visibilityByShipRangeFire},
+											{title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_UNDERWATER',			value: visibilityRangeUnderwater, 	isInvisible: (visibilityRangeUnderwater_vis == null)}
 										]
 						},
 						{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_PLANE', value: visibilityPlaneRange,
@@ -1398,6 +1402,9 @@
 		<bind name="watchDH" value="'visibilityInSmokeRangeBase'; ['visibilityInSmokeRangeBaseEntity.parameter.evChanged']; (format(visibilityInSmokeRangeBaseEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
 		<bind name="primaryEntityDH" value="'visibilityInSmokeRangeGKEntity'; CC.parameter; selfAvatarEntityId + '_' + 'visibilityInSmokeRangeGK'"/>
 		<bind name="watchDH" value="'visibilityInSmokeRangeGK'; ['visibilityInSmokeRangeGKEntity.parameter.evChanged']; (format(visibilityInSmokeRangeGKEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+		<bind name="primaryEntityDH" value="'visibilityRangeUnderwaterEntity'; CC.parameter; selfAvatarEntityId + '_' + 'visibilityRangeUnderwater'"/>
+		<bind name="watchDH" value="'visibilityRangeUnderwater'; ['visibilityRangeUnderwaterEntity.parameter.evChanged']; (format(visibilityRangeUnderwaterEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+		<bind name="watchDH" value="'visibilityRangeUnderwater'+'_vis'; ['visibilityRangeUnderwaterEntity.parameter.evChanged']; visibilityRangeUnderwaterEntity.parameter.currentValue"/>
 		<bind name="primaryEntityDH" value="'aaBaseNearStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaBaseNearState'"/>
 		<bind name="watchDH" value="'aaBaseNearState'; ['aaBaseNearStateEntity.parameter.evChanged']; (format(aaBaseNearStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
 		<bind name="primaryEntityDH" value="'aaCurrentNearStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaCurrentNearState'"/>
@@ -1460,7 +1467,8 @@
 							paramsArr:	[	{title: 'IDS_PARAM_VISIBILITY_GK',								value: visibilityByShipRangeGK,		isInvisible: (shootMGRange_vis == 0)},
 											{title: 'IDS_VISIBILITY_DIST_BY_GK_IN_SMOKE_HUD_TOOLTIP',		value: visibilityInSmokeRangeGK,	isInvisible: (shootMGRange_vis == 0)},
 											{title: 'IDS_PARAM_VISIBILITY_AA',								value: visibilityByShipRangeATBA, 	isInvisible: (aa_vis == 0)},
-											{title: 'IDS_PARAM_VISIBILITY_FIRE',							value: visibilityByShipRangeFire}
+											{title: 'IDS_PARAM_VISIBILITY_FIRE',							value: visibilityByShipRangeFire},
+											{title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_UNDERWATER',			value: visibilityRangeUnderwater, 	isInvisible: (visibilityRangeUnderwater_vis == null)}
 										]
 						},
 						{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_PLANE', value: visibilityPlaneRange,
@@ -1712,6 +1720,58 @@
 					<height value="1px"/>
 					<alpha value="0.5"/>
 				</style>
+			</block>
+		</block>
+	</block>
+	<block className="SubmarineHUD">
+		<bind name="collectionDH" value="CC.consumable; 'consumables'"/>
+		<bind name="firstEntityDH" value="'selfVehicleEntity'; CC.selfVehicle"/>
+		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
+		<bind name="visible" value="(selfVehicleEntity.selfVehicle.subtype == ShipTypes.Submarine) &amp;&amp; isAlive"/>
+		<styleClass value="$FullsizeAbsolute"/>
+		<block>
+			<styleClass value="$MiddleVHAbsolutely"/>
+			<block>
+				<style>
+					<width value="12px"/>
+					<height value="12px"/>
+					<marginTop value="7px"/>
+					<hitTest value="false"/>
+					<backgroundSize value="cover"/>
+					<backgroundImage value="url:../submarine/submarine-sight.png"/>
+				</style>
+			</block>
+		</block>
+		<block>
+			<styleClass value="$MiddleVAligned"/>
+			<styleClass value="$MiddleAlignedAbsolutely"/>
+			<block>
+				<style>
+					<marginRight value="450px"/>
+				</style>
+				<bind name="instance" value="'SubmarineOxygenBar'; {}"/>
+			</block>
+		</block>
+		<block>
+			<styleClass value="$MiddleAlignedAbsolutely"/>
+			<style>
+				<bottom value="14px"/>
+			</style>
+			<block>
+				<styleClass value="$MiddleAligned"/>
+				<style>
+					<marginBottom value="6px"/>
+					<hitTest value="false"/>
+				</style>
+				<bind name="instance" value="'SubmarineTorpedoesReloadBars'; {}"/>
+			</block>
+			<block>
+				<styleClass value="$MiddleAligned"/>
+				<block>
+					<bind name="style" value="'marginRight'; (60*consumables.length - 20) + 'px'"/>
+					<bind name="instance" value="'SubmarineWeaponsPanel'; {}"/>
+				</block>
 			</block>
 		</block>
 	</block>
@@ -2196,6 +2256,13 @@
 			<styleClass value="$Fullsize"/>
 		</block>
 	</block>
+	<css name="$ModernizationAndConsumScrollBar">
+		<wheelScrollSpeed value="15"/>
+		<scrollbarController value="lesta.unbound.style.UbScrollingControllerModern"/>
+		<scrollArea value="ModernScrollArea"/>
+		<scrollbar value="ModernScrollBarSimple"/>
+		<scrollbarTrackMode value="scrollToCursor"/>
+	</css>
 	<block className="VerticalDivider">
 		<style>
 			<height value="100%"/>
@@ -3087,7 +3154,7 @@
 	<css name="$BlockDropShadowFilter2">
 		<dropShadowFilter value="3 110 0x000000 0.6 6 6 0.6"/>
 	</css>
-	<css name="$Text13">
+	<css name="$TextDefault13NM">
 		<fontFamily value="$WWSDefaultFont"/>
 		<mouseEnabled value="false"/>
 		<mouseChildren value="false"/>
@@ -5186,6 +5253,504 @@
 			<block>
 				<bind name="mc" value="'slider_default'; ['valueChange']; ['value']; {maximum:_maximum, minimum:_minimum, step:_step, value:_value}"/>
 			</block>
+		</block>
+	</block>
+	<block className="SubmarineWeaponsPanel">
+		<style>
+			<flow value="horizontal"/>
+		</style>
+		<bind name="catch" value="'weaponSelectedEv'"/>
+		<bind name="collectionRepeatDH" value="CC.submarineTorpedo; 'SubmarineWeaponsPanelItem'; ''; {}"/>
+	</block>
+	<block className="SubmarineWeaponsPanelItem">
+		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
+		<bind name="dataRefDH" value="'submarineTorpedoEntity'; '$dataRef.ref'"/>
+		<bind name="watchDH" value="'torpedoesGroupId';	[]; submarineTorpedoEntity.submarineTorpedo.id"/>
+		<bind name="watchDH" value="'type';				[]; submarineTorpedoEntity.submarineTorpedo.type"/>
+		<bind name="watchDH" value="'isSelected';		['submarineTorpedoEntity.submarineTorpedo.evSelectedChanged']; submarineTorpedoEntity.submarineTorpedo.selected"/>
+		<bind name="watchDH" value="'commandName';		[]; submarineTorpedoEntity.submarineTorpedo.commandID"/>
+		<bind name="watchDH" value="'nowReloadingId';	['submarineTorpedoEntity.submarineTorpedo.evNowReloadingIdChanged']; submarineTorpedoEntity.submarineTorpedo.nowReloadingId"/>
+		<bind name="watchDH" value="'isAimedForward';	[]; submarineTorpedoEntity.submarineTorpedo.aimedForward"/>
+		<bind name="primaryEntityDH" value="'cmdEntity'; CC.commandMappingCommandName; commandName"/>
+		<bind name="watchDH" value="'commandId'; []; cmdEntity.commandMappingCommand.id"/>
+		<bind name="collectionDH" value="CC.submarineTorpedoBarrel; 'allContainerBarrels'; 'byGroup.group' + torpedoesGroupId"/>
+		<bind name="entityDH" value="'currentReloadindBarrelEntity'; nowReloadingId"/>
+		<bind name="watchDH" value="'progressReloadValue'; ['currentReloadindBarrelEntity.progress.evChanged']; currentReloadindBarrelEntity.progress.value"/>
+		<bind name="watchDH" value="'maxReloadValue'; ['currentReloadindBarrelEntity.progress.evChanged']; currentReloadindBarrelEntity.progress.max"/>
+		<bind name="watchDH" value="'progressCooldownValue'; ['submarineTorpedoEntity.progress.evChanged']; submarineTorpedoEntity.progress.value"/>
+		<bind name="watchDH" value="'maxCooldownValue'; ['submarineTorpedoEntity.progress.evChanged']; submarineTorpedoEntity.progress.max"/>
+		<style>
+			<width value="64px"/>
+			<height value="64px"/>
+			<marginLeft value="-4px"/>
+			<marginRight value="-4px"/>
+		</style>
+		<bind name="firstEntityDH" value="'submarineEntity'; CC.submarine"/>
+		<bind name="watchDH" value="'isLocked'; ['submarineEntity.submarine.evDepthChanged']; submarineEntity.submarine.depthIndex &gt; 1"/>
+		<bind name="changeDispatch" value="isReloading; 'evReloadCompleted'; {}; 2; false"/>
+		<bind name="watch" value="'isCooldown'; (progressCooldownValue != 0)"/>
+		<bind name="watch" value="'isReloading'; allContainerBarrels[0].progress.value != 0"/>
+		<bind name="watch" value="'isReloadingOrCooldown'; isCooldown || isReloading"/>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<left value="-113"/>
+				<bottom value="60px"/>
+			</style>
+			<bind name="instance" value="'SubmarineWeaponsPanelItemHint'; rollOver ? {_submarineTorpedoEntityId: submarineTorpedoEntity.id} : null"/>
+		</block>
+		<block>
+			<bind name="transition" value="isSelected; 0.07; {scaleX: 0.86, scaleY: 0.86, alpha: 0.8}; {scaleX: 1, scaleY: 1, alpha: 1}; {scaleX: 0.86, scaleY: 0.86, alpha: 0.8}; isSelected ? 2 : 0"/>
+			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<left value="32px"/>
+				<top value="60px"/>
+			</style>
+			<block>
+				<style>
+					<backgroundColor value="0x9900ffcc"/>
+					<left value="-27px"/>
+					<top value="-54px"/>
+					<width value="54px"/>
+					<height value="52px"/>
+					<backgroundStretchX value="true"/>
+					<backgroundStretchY value="true"/>
+					<position value="absolute"/>
+				</style>
+				<bind name="style" value="'backgroundImage'; isAimedForward	?	'symbol:torpedo_range_normal_1'
+															:	'symbol:torpedo_range_rear_1'"/>
+			</block>
+			<block>
+				<style>
+					<left value="-30px"/>
+					<top value="-58px"/>
+					<width value="60px"/>
+					<height value="60px"/>
+					<backgroundStretchX value="true"/>
+					<backgroundStretchY value="true"/>
+					<position value="absolute"/>
+				</style>
+				<bind name="style" value="'backgroundImage'; ('url:../consumables/ammo_torpedo_halloween_' + type + '.png')"/>
+			</block>
+			<block className="gun_keycontrol_reload_tint_sprite" type="native">
+				<bind name="transition" value="isReloadingOrCooldown; 0.1; {alpha: 0}; {alpha: 1}; {alpha: 0}"/>
+				<style>
+					<position value="absolute"/>
+				</style>
+			</block>
+			<bind name="watch" value="'curMaskY';	isReloading ? (-56 * (1 - progressReloadValue/maxReloadValue)) :
+									isCooldown	? (-56 * (1 - progressCooldownValue/maxCooldownValue))
+												: -56"/>
+			<block className="weapon_panel_mask" type="native">
+				<bind name="visible" value="isReloadingOrCooldown || isLocked"/>
+				<bind name="y" value="isLocked ? 0 : curMaskY"/>
+				<bind name="isMask" value="true"/>
+				<style>
+					<position value="absolute"/>
+					<width value="56px"/>
+					<height value="56px"/>
+					<alpha value="1"/>
+				</style>
+				<block className="gun_keycontrol_bg_sprite" type="native">
+					<style>
+						<position value="absolute"/>
+						<top value="2px"/>
+					</style>
+				</block>
+			</block>
+			<block className="gun_keycontrol_reload_bar_sprite" type="native">
+				<bind name="visible" value="isReloadingOrCooldown"/>
+				<bind name="y" value="curMaskY"/>
+				<style>
+					<position value="absolute"/>
+					<width value="54px"/>
+					<alpha value="0.9"/>
+				</style>
+			</block>
+			<block type="text">
+				<bind name="fade" value="isReloadingOrCooldown &amp;&amp; !isLocked; 0.07; {alpha: 0, top: 5}; {alpha: 1, top: 0}; {alpha: 0, top: -5}"/>
+				<style>
+					<width value="100%"/>
+					<left value="-32px"/>
+					<top value="-36"/>
+					<textAlign value="center"/>
+					<position value="absolute"/>
+				</style>
+				<styleClass value="$TextDefault25NM"/>
+				<bind name="style" value="'textColor'; 0xffffe68d"/>
+				<bind name="pureText" value="countdownFormat(isReloading	?	progressReloadValue
+														:	progressCooldownValue, 1, false, false)"/>
+			</block>
+			<block className="weapon_lock_icon" type="native">
+				<style>
+					<position value="absolute"/>
+					<top value="2px"/>
+				</style>
+				<bind name="fade" value="isLocked; 0.1; {scaleX: 1.2,	scaleY: 1.2,	alpha: 0};
+										{scaleX: 1,		scaleY: 1,		alpha: 1};
+										{scaleX: 1.2,	scaleY: 1.2,	alpha: 0}"/>
+			</block>
+			<block>
+				<style>
+					<position value="absolute"/>
+					<alpha value="0"/>
+				</style>
+				<bind name="appear" value="'evReloadCompleted'; 0.2; 0; {alpha: 0.7, scaleX: 1, scaleY: 1}; {alpha: 0, scaleX: 1.35, scaleY: 1.35}; 2"/>
+				<block className="gun_keycontrol_ready_tint_sprite" type="native">
+					<style>
+						<alpha value="0.8"/>
+					</style>
+				</block>
+				<block className="gun_keycontrol_ready_stroke_sprite" type="native">
+					<style>
+						<position value="absolute"/>
+					</style>
+				</block>
+			</block>
+		</block>
+		<block className="gun_keycontrol_ready_stroke_sprite" type="native">
+			<bind name="transition" value="isSelected; 0.07; {scaleX: 1.2, scaleY: 1.2, alpha: 0}; {scaleX: 1, scaleY: 1, alpha: 1}; {scaleX: 1.2, scaleY: 1.2, alpha: 0}; isSelected ? 2 : 0"/>
+			<style>
+				<position value="absolute"/>
+				<left value="32px"/>
+				<top value="60px"/>
+			</style>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<bottom value="-22px"/>
+				<left value="32px"/>
+			</style>
+			<block className="HotkeyAnimation" type="native">
+				<bind name="commandId" value="commandId"/>
+			</block>
+		</block>
+	</block>
+	<block className="SubmarineWeaponsPanelItemHint">
+		<bind name="entityDH" value="'submarineTorpedoEntity'; _submarineTorpedoEntityId"/>
+		<bind name="watchDH" value="'type'; []; submarineTorpedoEntity.submarineTorpedo.type"/>
+		<bind name="watchDH" value="'reloadTime';		[]; submarineTorpedoEntity.submarineTorpedo.reloadTime"/>
+		<bind name="watchDH" value="'range';				[]; submarineTorpedoEntity.submarineTorpedo.range"/>
+		<bind name="watchDH" value="'speed';				[]; submarineTorpedoEntity.submarineTorpedo.speed"/>
+		<bind name="watchDH" value="'damage';			[]; submarineTorpedoEntity.submarineTorpedo.damage"/>
+		<bind name="watchDH" value="'isAimedForward';	[]; submarineTorpedoEntity.submarineTorpedo.aimedForward"/>
+		<bind name="watch" value="'attributesNeutral'; [	{attributeIDS: 'IDS_PARAMS_MODIFIER_RELOADTIME',	measuredValue: reloadTime,	measure: 'IDS_SECOND'},
+										{attributeIDS: 'IDS_SHIP_PARAM_TORPEDO_DAMAGE',		measuredValue: damage,		measure: ''},
+										{attributeIDS: 'IDS_SHIP_PARAM_TORPEDO_SPEED',		measuredValue: speed,		measure: 'IDS_KNOT'},
+										{attributeIDS: 'IDS_SHIP_PARAM_TORPEDOES_MAX_DIST',	measuredValue: range,		measure: 'IDS_KILOMETER_SPACE'}]"/>
+		<bind name="appear" value="'addedToStage'; 0.1; 0; {alpha: 0}; {alpha: 1}"/>
+		<style>
+			<width value="290px"/>
+			<hitTest value="false"/>
+		</style>
+		<block>
+			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<alpha value="1.2"/>
+			</style>
+			<bind name="instance" value="'TooltipBackground'; {_isInBattle: true}"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+				<marginTop value="14px"/>
+				<marginLeft value="2px"/>
+				<marginRight value="2px"/>
+				<marginLeft value="2px"/>
+				<marginBottom value="2px"/>
+			</style>
+			<block>
+				<style>
+					<marginLeft value="12px"/>
+					<marginRight value="12px"/>
+					<width value="100%"/>
+					<marginBottom value="8px"/>
+				</style>
+				<block>
+					<style>
+						<left value="3px"/>
+						<top value="4px"/>
+						<width value="54px"/>
+						<height value="52px"/>
+						<backgroundStretchX value="true"/>
+						<backgroundStretchY value="true"/>
+						<position value="absolute"/>
+					</style>
+					<bind name="style" value="'backgroundImage'; isAimedForward	?	'symbol:torpedo_range_normal_1'
+																:	'symbol:torpedo_range_rear_1'"/>
+				</block>
+				<block>
+					<style>
+						<width value="60px"/>
+						<height value="60px"/>
+						<backgroundStretchX value="true"/>
+						<backgroundStretchY value="true"/>
+					</style>
+					<bind name="style" value="'backgroundImage'; ('url:../consumables/ammo_torpedo_halloween_' + type + '.png')"/>
+				</block>
+				<block type="text">
+					<style>
+						<marginLeft value="12px"/>
+						<width value="100%"/>
+						<alpha value="0.9"/>
+						<leading value="-3"/>
+					</style>
+					<styleClass value="$TextDefaultBold17NM"/>
+					<bind name="text" value="tr('IDS_HALLOWEEN_TORPEDOES_TITLE_' + toUpperCase(type))"/>
+				</block>
+				<style>
+					<flow value="horizontal"/>
+				</style>
+			</block>
+			<block>
+				<style>
+					<width value="100%"/>
+				</style>
+				<block className="HorizontalDivider">
+					<styleClass value="$PxHorizontalCorrection"/>
+					<style>
+						<width value="100%"/>
+						<height value="3px"/>
+					</style>
+					<block className="divider_h" type="native">
+						<styleClass value="$Fullsize"/>
+					</block>
+				</block>
+			</block>
+			<block>
+				<style>
+					<width value="100%"/>
+					<alpha value="1"/>
+				</style>
+				<block className="inner_panel" type="native">
+					<style>
+						<alpha value="1.5"/>
+					</style>
+					<styleClass value="$FullsizeAbsolute"/>
+				</block>
+				<block>
+					<style>
+						<width value="100%"/>
+						<alpha value="1"/>
+						<marginLeft value="12px"/>
+						<marginRight value="12px"/>
+						<marginTop value="18px"/>
+						<marginBottom value="-4px"/>
+					</style>
+					<bind name="repeat" value="attributesNeutral; 'ParamsModifierItem'; {_shrinkHeight: true}"/>
+				</block>
+			</block>
+		</block>
+	</block>
+	<block className="SubmarineTorpedoesReloadBars">
+		<style>
+			<flow value="horizontal"/>
+		</style>
+		<bind name="collectionRepeatDH" value="CC.submarineTorpedo; 'SubmarineTorpedoReloadBarContainer'; ''; {}"/>
+	</block>
+	<block className="SubmarineTorpedoReloadBarContainer">
+		<bind name="dataRefDH" value="'submarineTorpedoEntity'; '$dataRef.ref'"/>
+		<style>
+			<flow value="horizontal"/>
+			<marginLeft value="10px"/>
+			<marginRight value="10px"/>
+		</style>
+		<bind name="watchDH" value="'torpedoesGroupId';	[]; submarineTorpedoEntity.submarineTorpedo.id"/>
+		<bind name="watchDH" value="'aimState';			['submarineTorpedoEntity.submarineTorpedo.evAimStateChanged']; submarineTorpedoEntity.submarineTorpedo.aimState"/>
+		<bind name="watchDH" value="'nowReloadingId';	['submarineTorpedoEntity.submarineTorpedo.evNowReloadingIdChanged']; submarineTorpedoEntity.submarineTorpedo.nowReloadingId"/>
+		<bind name="watchDH" value="'isSelected';		['submarineTorpedoEntity.submarineTorpedo.evSelectedChanged']; submarineTorpedoEntity.submarineTorpedo.selected"/>
+		<bind name="watchDH" value="'progressCooldownValue'; ['submarineTorpedoEntity.progress.evChanged']; submarineTorpedoEntity.progress.value"/>
+		<bind name="watch" value="'isCooldown'; (progressCooldownValue != 0)"/>
+		<bind name="style" value="'alpha'; isSelected ? 1 : 0.4"/>
+		<block type="text">
+			<style>
+				<marginRight value="5px"/>
+				<top value="-1px"/>
+			</style>
+			<styleClass value="$TextDefault13NM"/>
+			<bind name="text" value="torpedoesGroupId + 1"/>
+		</block>
+		<block>
+			<style>
+				<marginTop value="2px"/>
+			</style>
+			<bind name="entityDH" value="'currentReloadindBarrelEntity'; nowReloadingId"/>
+			<bind name="watchDH" value="'progressReloadValue'; ['currentReloadindBarrelEntity.progress.evChanged']; currentReloadindBarrelEntity.progress.value"/>
+			<bind name="watch" value="'isReloading'; nowReloadingId != 0"/>
+			<block type="text">
+				<bind name="visible" value="isReloading"/>
+				<style>
+					<width value="100%"/>
+					<textAlign value="center"/>
+					<top value="-14"/>
+					<position value="absolute"/>
+					<alpha value="0.9"/>
+				</style>
+				<styleClass value="$TextDefaultNM"/>
+				<bind name="pureText" value="countdownFormat(progressReloadValue, 1, false, false)"/>
+			</block>
+			<block className="NewReloadBarBG" type="native">
+				<style>
+					<width value="100%"/>
+					<marginLeft value="-1px"/>
+					<marginRight value="-1px"/>
+					<position value="absolute"/>
+				</style>
+			</block>
+			<block>
+				<style>
+					<marginTop value="2px"/>
+				</style>
+				<bind name="collectionRepeatDH" value="CC.submarineTorpedoBarrel; 'SubmarineTorpedoReloadItem'; 'byGroup.group' + torpedoesGroupId; {_aimState: aimState, _isCooldown: isCooldown}"/>
+				<style>
+					<flow value="horizontal"/>
+				</style>
+			</block>
+		</block>
+	</block>
+	<block className="SubmarineTorpedoReloadItem">
+		<bind name="dataRefDH" value="'barrelEntity'; '$dataRef.ref'"/>
+		<bind name="watchDH" value="'torpedoesGroupId'; []; barrelEntity.submarineTorpedoBarrel.groupId"/>
+		<bind name="collectionDH" value="CC.submarineTorpedoBarrel; 'submarineTorpedoBarrels'; 'byGroup.group' + torpedoesGroupId"/>
+		<bind name="watch" value="'isReloaded'; (progressValue == 0)"/>
+		<bind name="watch" value="'isReloadingOrCooldown'; _isCooldown || !(isReloaded)"/>
+		<bind name="var" value="{containerWidth: 70}"/>
+		<bind name="watch" value="'barItemWidth'; (containerWidth/submarineTorpedoBarrels.length - (submarineTorpedoBarrels.length - 1)*2)"/>
+		<bind name="style" value="'marginRight'; ($index &lt; (submarineTorpedoBarrels.length - 1) ? '2px' : '0px')"/>
+		<bind name="watchDH" value="'progressValue'; ['barrelEntity.progress.evChanged']; barrelEntity.progress.value"/>
+		<bind name="watchDH" value="'progressMax';	['barrelEntity.progress.evChanged']; barrelEntity.progress.max"/>
+		<style>
+			<width value="1px"/>
+		</style>
+		<bind name="style" value="'width'; (barItemWidth +'px')"/>
+		<block className="NewReloadBarProgressOrange" type="native">
+			<bind name="visible" value="isReloadingOrCooldown || (_aimState != RotationState.AIMED)"/>
+			<style>
+				<position value="absolute"/>
+				<height value="2px"/>
+			</style>
+			<bind name="style" value="'width'; (barItemWidth * (1 - progressValue/progressMax)) + 'px'"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<width value="100%"/>
+				<height value="2px"/>
+			</style>
+			<bind name="visible" value="!isReloadingOrCooldown &amp;&amp; (_aimState == RotationState.AIMED)"/>
+			<block className="NewReloadBarProgressGreen" type="native">
+				<styleClass value="$Fullsize"/>
+			</block>
+		</block>
+		<block className="NewReloadBarDivider" type="native">
+			<bind name="visible" value="($index &gt; 0)"/>
+			<style>
+				<position value="absolute"/>
+				<left value="-2px"/>
+				<top value="-2px"/>
+			</style>
+		</block>
+	</block>
+	<block className="SubmarineOxygenBar">
+		<bind name="firstEntityDH" value="'submarineEntity'; CC.submarine"/>
+		<bind name="watchDH" value="'depth';			['submarineEntity.submarine.evDepthChanged']; submarineEntity.submarine.depth"/>
+		<bind name="watchDH" value="'oxygen';		['submarineEntity.submarine.evOxygenChanged']; submarineEntity.submarine.oxygen"/>
+		<bind name="watchDH" value="'maxOxygen';		[]; submarineEntity.submarine.maxOxygen"/>
+		<bind name="watchDH" value="'oxygenSpeed'; ['submarineEntity.submarine.evOxygenSpeedChanged']; -(submarineEntity.submarine.oxygenSpeed)"/>
+		<bind name="watchDH" value="'isOxygenAlert'; ['submarineEntity.submarine.evIsInDangerOxygenLevelChanged']; submarineEntity.submarine.isInDangerOxygenLevel"/>
+		<bind name="watchDH" value="'isInMinOxygenState'; ['submarineEntity.submarine.evIsInMinOxygenStateChanged']; submarineEntity.submarine.isInMinOxygenState"/>
+		<bind name="watch" value="'curTimeInSeconds';	oxygen/oxygenSpeed"/>
+		<bind name="timeFormat" value="(curTimeInSeconds &gt; 0) ? curTimeInSeconds : 0; 'mm:ss'; 'formattedText'"/>
+		<bind name="watch" value="'oxygenLeft'; oxygen/maxOxygen"/>
+		<bind name="fade" value="oxygenLeft &lt; 1; 0.11; {alpha: 0}; {alpha: 1}; {alpha: 0}; 1; depth == 'SURFACE' ? 3 : 0"/>
+		<bind name="watch" value="'curMaskY'; math.round(121 * (1 - oxygenLeft))"/>
+		<bind name="watch" value="'curCapY'; curMaskY - (curMaskY % 2)"/>
+		<bind name="changeDispatch" value="curCapY; 'curMaskYChanged'; {}; 2"/>
+		<block className="oxygen_bar_bg" type="native">
+			<style>
+				<height value="123px"/>
+			</style>
+		</block>
+		<block className="universal_mask" type="native">
+			<bind name="y" value="curMaskY"/>
+			<bind name="isMask" value="true"/>
+			<style>
+				<position value="absolute"/>
+				<width value="4px"/>
+				<top value="1px"/>
+				<height value="121px"/>
+				<alpha value="1"/>
+			</style>
+			<block className="oxygen_bar" type="native">
+				<style>
+					<position value="absolute"/>
+					<left value="1px"/>
+				</style>
+			</block>
+			<block className="oxygen_bar_orange" type="native">
+				<bind name="fade" value="isOxygenAlert; 0.1; {alpha: 0}; {alpha: 1}; {alpha: 0};"/>
+				<style>
+					<position value="absolute"/>
+					<left value="1px"/>
+				</style>
+			</block>
+		</block>
+		<block className="oxygen_bar_cap" type="native">
+			<style>
+				<position value="absolute"/>
+				<left value="1px"/>
+				<marginTop value="1px"/>
+			</style>
+			<bind name="appear" value="depth != 'SURFACE' ? 'curMaskYChanged' : null; 0.7; 0; {alpha: 0}; {alpha: 1}"/>
+			<bind name="y" value="curCapY"/>
+		</block>
+		<block>
+			<bind name="fade" value="(oxygenLeft &lt; 1) &amp;&amp; (depth != 'SURFACE'); 0.13; {alpha: 0, top: 5}; {alpha: 1, top: 0}; {alpha: 0, top: 5}; 1; 0"/>
+			<style>
+				<position value="absolute"/>
+				<width value="40px"/>
+				<bottom value="12px"/>
+				<right value="0"/>
+				<alpha value="0.9"/>
+			</style>
+			<bind name="instance" value="'BlinkingTextField'; {	_text: formattedText, 
+												_textClass: '$TextDefaultBoldNM', 
+												_blinkOffColor: !(isOxygenAlert) || isInMinOxygenState ? '0xFFFFFF' : '0xFFFDAA0E', 
+												_blinkOnColor: '0xFE6500',
+												_blinkDuration: 0.4, 
+												_blinkEnabled: isInMinOxygenState}"/>
+		</block>
+	</block>
+	<block className="BlinkingTextField">
+		<style>
+			<width value="100%"/>
+		</style>
+		<bind name="var" value="{blinkOn: false}"/>
+		<bind name="dispatch" value="'addedToStage'; _blinkEnabled != false ? 'evBlinkOn' : ''; {}; 2; _blinkDuration"/>
+		<bind name="changeDispatch" value="_blinkEnabled; 'evBlinkOn'; {}; true; true"/>
+		<bind name="dispatch" value="'evDelayedBlinkOn'; _blinkEnabled != false ? 'evBlinkOn' : ''; {}; 2; _blinkDuration"/>
+		<bind name="catch" value="'evBlinkOn'; {blinkOn: true}; 'evDelayedBlinkOff'"/>
+		<bind name="dispatch" value="'evDelayedBlinkOff'; 'evBlinkOff'; {}; 2; _blinkDuration"/>
+		<bind name="catch" value="'evBlinkOff'; {blinkOn: false}; 'evDelayedBlinkOn'"/>
+		<block type="text">
+			<style>
+				<position value="absolute"/>
+				<textAlign value="center"/>
+			</style>
+			<bind name="style" value="'textColor'; _blinkOffColor"/>
+			<bind name="class" value="_textClass"/>
+			<bind name="pureText" value="_text"/>
+		</block>
+		<block type="text">
+			<bind name="transition" value="blinkOn; _blinkDuration; {alpha: 0}; {alpha: 1}"/>
+			<style>
+				<position value="absolute"/>
+				<textAlign value="center"/>
+			</style>
+			<bind name="style" value="'textColor'; _blinkOnColor"/>
+			<bind name="class" value="_textClass"/>
+			<bind name="pureText" value="_text"/>
 		</block>
 	</block>
 	<block className="PlayerContactItemWithRollover">
@@ -8126,6 +8691,67 @@
 			</style>
 		</block>
 	</block>
+	<block className="ParamsModifierItem">
+		<style>
+			<width value="100%"/>
+			<flow value="horizontal"/>
+			<marginBottom value="16px"/>
+		</style>
+		<bind name="style" value="'paddingTop'; (_shrinkHeight == true) ? '-8px' : '0'"/>
+		<block type="text">
+			<styleClass value="$TextDefaultNM"/>
+			<style>
+				<leading value="-3"/>
+				<alpha value="0.8"/>
+				<width value="100%"/>
+			</style>
+			<bind name="text" value="attributeIDS"/>
+		</block>
+		<block type="text">
+			<style>
+				<marginLeft value="12px"/>
+			</style>
+			<styleClass value="$TextDefaultNM"/>
+			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
+					 category == 'negative'	? '$FontColorCompareNegative'
+					 						: '$FontColorDefault'"/>
+			<bind name="text" value="measuredValue"/>
+		</block>
+		<block type="text">
+			<style>
+				<marginLeft value="4px"/>
+			</style>
+			<styleClass value="$TextDefaultNM"/>
+			<bind name="style" value="'alpha'; category == 'positive' ? 0.65 : 0.8"/>
+			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
+					 category == 'negative'	? '$FontColorCompareNegative'
+					 						: '$FontColorDefault'"/>
+			<bind name="text" value="measure"/>
+		</block>
+	</block>
+	<block className="ParamsModifierList">
+		<style>
+			<width value="100%"/>
+		</style>
+		<block>
+			<style>
+				<width value="100%"/>
+			</style>
+			<bind name="repeat" value="_attributesPositive; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+			</style>
+			<bind name="repeat" value="_attributesNegative; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+			</style>
+			<bind name="repeat" value="_attributesNeutral; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
+		</block>
+	</block>
 	<block className="PlayerDogTag">
 		<bind name="primaryEntityDH" value="'playerEntity'; CC.accountSimple; _playerDbId"/>
 		<bind name="watchDH" value="'dogTagList';['playerEntity.dogTagView.evUpdate']; playerEntity.dogTagView.components"/>
@@ -8567,6 +9193,7 @@
 		</block>
 	</block>
 	<block className="DogTagBattleTypeRestriction">
+		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 		<block className="icon_battletypes_small" type="native">
 			<style>
 				<marginRight value="6px"/>
@@ -8574,12 +9201,12 @@
 				<height value="25px"/>
 			</style>
 			<bind name="gotoAndStop!" value="	($value == 'PVP')			? 'RandomBattle' :
-									($value == 'COOPERATIVE')	? 'CooperativeBattle':
-									($value == 'RANKED')		? 'RankedBattle':
-									($value == 'PVE')			? 'PVEBattle':
-									($value == 'PVE_PREMADE')	? 'PVEBattle_hard':
-									($value == 'CLAN')			? 'ClanBattle'
-																: null "/>
+								($value == 'COOPERATIVE')	? 'CooperativeBattle':
+								($value == 'RANKED') 		&amp;&amp; (rankedBattlesSeason.isJuniorSeason == true) ? 'RankedBattle_junior' : 'RankedBattle':
+								($value == 'PVE')			? 'PVEBattle':
+								($value == 'PVE_PREMADE')	? 'PVEBattle_hard':
+								($value == 'CLAN')			? 'ClanBattle'
+															: null "/>
 		</block>
 		<block className="VerticalDivider">
 			<style>
@@ -8650,15 +9277,14 @@
 																		_levelProgress: _levelProgress} : null"/>
 		<block type="text">
 			<bind name="visible" value="!_noRank &amp;&amp; !_isBot &amp;&amp; rank != 0 &amp;&amp; rank != null"/>
-			<styleClass value="$TextDefaultNM"/>
 			<style>
 				<marginTop value="8px"/>
 				<marginLeft value="3px"/>
 				<maxWidth value="160"/>
 				<multiline value="false"/>
 			</style>
-			<bind name="text" value="rank == 1 	? subst('IDS_RANK_X_SEAWOLF',[], {rank: tr('IDS_RANK_SEA_WOLF')})
-								: subst('IDS_RANK_X',[], {rank: rank - 1})"/>
+			<styleClass value="$TextDefaultNM"/>
+			<bind name="text" value="subst('IDS_RANK_X',[], {rank: rank})"/>
 		</block>
 	</block>
 	<block className="PlayerProgressBar">
@@ -8820,6 +9446,7 @@
 					<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 					<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 					<block>
+						<bind name="soundSet" value="'default_button'"/>
 						<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 						<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 						<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -8887,6 +9514,7 @@
 						<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 						<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 						<block>
+							<bind name="soundSet" value="'default_button'"/>
 							<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 							<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 							<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -8979,6 +9607,7 @@
 					<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 					<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 					<block>
+						<bind name="soundSet" value="'default_button'"/>
 						<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 						<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 						<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -9111,6 +9740,7 @@
 						<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 						<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 						<block>
+							<bind name="soundSet" value="'default_button'"/>
 							<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 							<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 							<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -9205,6 +9835,7 @@
 						<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 						<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 						<block>
+							<bind name="soundSet" value="'default_button'"/>
 							<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 							<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 							<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -9302,6 +9933,7 @@
 					<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 					<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 					<block>
+						<bind name="soundSet" value="'default_button'"/>
 						<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 						<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 						<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -9493,67 +10125,6 @@
 			<bind name="value" value="_curValue"/>
 		</block>
 	</block>
-	<block className="ParamsModifierItem">
-		<style>
-			<width value="100%"/>
-			<flow value="horizontal"/>
-			<marginBottom value="16px"/>
-		</style>
-		<bind name="style" value="'paddingTop'; (_shrinkHeight == true) ? '-8px' : '0'"/>
-		<block type="text">
-			<styleClass value="$TextDefaultNM"/>
-			<style>
-				<leading value="-3"/>
-				<alpha value="0.8"/>
-				<width value="100%"/>
-			</style>
-			<bind name="text" value="attributeIDS"/>
-		</block>
-		<block type="text">
-			<style>
-				<marginLeft value="12px"/>
-			</style>
-			<styleClass value="$TextDefaultNM"/>
-			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
-					 category == 'negative'	? '$FontColorCompareNegative'
-					 						: '$FontColorDefault'"/>
-			<bind name="text" value="measuredValue"/>
-		</block>
-		<block type="text">
-			<style>
-				<marginLeft value="4px"/>
-			</style>
-			<styleClass value="$TextDefaultNM"/>
-			<bind name="style" value="'alpha'; category == 'positive' ? 0.65 : 0.8"/>
-			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
-					 category == 'negative'	? '$FontColorCompareNegative'
-					 						: '$FontColorDefault'"/>
-			<bind name="text" value="measure"/>
-		</block>
-	</block>
-	<block className="ParamsModifierList">
-		<style>
-			<width value="100%"/>
-		</style>
-		<block>
-			<style>
-				<width value="100%"/>
-			</style>
-			<bind name="repeat" value="_attributesPositive; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
-		</block>
-		<block>
-			<style>
-				<width value="100%"/>
-			</style>
-			<bind name="repeat" value="_attributesNegative; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
-		</block>
-		<block>
-			<style>
-				<width value="100%"/>
-			</style>
-			<bind name="repeat" value="_attributesNeutral; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
-		</block>
-	</block>
 	<css name="$TextHeaderLargeBold">
 		<mouseChildren value="false"/>
 		<mouseEnabled value="false"/>
@@ -9698,6 +10269,7 @@
 			</style>
 		</block>
 		<block>
+			<bind name="visible" value="title != null"/>
 			<style>
 				<width value="100%"/>
 				<marginTop value="-2px"/>
@@ -9708,7 +10280,9 @@
 	<block className="PlayerSummary">
 		<bind name="var" value="{curSeasonIndex: 0}"/>
 		<bind name="catch" value="'curSeasonIndexChanged'"/>
+		<bind name="catch" value="'currentSeasonIdChanged'"/>
 		<bind name="collectionDH" value="CC.rankedSeasonHistory; 'statDataEntities'; 'statToShow'"/>
+		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 		<bind name="entityDH" value="'statDataEntity'; statDataEntities[0].id"/>
 		<bind name="watchDH" value="'statData'; ['statDataEntity.dataComponent.evDataChanged']; statDataEntity.dataComponent.data"/>
 		<bind name="watchDH" value="'shipsList'; ['statDataEntity.dataComponent.evDataChanged']; statDataEntity.dataComponent.data.shipsList"/>
@@ -9765,22 +10339,20 @@
 			<bind name="appear" value="'addedToStage'; 0.15; 0; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 			<style>
 				<position value="absolute"/>
-				<width value="230px"/>
-				<marginTop value="-40px"/>
-				<right value="1280:10,1920:20aw"/>
+				<width value="240px"/>
+				<right value="1280:5,1920:40aw"/>
+				<marginTop value="-33px"/>
 			</style>
 			<block>
-				<styleClass value="$MiddleAligned"/>
 				<style>
-					<width value="230px"/>
+					<width value="100%"/>
 				</style>
 				<block>
 					<style>
 						<height value="30px"/>
-						<top value="-3px"/>
 					</style>
 					<styleClass value="$MiddleAligned"/>
-					<bind name="instance" value="'RankedSeasonDropdown'; battleType == BattleTypes.RANKED_BATTLE ? {statData: statData, _curSeasonIndex: curSeasonIndex}: null"/>
+					<bind name="instance" value="'RankedSeasonDropdown'; (battleType == BattleTypes.RANKED_BATTLE) ? {statData: statData, _curSeasonIndex: curSeasonIndex, currentSeasonId: currentSeasonId}: null"/>
 				</block>
 				<block>
 					<styleClass value="$MiddleAligned"/>
@@ -9791,7 +10363,7 @@
 						<block className="icon_battletypes_big" type="native">
 							<bind name="transition" value="statData.vehicleId != 0; 0.15; {alpha: 1}; {alpha: 0.7}"/>
 							<styleClass value="$MiddleAligned"/>
-							<bind name="gotoAndStop!" value="battleType"/>
+							<bind name="gotoAndStop!" value="(currentSeasonId &gt; 100) ? 'RankedBattle_junior' : battleType"/>
 						</block>
 						<block className="battle_type_overlay_big" type="native">
 							<bind name="visible" value="statData.vehicleId != 0"/>
@@ -9930,6 +10502,7 @@
 		<bind name="catch" value="'ItemChooserInnerEvent.historySeasonChanged'"/>
 		<bind name="action" value="'_curItemIndex' + varChanged; 'rankedSeasonChanged'; {seasonId: statData.seasonList[_curItemIndex].id}"/>
 		<bind name="dispatch" value="'_curItemIndex' + varChanged; 'curSeasonIndexChanged'; {curSeasonIndex: _curItemIndex}; false"/>
+		<bind name="dispatch" value="'_curItemIndex' + varChanged; 'currentSeasonIdChanged'; {currentSeasonId: statData.seasonList[_curItemIndex].id}"/>
 		<bind name="appear" value="'addedToStage'; 0.15; 0; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 		<block>
 			<bind name="instance" value="'ItemChooser'; {	_items: statData.seasonList, curIndex: _curItemIndex,
@@ -11153,6 +11726,44 @@
 			</block>
 		</block>
 	</block>
+	<block className="ResizableButtonDock">
+		<style>
+			<width value="100%f"/>
+		</style>
+		<bind name="watch" value="'enabled'; _enabled != false"/>
+		<bind name="name" value="_name"/>
+		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController; null; 'resizableButtonDock_'"/>
+		<bind name="clickSplit"/>
+		<bind name="request" value="'left_click'; _request ? _request : null; _requestParams ? _requestParams : {}"/>
+		<bind name="action" value="'left_click'; _action ? _action : null; _actionParams ? _actionParams : {}"/>
+		<bind name="transition" value="resizableButtonDock_rollOver &amp;&amp; !(resizableButtonDock_mouseDown) &amp;&amp; enabled; 0.1; {alpha: 0.65}; {alpha: 1}; {alpha: 0.65}"/>
+		<bind name="soundOn" value="'left_click'; 'press'; 'default_button'"/>
+		<block>
+			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<marginLeft value="-10px"/>
+				<marginRight value="-10px"/>
+				<marginBottom value="-9px"/>
+				<marginTop value="-10px"/>
+			</style>
+			<bind name="style" value="'hitTest'; enabled"/>
+			<block className="button_dock_bg" type="native">
+				<styleClass value="$Fullsize"/>
+				<bind name="gotoAndStop!" value="'down'"/>
+			</block>
+		</block>
+		<block type="text">
+			<style>
+				<hitTest value="false"/>
+				<mouseEnabled value="false"/>
+				<mouseChildren value="false"/>
+			</style>
+			<bind name="style" value="'alpha'; enabled ? 1 : 0.65"/>
+			<styleClass value="$TextDefaultBoldNM"/>
+			<bind name="class" value="'$FontColorBlueish'"/>
+			<bind name="text" value="_label"/>
+		</block>
+	</block>
 	<block className="InfopanelButton">
 		<bind name="request" value="'buttonClick'; _request ? _request : null; _request ? _requestParams : null"/>
 		<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: _tooltipIDS}"/>
@@ -11522,14 +12133,14 @@
 	</block>
 	<block className="MainHUDPCContainer">
 		<styleClass value="$FullsizeAbsolute"/>
-		<bind name="mouseEnabled" value="false"/>
-		<bind name="mouseChildren" value="false"/>
 		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
 		<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
 		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
 		<bind name="watchDH" value="'tacticalMap'; ['cameraEntity.camera.evTacticalStateChanged']; cameraEntity.camera.isTactical"/>
 		<block>
 			<styleClass value="$Fullsize"/>
+			<bind name="mouseEnabled" value="false"/>
+			<bind name="mouseChildren" value="false"/>
 			<block>
 				<styleClass value="$FullsizeAbsolute"/>
 				<bind name="transition" value="!tacticalMap; 0.15; {alpha: 0, top: 50}; {alpha: 1, top: 0}; {alpha: 0, top: 50}; 2; tacticalMap ? 0 : 0.1"/>
@@ -11539,7 +12150,8 @@
 			<bind name="instance" value="'DogTagInHUD'; {}"/>
 			<bind name="instance" value="'DogTagInHUDSpectator'; {}"/>
 			<bind name="instance" value="'FogHornIndicator'; {}"/>
-			<bind name="instance" value="'ShipParamsTooltip'; {}"/>
+			<bind name="instance" value="'SubmarineHUD'; {}"/>
 		</block>
+		<bind name="instance" value="'ShipParamsTooltip'; {}"/>
 	</block>
 </ui>

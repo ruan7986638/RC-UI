@@ -647,6 +647,13 @@
 			<styleClass value="$Fullsize"/>
 		</block>
 	</block>
+	<css name="$ModernizationAndConsumScrollBar">
+		<wheelScrollSpeed value="15"/>
+		<scrollbarController value="lesta.unbound.style.UbScrollingControllerModern"/>
+		<scrollArea value="ModernScrollArea"/>
+		<scrollbar value="ModernScrollBarSimple"/>
+		<scrollbarTrackMode value="scrollToCursor"/>
+	</css>
 	<block className="VerticalDivider">
 		<style>
 			<height value="100%"/>
@@ -817,13 +824,15 @@
 		<block>
 			<bind name="watch" value="'allyClanTag'; team_results.listAllied[0].player.clan_tag"/>
 			<bind name="watch" value="'enemyClanTag'; team_results.listEnemies[0].player.clan_tag"/>
+			<bind name="watch" value="'allyRealm'; team_results.listAllied[0].player.realm"/>
+			<bind name="watch" value="'enemyRealm'; team_results.listEnemies[0].player.realm"/>
 			<styleClass value="$MiddleAligned"/>
 			<style>
 				<position value="absolute"/>
 				<top value="0"/>
 				<marginTop value="-140%"/>
 			</style>
-			<bind name="instance" value="'ClanBattleVS'; battleType == 'ClanBattle' ? {_allyClanTag: allyClanTag, _enemyClanTag: enemyClanTag} : null"/>
+			<bind name="instance" value="'ClanBattleVS'; battleType == 'ClanBattle' ? {_allyClanTag: allyClanTag, _enemyClanTag: enemyClanTag, _allyRealm: allyRealm, _enemyRealm: enemyRealm} : null"/>
 		</block>
 		<block>
 			<style>
@@ -1040,7 +1049,6 @@
 		<block>
 			<bind name="visible" value="personal.seasonId != 0 &amp;&amp; game_data.battle_mode_id == 4"/>
 			<style>
-				<left value="30px"/>
 				<position value="absolute"/>
 				<height value="28px"/>
 				<marginTop value="1px"/>
@@ -1092,14 +1100,11 @@
 					<styleClass value="$MiddleVAligned"/>
 					<block>
 						<bind name="visible" value="divisionIndex &gt; 0"/>
-						<styleClass value="$MiddleAligned"/>
 						<style>
 							<marginTop value="1px"/>
 						</style>
+						<styleClass value="$MiddleAligned"/>
 						<block className="division_item" type="native">
-							<style>
-								<marginLeft value="12px"/>
-							</style>
 							<bind name="gotoAndStop!" value="isInSameDivision ? divisionSign + 1 : (divisionSign + 1 + 10)"/>
 						</block>
 					</block>
@@ -5284,7 +5289,7 @@
 				<width value="27px"/>
 				<height value="27px"/>
 			</style>
-			<bind name="style" value="'backgroundImage'; 'url:' + '../ranks/icons/icon_rank_small_' + (_rankId - 1) + '.png'"/>
+			<bind name="style" value="'backgroundImage'; 'url:' + '../ranks/icons/icon_rank_small_' + _rankId + '.png'"/>
 		</block>
 		<block type="text">
 			<style>
@@ -5293,18 +5298,18 @@
 			</style>
 			<styleClass value="$TextSecondaryBold"/>
 			<bind name="class" value="'$FontSizeNano'"/>
-			<bind name="text" value="_rankId &gt; 1 ? _rankId - 1 : ''"/>
+			<bind name="text" value="_rankId "/>
 		</block>
 	</block>
 	<block className="RankStars">
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesStats'"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'rankedBattlesRanks';  _rankId; 'rankInfo'"/>
 		<bind name="tooltip" value="'RankStarTooltip'; !(rankInfo.starLossPlace == 0 &amp;&amp; rankInfo.starEarnPlace == 0) ? {_rankId: _rankId} : null"/>
-		<bind name="style" value="'width'; _noWidth ? 'auto' : '100%'"/>
 		<style>
 			<flow value="htile"/>
 			<align value="center"/>
 		</style>
+		<bind name="style" value="'width'; _noWidth ? 'auto' : '100%'"/>
 		<bind name="repeat" value="rankInfo.starsToNext; (_size ? 'RankStarIconSmall' : 'RankStarIcon'); {_starState: (rankedBattlesStats.rank &lt; rankInfo.id)	? 'earned'
 																																				: (rankedBattlesStats.rank &gt; rankInfo.id)	? 'not_earned'
 																																															: 'unknown', _size: _size}"/>
@@ -5330,7 +5335,7 @@
 				<marginRight value="5px"/>
 			</style>
 			<bind name="gotoAndStop!" value="(_starState != 'unknown')	? _starState
-														: ( $index + 1 &lt;= rankedBattlesStats.stars)	|| (rankedBattlesStats.rank == 2) ? 'earned'
+														: ( $index + 1 &lt;= rankedBattlesStats.stars)	? 'earned'
 																									: 'not_earned'"/>
 		</block>
 	</block>
@@ -5346,7 +5351,7 @@
 			<bind name="style" value="'width'; _size == 'small' ? '27px' : 'auto'"/>
 			<bind name="style" value="'height'; _size == 'small' ? '27px' : 'auto'"/>
 			<bind name="gotoAndStop!" value="(_starState != 'unknown')	? _starState
-														: ( $index + 1 &lt;= rankedBattlesStats.stars)	|| (rankedBattlesStats.rank == 2) ? 'earned'
+														: ( $index + 1 &lt;= rankedBattlesStats.stars)	? 'earned'
 																									: 'not_earned'"/>
 		</block>
 	</block>
@@ -5504,10 +5509,15 @@
 	</block>
 	<block className="PlayerRankIcon">
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'rankedBattlesRanks';  _rankId; 'rankInfo'"/>
+		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 		<block className="icons_rank_outer" type="native">
-			<bind name="gotoAndStop!" value="rankInfo.id &lt;= 2 ? 'top'
-											: rankInfo.leagueId == 1 ? 'big' 
-											: rankInfo.leagueId == 2 ? 'medium' : 'small'"/>
+			<bind name="gotoAndStop!" value="rankedBattlesSeason.isJuniorSeason == true 	? rankInfo.id == 1 			? 'top' 
+																		: rankInfo.leagueId == 1 	? 'big'
+																									: 'small' 
+																		: rankInfo.id == 1 			? 'top'
+																		: rankInfo.leagueId == 1 	? 'big' 
+																		: rankInfo.leagueId == 2 	? 'medium' 
+																		: 'small'"/>
 			<bind name="style" value="'width'; _small ? '70px' : '98px'"/>
 			<bind name="style" value="'height'; _small ? '70px' : '98px'"/>
 			<block>
@@ -5515,20 +5525,26 @@
 				<bind name="style" value="'width'; _small ? '27px' : '35px'"/>
 				<bind name="style" value="'height'; _small ? '27px' : '35px'"/>
 				<bind name="style" value="'top'; _small ? '23px' : '32px'"/>
-				<bind name="style" value="'backgroundImage';  _small ? 'url:' + '../ranks/icons/icon_rank_small_' + (rankInfo.id - 1) + '.png' : 'url:' + '../ranks/icons/icon_rank_big_' + (rankInfo.id - 1) + '.png'"/>
+				<bind name="style" value="'backgroundImage';  _small ? 'url:' + '../ranks/icons/icon_rank_small_' + (rankInfo.id) + '.png' 
+													: 'url:' + '../ranks/icons/icon_rank_big_' + (rankInfo.id) + '.png'"/>
 			</block>
 		</block>
 	</block>
 	<block className="PlayerRankIconBig">
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'rankedBattlesRanks';  _rankId; 'rankInfo'"/>
+		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 		<block className="icons_rank_outer_big" type="native">
 			<style>
 				<width value="146px"/>
 				<height value="146px"/>
 			</style>
-			<bind name="gotoAndStop!" value="rankInfo.id &lt;= 2 ? 'top'
-											: rankInfo.leagueId == 1 ? 'big' 
-											: rankInfo.leagueId == 2 ? 'medium' : 'small'"/>
+			<bind name="gotoAndStop!" value="rankedBattlesSeason.isJuniorSeason == true 	? rankInfo.id == 1 			? 'top' 
+																		: rankInfo.leagueId == 1 	? 'big'
+																									: 'small' 
+																		: rankInfo.id == 1 			? 'top'
+																		: rankInfo.leagueId == 1 	? 'big' 
+																		: rankInfo.leagueId == 2 	? 'medium' 
+																		: 'small'"/>
 			<block>
 				<styleClass value="$MiddleAlignedAbsolutely"/>
 				<style>
@@ -5536,7 +5552,7 @@
 					<width value="54px"/>
 					<height value="54px"/>
 				</style>
-				<bind name="style" value="'backgroundImage'; 'url:' + '../ranks/icons/icon_rank_big_' + (rankInfo.id - 1) + '.png'"/>
+				<bind name="style" value="'backgroundImage'; 'url:' + '../ranks/icons/icon_rank_big_' + (rankInfo.id) + '.png'"/>
 			</block>
 		</block>
 	</block>
@@ -6438,24 +6454,29 @@
 				<bind name="instance" value="'PointsCharge';  {_battleModeInfo: battleModeInfo, _gameInfo: gameInfo}"/>
 			</block>
 			<block>
+				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 				<bind name="firstEntityDH" value="'pveStateEntity'; CC.pveState"/>
 				<bind name="watchDH" value="'chosenOperationId'; ['']; pveStateEntity.pveState.chosenOperation"/>
 				<bind name="watchDH" value="'activeOperationId'; ['']; pveStateEntity.pveState.activeOperation"/>
 				<bind name="watchDH" value="'chosenDifficulty';	['']; pveStateEntity.pveState.chosenDifficulty"/>
 				<bind name="primaryEntityDH" value="'operationEntity'; CC.operation; chosenOperationId"/>
 				<bind name="watchDH" value="'operationType';	['operationEntity.operation.evStatusChanged']; operationEntity.operation.type"/>
+				<bind name="watchDH" value="'operationIsHard'; []; operationEntity.operation.isHard"/>
 				<bind name="watch" value="'isChosenOperationOfTheWeek'; ((chosenOperationId == activeOperationId) &amp;&amp; (chosenDifficulty == 'normal'))"/>
 				<style>
 					<marginTop value="16px"/>
 					<width value="100%"/>
 				</style>
+				<bind name="watch" value="'pveDifficultyPostfix'; operationIsHard ? '_hard' : ''"/>
+				<bind name="watch" value="'pveIconLabel'; (operationType == 'event' ? 'PVEBattle_event' : 'PVEBattle') + pveDifficultyPostfix"/>
 				<block className="icon_battletypes" type="native">
 					<styleClass value="$MiddleAligned"/>
 					<style>
 						<marginTop value="0px"/>
 					</style>
-					<bind name="gotoAndStop!" value="(gameInfo.battleType == BattleTypes.PVE_BATTLE) &amp;&amp; (operationType == 'event')	? 'PVEBattle_event' 
-																																	: gameInfo.battleType"/>
+					<bind name="gotoAndStop!" value="(gameInfo.battleType == BattleTypes.RANKED_BATTLE) &amp;&amp; (rankedBattlesSeason.isJuniorSeason == true) 	? 'RankedBattle_junior' :
+									(gameInfo.battleType == BattleTypes.PVE_BATTLE)  &amp;&amp; (operationType == 'event')		? pveIconLabel 
+																																		: gameInfo.battleType"/>
 				</block>
 				<block>
 					<styleClass value="$MiddleAligned"/>
@@ -6473,9 +6494,9 @@
 							<marginTop value="-6px"/>
 							<alpha value="0.8"/>
 						</style>
-						<bind name="text" value="(gameInfo.gameModeId == GameMode.PVE	?	tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' +	(isChosenOperationOfTheWeek == true 					? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
-																													(chosenDifficulty == 'normal'	? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE')
-																																									: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
+						<bind name="text" value="(gameInfo.gameModeId == GameMode.PVE	?	tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' +	(isChosenOperationOfTheWeek == true 	? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
+																													(!(operationIsHard)						? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE')
+																																							: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
 																		:	gameInfo.battleType == BattleTypes.EVENT_BATTLE	? 'IDS_EVENTBATTLE'
 																															:	(toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE'))))"/>
 					</block>
@@ -7039,49 +7060,67 @@
 		<bind name="watchDH" value="'chosenOperationId'; ['']; pveStateEntity.pveState.chosenOperation"/>
 		<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
 		<bind name="primaryEntityDH" value="'operationEntity'; CC.operation; chosenOperationId"/>
+		<bind name="watch" value="'isHW2018'; isIn(operationEntity.operation.gpName, ['PCVO013_EV_HL_18_e04_Halloween_2018', 'PCVO017_EV_HL_18_e04_Halloween_2018_Hard'])"/>
 		<style>
 			<width value="100%"/>
 			<marginRight value="80px"/>
 		</style>
-		<block type="text">
-			<bind name="appear" value="'startShow'; 0.15; 0.4; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
-			<styleClass value="$TextDefaultBold23NM"/>
+		<block>
 			<style>
 				<width value="100%"/>
-				<marginBottom value="12px"/>
 			</style>
-			<bind name="text" value="tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_NAME')"/>
+			<block type="text">
+				<bind name="appear" value="'startShow'; 0.15; 0.4; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+				<styleClass value="$TextDefaultBold23NM"/>
+				<style>
+					<width value="100%"/>
+					<marginBottom value="12px"/>
+				</style>
+				<bind name="text" value="tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_NAME')"/>
+			</block>
+			<block type="text">
+				<bind name="appear" value="'startShow'; 0.15; 0.47; {alpha: 0, top: 10}; {alpha: 0.85, top: 0}"/>
+				<style>
+					<width value="100%"/>
+					<marginBottom value="24px"/>
+					<leading value="-3"/>
+					<alpha value="0.85"/>
+				</style>
+				<styleClass value="$TextDefault19NM"/>
+				<bind name="text" value="tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_DESCRIPTION')"/>
+			</block>
 		</block>
-		<block type="text">
-			<bind name="appear" value="'startShow'; 0.15; 0.47; {alpha: 0, top: 10}; {alpha: 0.85, top: 0}"/>
+		<block>
 			<style>
 				<width value="100%"/>
-				<marginBottom value="24px"/>
-				<leading value="-3"/>
-				<alpha value="0.85"/>
 			</style>
-			<styleClass value="$TextDefault19NM"/>
-			<bind name="text" value="tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_DESCRIPTION')"/>
+			<block type="text">
+				<bind name="appear" value="'startShow'; 0.15; 0.54; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+				<styleClass value="$TextDefaultBold23NM"/>
+				<style>
+					<width value="100%"/>
+					<marginBottom value="12px"/>
+				</style>
+				<bind name="text" value="'IDS_PVE_OPERATION_GOAL'"/>
+			</block>
+			<block type="text">
+				<bind name="appear" value="'startShow'; 0.15; 0.61; {alpha: 0, top: 10}; {alpha: 0.85, top: 0}"/>
+				<style>
+					<width value="100%"/>
+					<marginBottom value="24px"/>
+					<leading value="-3"/>
+					<alpha value="0.85"/>
+				</style>
+				<styleClass value="$TextDefault19NM"/>
+				<bind name="text" value="tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_GOAL')"/>
+			</block>
 		</block>
-		<block type="text">
-			<bind name="appear" value="'startShow'; 0.15; 0.54; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
-			<styleClass value="$TextDefaultBold23NM"/>
+		<block>
+			<bind name="visible" value="isHW2018"/>
 			<style>
 				<width value="100%"/>
-				<marginBottom value="12px"/>
 			</style>
-			<bind name="text" value="'IDS_PVE_OPERATION_GOAL'"/>
-		</block>
-		<block type="text">
-			<bind name="appear" value="'startShow'; 0.15; 0.61; {alpha: 0, top: 10}; {alpha: 0.85, top: 0}"/>
-			<style>
-				<width value="100%"/>
-				<marginBottom value="24px"/>
-				<leading value="-3"/>
-				<alpha value="0.85"/>
-			</style>
-			<styleClass value="$TextDefault19NM"/>
-			<bind name="text" value="tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_GOAL')"/>
+			<bind name="instance" value="'SubmarineBattleDescription'; isHW2018 ? {} : null"/>
 		</block>
 		<block>
 			<style>
@@ -7662,6 +7701,7 @@
 		</block>
 	</block>
 	<block className="DogTagBattleTypeRestriction">
+		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 		<block className="icon_battletypes_small" type="native">
 			<style>
 				<marginRight value="6px"/>
@@ -7669,12 +7709,12 @@
 				<height value="25px"/>
 			</style>
 			<bind name="gotoAndStop!" value="	($value == 'PVP')			? 'RandomBattle' :
-									($value == 'COOPERATIVE')	? 'CooperativeBattle':
-									($value == 'RANKED')		? 'RankedBattle':
-									($value == 'PVE')			? 'PVEBattle':
-									($value == 'PVE_PREMADE')	? 'PVEBattle_hard':
-									($value == 'CLAN')			? 'ClanBattle'
-																: null "/>
+								($value == 'COOPERATIVE')	? 'CooperativeBattle':
+								($value == 'RANKED') 		&amp;&amp; (rankedBattlesSeason.isJuniorSeason == true) ? 'RankedBattle_junior' : 'RankedBattle':
+								($value == 'PVE')			? 'PVEBattle':
+								($value == 'PVE_PREMADE')	? 'PVEBattle_hard':
+								($value == 'CLAN')			? 'ClanBattle'
+															: null "/>
 		</block>
 		<block className="VerticalDivider">
 			<style>
@@ -7745,15 +7785,14 @@
 																		_levelProgress: _levelProgress} : null"/>
 		<block type="text">
 			<bind name="visible" value="!_noRank &amp;&amp; !_isBot &amp;&amp; rank != 0 &amp;&amp; rank != null"/>
-			<styleClass value="$TextDefaultNM"/>
 			<style>
 				<marginTop value="8px"/>
 				<marginLeft value="3px"/>
 				<maxWidth value="160"/>
 				<multiline value="false"/>
 			</style>
-			<bind name="text" value="rank == 1 	? subst('IDS_RANK_X_SEAWOLF',[], {rank: tr('IDS_RANK_SEA_WOLF')})
-								: subst('IDS_RANK_X',[], {rank: rank - 1})"/>
+			<styleClass value="$TextDefaultNM"/>
+			<bind name="text" value="subst('IDS_RANK_X',[], {rank: rank})"/>
 		</block>
 	</block>
 	<block className="PlayerProgressBar">
@@ -7819,6 +7858,7 @@
 		<height value="21px"/>
 	</css>
 	<block className="BattleLoading">
+		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 		<bind name="collectionDH" value="CC.userPrefs; 'userPrefsCollection'"/>
 		<bind name="entityDH" value="'userPrefsEntity'; userPrefsCollection[0].id"/>
 		<bind name="watchDH" value="'userPrefs'; ['userPrefsEntity.userPrefs.evUserPrefsChanged']; userPrefsEntity.userPrefs.userPrefs"/>
@@ -8000,6 +8040,8 @@
 			</block>
 			<block>
 				<bind name="appear" value="'startShow'; 0.15; 0.45; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+				<bind name="watch" value="'pveDifficultyPostfix'; operationIsHard ? '_hard' : ''"/>
+				<bind name="watch" value="'pveIconLabel'; (operationType == 'event' ? 'PVEBattle_event' : 'PVEBattle') + pveDifficultyPostfix"/>
 				<style>
 					<height value="180px"/>
 					<bottom value="40px"/>
@@ -8016,10 +8058,11 @@
 						<style>
 							<position value="absolute"/>
 						</style>
-						<bind name="gotoAndStop!" value="gameInfo.gameModeId == GameMode.TUTORIAL												? 'TutorialBattle' :
-										(gameInfo.gameModeId == GameMode.PVE) &amp;&amp; (operationType == 'event')		? 'PVEBattle_event' :
-										gameInfo.gameModeId == GameMode.PVE														? 'PVEBattle'
-																																: gameInfo.battleType"/>
+						<bind name="gotoAndStop!" value="(gameInfo.battleType == BattleTypes.RANKED_BATTLE) &amp;&amp; (rankedBattlesSeason.isJuniorSeason == true) 	? 'RankedBattle_junior':
+										(gameInfo.gameModeId == GameMode.TUTORIAL)															? 'TutorialBattle' :
+										(gameInfo.gameModeId == GameMode.PVE) &amp;&amp; (operationType == 'event')					? 'PVEBattle_event' :
+										(gameInfo.gameModeId == GameMode.PVE)																? pveIconLabel
+																																			: gameInfo.battleType"/>
 					</block>
 				</block>
 				<block>
@@ -8030,6 +8073,7 @@
 					<bind name="watch" value="'isChosenOperationOfTheWeek'; ((chosenOperationId == activeOperationId) &amp;&amp; (chosenDifficulty == 'normal'))"/>
 					<bind name="primaryEntityDH" value="'operationEntity'; CC.operation; chosenOperationId"/>
 					<bind name="watchDH" value="'operationType';	['operationEntity.operation.evStatusChanged']; operationEntity.operation.type"/>
+					<bind name="watchDH" value="'operationIsHard'; []; operationEntity.operation.isHard"/>
 					<styleClass value="$MiddleAligned"/>
 					<block type="text">
 						<bind name="name" value="'mapName'"/>
@@ -8046,9 +8090,9 @@
 							<marginTop value="-6px"/>
 							<alpha value="0.85"/>
 						</style>
-						<bind name="text" value="gameInfo.gameModeId == GameMode.PVE	?  tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' + 	(isChosenOperationOfTheWeek == true				? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
-																												(chosenDifficulty == 'normal'	? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE') 
-																																								: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
+						<bind name="text" value="gameInfo.gameModeId == GameMode.PVE	?  tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' + 	(isChosenOperationOfTheWeek == true		? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
+																												(!(operationIsHard)						? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE') 
+																																						: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
 																	:	gameInfo.battleType == BattleTypes.EVENT_BATTLE	? 'IDS_EVENTBATTLE'
 																														: (toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE')))"/>
 					</block>
@@ -8504,14 +8548,15 @@
 			</style>
 		</block>
 		<block>
-			<bind name="primaryEntityDH" value="'allyPlayerEntity'; CC.avatar; allies[0].id"/>
-			<bind name="primaryEntityDH" value="'enemyPlayerEntity'; CC.avatar; enemies[0].id"/>
 			<styleClass value="$MiddleAlignedAbsolutely"/>
 			<style>
 				<top value="0"/>
 				<marginTop value="-140%"/>
 			</style>
-			<bind name="instance" value="'ClanBattleVS'; gameInfo.battleType == 'ClanBattle'	? {_allyClanId: allyPlayerEntity.clanman.clanId, _enemyClanId: enemyPlayerEntity.clanman.clanId}
+			<bind name="instance" value="'ClanBattleVS'; gameInfo.battleType == 'ClanBattle'	? {
+		                                                                    _allyPlayerEntityId: allies[0].id,
+		                                                                    _enemyPlayerEntityId: enemies[0].id
+		                                                                    }
 																			: null"/>
 		</block>
 		<block>
@@ -8647,10 +8692,14 @@
 										}"/>
 	</block>
 	<block className="ClanBattleVS">
-		<bind name="primaryEntityDH" value="'allyClanEntity'; CC.clan; _allyClanId"/>
-		<bind name="primaryEntityDH" value="'enemyClanEntity'; CC.clan; _enemyClanId"/>
-		<bind name="watchDH" value="'allyClanTag'; ['clanEntity.clan.evTagChanged'];		_allyClanTag	? _allyClanTag	: allyClanEntity.clan.tag"/>
-		<bind name="watchDH" value="'enemyClanTag'; ['clanEntity.clan.evTagChanged'];	_enemyClanTag 	? _enemyClanTag	: enemyClanEntity.clan.tag"/>
+		<bind name="primaryEntityDH" value="'allyPlayerEntity'; CC.avatar; _allyPlayerEntityId"/>
+		<bind name="primaryEntityDH" value="'enemyPlayerEntity'; CC.avatar; _enemyPlayerEntityId"/>
+		<bind name="primaryEntityDH" value="'allyClanEntity'; CC.clan; allyPlayerEntity.clanman.clanId"/>
+		<bind name="primaryEntityDH" value="'enemyClanEntity'; CC.clan; enemyPlayerEntity.clanman.clanId"/>
+		<bind name="watchDH" value="'allyClanTag'; ['allyClanEntity.clan.evTagChanged'];		_allyClanTag	? _allyClanTag	: allyClanEntity.clan.tag"/>
+		<bind name="watchDH" value="'enemyClanTag'; ['enemyClanEntity.clan.evTagChanged'];	_enemyClanTag 	? _enemyClanTag	: enemyClanEntity.clan.tag"/>
+		<bind name="watchDH" value="'allyRealm'; [];		_allyRealm	    ? _allyRealm	: allyPlayerEntity.accountRealm.realm"/>
+		<bind name="watchDH" value="'enemyRealm'; [];	_enemyRealm 	? _enemyRealm	: enemyPlayerEntity.accountRealm.realm"/>
 		<block>
 			<style>
 				<position value="absolute"/>
@@ -8658,7 +8707,7 @@
 			</style>
 			<block type="text">
 				<styleClass value="$TextDefaultBold21NM"/>
-				<bind name="text" value="allyClanTag"/>
+				<bind name="text" value="allyClanTag + ' ' + tr('IDS_REALM_' + toUpperCase(allyRealm))"/>
 			</block>
 		</block>
 		<block type="text">
@@ -8677,7 +8726,7 @@
 			</style>
 			<block type="text">
 				<styleClass value="$TextDefaultBold21NM"/>
-				<bind name="text" value="enemyClanTag"/>
+				<bind name="text" value="tr('IDS_REALM_' + toUpperCase(enemyRealm)) + ' ' + enemyClanTag"/>
 			</block>
 		</block>
 	</block>
@@ -14765,11 +14814,12 @@
 				<style>
 					<alpha value="0.8"/>
 				</style>
-				<bind name="watch" value="'shipClass';	(shipInfo.subtype == 'Cruiser') 	? tr('IDS_CRUISER') :
-										(shipInfo.subtype == 'AirCarrier')	? tr('IDS_AIRCARRIER') :
-										(shipInfo.subtype == 'Battleship') 	? tr('IDS_BATTLESHIP') : 
-										(shipInfo.subtype == 'Auxiliary') 	? tr('IDS_AUXILIARY')
-																			: tr('IDS_DESTROYER')"/>
+				<bind name="watch" value="'shipClass';	(shipInfo.subtype == ShipTypes.Cruiser) 		? tr('IDS_CRUISER') :
+										(shipInfo.subtype == ShipTypes.AircraftCarrier)	? tr('IDS_AIRCARRIER') :
+										(shipInfo.subtype == ShipTypes.BattleShip) 		? tr('IDS_BATTLESHIP') : 
+										(shipInfo.subtype == ShipTypes.Auxiliary) 		? tr('IDS_AUXILIARY') :
+										(shipInfo.subtype == ShipTypes.Submarine) 		? tr('IDS_SUBMARINE')
+																						: tr('IDS_DESTROYER')"/>
 				<bind name="instance" value="'InvertableTextLine'; { _text: subst('IDS_SHIP_LEVEL', [], {_shipClass: shipClass, _shipLevel: shipInfo.levelRome}),
 													_invert: _fromCrew ? !isOwned : false, 
 													_normalClass: shipInfo.isPremium &amp;&amp; !_isNotMyShip ? '$TextShipLinePremium' : '$TextShipLineNormal', 
@@ -14833,6 +14883,7 @@
 			<width value="100%"/>
 		</style>
 		<block>
+			<bind name="visible" value="!(!_armorEnabled &amp;&amp; id == 'armour')"/>
 			<style>
 				<width value="100%"/>
 			</style>
@@ -15104,7 +15155,7 @@
 			</style>
 			<bind name="appear" value="'hideParams'; 0.45; 0.0; {alpha: 1.0, top: 0}; {alpha: 0.0, top: -10}"/>
 			<bind name="appear" value="'showParams'; 0.3; 0.10; {alpha: 0.0, top: 10}; {alpha: 1.0, top: 0}"/>
-			<bind name="repeat" value="viewParams.list; 'ShipInfoTabRow'; {secondLevelTooltip: secondLevelTooltip, viewParams: viewParams, _armourOff: _armourOff}"/>
+			<bind name="repeat" value="viewParams.list; 'ShipInfoTabRow'; {secondLevelTooltip: secondLevelTooltip, viewParams: viewParams, _armourOff: _armourOff, _armorEnabled: _armorEnabled}"/>
 		</block>
 	</block>
 	<block className="ShipSilhouetteRightAligned">
@@ -15142,7 +15193,8 @@
 		<bind name="watch" value="'showPanel'; _crewInset != 1 &amp;&amp; ((isOwned &amp;&amp; (_dockInset == LobbyConstants.DOCK)) || _dockInset == LobbyConstants.SHIP_MODULES || _dockInset == LobbyConstants.SHIP_EXTERIOR)"/>
 		<bind name="watch" value="'carouselRows'; (userPrefs.curRowCountIndex == null) ? 0 : userPrefs.curRowCountIndex"/>
 		<bind name="watch" value="'isSmallCarouselView'; (userPrefs.isSmallCarouselView == null) ? false : userPrefs.isSmallCarouselView"/>
-		<bind name="watch" value="'excursionOff'; (testShipParams != null || (isOwned &amp;&amp; playerShipInfo.isLocked) || !(shipInfoSlim.isDownloaded))"/>
+		<bind name="watch" value="'excursionOff'; (testShipParams != null || (isOwned &amp;&amp; playerShipInfo.isLocked) || !(shipInfoSlim.isDownloaded) || (shipInfo.subtype == ShipTypes.Submarine))"/>
+		<bind name="watch" value="'armorEnabled'; shipInfo.subtype != ShipTypes.Submarine"/>
 		<bind name="fade" value="showPanel; showPanel ? 0.3 : 0; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 		<bind name="appear" value="'addedToStage'; 0.3; 0.2; {alpha: 0, top: 5}; {alpha: 1, top: 0}"/>
 		<bind name="updateAllStates!" value="showPanel"/>
@@ -15289,19 +15341,21 @@
 					<bind name="instance" value="'UniqueCrewIcon'; {}"/>
 				</block>
 				<block>
+					<bind name="visible" value="armorEnabled"/>
 					<style>
 						<width value="100%"/>
 						<height value="31px"/>
 					</style>
-					<bind name="instance" value="'ArmourDisplaySwitcher'; {}"/>
+					<bind name="instance" value="'ArmourDisplaySwitcher'; armorEnabled ? {} : null"/>
 				</block>
 				<block>
 					<style>
 						<width value="100%"/>
 					</style>
-					<bind name="instance" value="'ShipInfoArmourBlock'; {shipId: shipId}"/>
+					<bind name="instance" value="'ShipInfoArmourBlock'; armorEnabled ? {shipId: shipId} : null"/>
 				</block>
 				<block>
+					<bind name="visible" value="armorEnabled"/>
 					<style>
 						<position value="absolute"/>
 						<bottom value="0"/>
@@ -15328,7 +15382,7 @@
 					<overflow value="scroll"/>
 				</style>
 				<styleClass value="$DefaultScrollBar"/>
-				<bind name="instance" value="'ShipParamsListView'; showStats ? { viewParams: viewParams } : null"/>
+				<bind name="instance" value="'ShipParamsListView'; showStats ? { viewParams: viewParams, _armorEnabled: armorEnabled } : null"/>
 			</block>
 			<block>
 				<bind name="visible" value="showLabelComingSoon"/>
@@ -15516,6 +15570,42 @@
 				<alpha value="0.85"/>
 			</style>
 			<bind name="repeat" value="weatherBulletsCount; 'ListWithBulletsElement'; {_marginBottom: '12px', _bulletType: '-', _textClass: '$TextDefault19NM', _text: ('IDS_LOCAL_WEATHER_DESCRIPTION_ITEM_' + toUpperCase(gpName) + '_'), _bulletIndex: true}"/>
+		</block>
+	</block>
+	<block className="SubmarineBattleDescription">
+		<style>
+			<width value="100%"/>
+		</style>
+		<block type="text">
+			<style>
+				<marginBottom value="12px"/>
+				<width value="100%"/>
+			</style>
+			<styleClass value="$TextDefaultBold23NM"/>
+			<bind name="text" value="'IDS_BATTLE_LOADING_SUBMARINE_INFO_HEADER'"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+				<alpha value="0.85"/>
+			</style>
+			<bind name="repeat" value="4; 'ListWithBulletsElement'; {_marginBottom: '12px', _textClass: '$TextDefault19NM', _text: 'IDS_BATTLE_LOADING_SUBMARINE_INFO_DESCRIPTION_', _bulletIndex: true}"/>
+		</block>
+		<block type="text">
+			<style>
+				<width value="100%"/>
+				<marginTop value="12px"/>
+			</style>
+			<styleClass value="$TextDefault19NM"/>
+			<bind name="substitute" value="'KEYS'; 6; null; tr('IDS_BATTLE_LOADING_SUBMARINE_DEEP_UP_TIP'); '_bg'"/>
+		</block>
+		<block type="text">
+			<style>
+				<width value="100%"/>
+				<marginTop value="8px"/>
+			</style>
+			<styleClass value="$TextDefault19NM"/>
+			<bind name="substitute" value="'KEYS'; 6; null; tr('IDS_BATTLE_LOADING_SUBMARINE_DEEP_DOWN_TIP'); '_bg'"/>
 		</block>
 	</block>
 	<block className="TasksList">
@@ -15906,6 +15996,7 @@
 					<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 					<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 					<block>
+						<bind name="soundSet" value="'default_button'"/>
 						<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 						<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 						<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -15973,6 +16064,7 @@
 						<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 						<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 						<block>
+							<bind name="soundSet" value="'default_button'"/>
 							<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 							<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 							<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -16065,6 +16157,7 @@
 					<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 					<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 					<block>
+						<bind name="soundSet" value="'default_button'"/>
 						<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 						<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 						<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -16197,6 +16290,7 @@
 						<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 						<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 						<block>
+							<bind name="soundSet" value="'default_button'"/>
 							<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 							<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 							<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -16291,6 +16385,7 @@
 						<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 						<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 						<block>
+							<bind name="soundSet" value="'default_button'"/>
 							<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 							<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 							<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -16388,6 +16483,7 @@
 					<bind name="dispatch" value="'mouseOut'; 'upEscapeButton'"/>
 					<bind name="dispatch" value="'mouseDown'; 'downEscapeButton'"/>
 					<block>
+						<bind name="soundSet" value="'default_button'"/>
 						<bind name="catch" value="'overEscapeButton'; {EscapeButtonOverAlpha: 1}"/>
 						<bind name="catch" value="'upEscapeButton'; {EscapeButtonOverAlpha: 0.8}"/>
 						<bind name="catch" value="'downEscapeButton'; {EscapeButtonOverAlpha: 0.4}"/>
@@ -16784,6 +16880,7 @@
 			</style>
 		</block>
 		<block>
+			<bind name="visible" value="title != null"/>
 			<style>
 				<width value="100%"/>
 				<marginTop value="-2px"/>
@@ -16794,7 +16891,9 @@
 	<block className="PlayerSummary">
 		<bind name="var" value="{curSeasonIndex: 0}"/>
 		<bind name="catch" value="'curSeasonIndexChanged'"/>
+		<bind name="catch" value="'currentSeasonIdChanged'"/>
 		<bind name="collectionDH" value="CC.rankedSeasonHistory; 'statDataEntities'; 'statToShow'"/>
+		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 		<bind name="entityDH" value="'statDataEntity'; statDataEntities[0].id"/>
 		<bind name="watchDH" value="'statData'; ['statDataEntity.dataComponent.evDataChanged']; statDataEntity.dataComponent.data"/>
 		<bind name="watchDH" value="'shipsList'; ['statDataEntity.dataComponent.evDataChanged']; statDataEntity.dataComponent.data.shipsList"/>
@@ -16851,22 +16950,20 @@
 			<bind name="appear" value="'addedToStage'; 0.15; 0; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 			<style>
 				<position value="absolute"/>
-				<width value="230px"/>
-				<marginTop value="-40px"/>
-				<right value="1280:10,1920:20aw"/>
+				<width value="240px"/>
+				<right value="1280:5,1920:40aw"/>
+				<marginTop value="-33px"/>
 			</style>
 			<block>
-				<styleClass value="$MiddleAligned"/>
 				<style>
-					<width value="230px"/>
+					<width value="100%"/>
 				</style>
 				<block>
 					<style>
 						<height value="30px"/>
-						<top value="-3px"/>
 					</style>
 					<styleClass value="$MiddleAligned"/>
-					<bind name="instance" value="'RankedSeasonDropdown'; battleType == BattleTypes.RANKED_BATTLE ? {statData: statData, _curSeasonIndex: curSeasonIndex}: null"/>
+					<bind name="instance" value="'RankedSeasonDropdown'; (battleType == BattleTypes.RANKED_BATTLE) ? {statData: statData, _curSeasonIndex: curSeasonIndex, currentSeasonId: currentSeasonId}: null"/>
 				</block>
 				<block>
 					<styleClass value="$MiddleAligned"/>
@@ -16877,7 +16974,7 @@
 						<block className="icon_battletypes_big" type="native">
 							<bind name="transition" value="statData.vehicleId != 0; 0.15; {alpha: 1}; {alpha: 0.7}"/>
 							<styleClass value="$MiddleAligned"/>
-							<bind name="gotoAndStop!" value="battleType"/>
+							<bind name="gotoAndStop!" value="(currentSeasonId &gt; 100) ? 'RankedBattle_junior' : battleType"/>
 						</block>
 						<block className="battle_type_overlay_big" type="native">
 							<bind name="visible" value="statData.vehicleId != 0"/>
@@ -17016,6 +17113,7 @@
 		<bind name="catch" value="'ItemChooserInnerEvent.historySeasonChanged'"/>
 		<bind name="action" value="'_curItemIndex' + varChanged; 'rankedSeasonChanged'; {seasonId: statData.seasonList[_curItemIndex].id}"/>
 		<bind name="dispatch" value="'_curItemIndex' + varChanged; 'curSeasonIndexChanged'; {curSeasonIndex: _curItemIndex}; false"/>
+		<bind name="dispatch" value="'_curItemIndex' + varChanged; 'currentSeasonIdChanged'; {currentSeasonId: statData.seasonList[_curItemIndex].id}"/>
 		<bind name="appear" value="'addedToStage'; 0.15; 0; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 		<block>
 			<bind name="instance" value="'ItemChooser'; {	_items: statData.seasonList, curIndex: _curItemIndex,
@@ -18239,6 +18337,44 @@
 			</block>
 		</block>
 	</block>
+	<block className="ResizableButtonDock">
+		<style>
+			<width value="100%f"/>
+		</style>
+		<bind name="watch" value="'enabled'; _enabled != false"/>
+		<bind name="name" value="_name"/>
+		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController; null; 'resizableButtonDock_'"/>
+		<bind name="clickSplit"/>
+		<bind name="request" value="'left_click'; _request ? _request : null; _requestParams ? _requestParams : {}"/>
+		<bind name="action" value="'left_click'; _action ? _action : null; _actionParams ? _actionParams : {}"/>
+		<bind name="transition" value="resizableButtonDock_rollOver &amp;&amp; !(resizableButtonDock_mouseDown) &amp;&amp; enabled; 0.1; {alpha: 0.65}; {alpha: 1}; {alpha: 0.65}"/>
+		<bind name="soundOn" value="'left_click'; 'press'; 'default_button'"/>
+		<block>
+			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<marginLeft value="-10px"/>
+				<marginRight value="-10px"/>
+				<marginBottom value="-9px"/>
+				<marginTop value="-10px"/>
+			</style>
+			<bind name="style" value="'hitTest'; enabled"/>
+			<block className="button_dock_bg" type="native">
+				<styleClass value="$Fullsize"/>
+				<bind name="gotoAndStop!" value="'down'"/>
+			</block>
+		</block>
+		<block type="text">
+			<style>
+				<hitTest value="false"/>
+				<mouseEnabled value="false"/>
+				<mouseChildren value="false"/>
+			</style>
+			<bind name="style" value="'alpha'; enabled ? 1 : 0.65"/>
+			<styleClass value="$TextDefaultBoldNM"/>
+			<bind name="class" value="'$FontColorBlueish'"/>
+			<bind name="text" value="_label"/>
+		</block>
+	</block>
 	<block className="InfopanelButton">
 		<bind name="request" value="'buttonClick'; _request ? _request : null; _request ? _requestParams : null"/>
 		<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: _tooltipIDS}"/>
@@ -18643,6 +18779,7 @@
 		<height value="21px"/>
 	</css>
 	<block className="BattleLoading">
+		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 		<bind name="collectionDH" value="CC.userPrefs; 'userPrefsCollection'"/>
 		<bind name="entityDH" value="'userPrefsEntity'; userPrefsCollection[0].id"/>
 		<bind name="watchDH" value="'userPrefs'; ['userPrefsEntity.userPrefs.evUserPrefsChanged']; userPrefsEntity.userPrefs.userPrefs"/>
@@ -18824,6 +18961,8 @@
 			</block>
 			<block>
 				<bind name="appear" value="'startShow'; 0.15; 0.45; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+				<bind name="watch" value="'pveDifficultyPostfix'; operationIsHard ? '_hard' : ''"/>
+				<bind name="watch" value="'pveIconLabel'; (operationType == 'event' ? 'PVEBattle_event' : 'PVEBattle') + pveDifficultyPostfix"/>
 				<style>
 					<height value="180px"/>
 					<bottom value="40px"/>
@@ -18840,10 +18979,11 @@
 						<style>
 							<position value="absolute"/>
 						</style>
-						<bind name="gotoAndStop!" value="gameInfo.gameModeId == GameMode.TUTORIAL												? 'TutorialBattle' :
-										(gameInfo.gameModeId == GameMode.PVE) &amp;&amp; (operationType == 'event')		? 'PVEBattle_event' :
-										gameInfo.gameModeId == GameMode.PVE														? 'PVEBattle'
-																																: gameInfo.battleType"/>
+						<bind name="gotoAndStop!" value="(gameInfo.battleType == BattleTypes.RANKED_BATTLE) &amp;&amp; (rankedBattlesSeason.isJuniorSeason == true) 	? 'RankedBattle_junior':
+										(gameInfo.gameModeId == GameMode.TUTORIAL)															? 'TutorialBattle' :
+										(gameInfo.gameModeId == GameMode.PVE) &amp;&amp; (operationType == 'event')					? 'PVEBattle_event' :
+										(gameInfo.gameModeId == GameMode.PVE)																? pveIconLabel
+																																			: gameInfo.battleType"/>
 					</block>
 				</block>
 				<block>
@@ -18854,6 +18994,7 @@
 					<bind name="watch" value="'isChosenOperationOfTheWeek'; ((chosenOperationId == activeOperationId) &amp;&amp; (chosenDifficulty == 'normal'))"/>
 					<bind name="primaryEntityDH" value="'operationEntity'; CC.operation; chosenOperationId"/>
 					<bind name="watchDH" value="'operationType';	['operationEntity.operation.evStatusChanged']; operationEntity.operation.type"/>
+					<bind name="watchDH" value="'operationIsHard'; []; operationEntity.operation.isHard"/>
 					<styleClass value="$MiddleAligned"/>
 					<block type="text">
 						<bind name="name" value="'mapName'"/>
@@ -18870,9 +19011,9 @@
 							<marginTop value="-6px"/>
 							<alpha value="0.85"/>
 						</style>
-						<bind name="text" value="gameInfo.gameModeId == GameMode.PVE	?  tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' + 	(isChosenOperationOfTheWeek == true				? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
-																												(chosenDifficulty == 'normal'	? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE') 
-																																								: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
+						<bind name="text" value="gameInfo.gameModeId == GameMode.PVE	?  tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' + 	(isChosenOperationOfTheWeek == true		? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
+																												(!(operationIsHard)						? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE') 
+																																						: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
 																	:	gameInfo.battleType == BattleTypes.EVENT_BATTLE	? 'IDS_EVENTBATTLE'
 																														: (toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE')))"/>
 					</block>
@@ -19328,14 +19469,15 @@
 			</style>
 		</block>
 		<block>
-			<bind name="primaryEntityDH" value="'allyPlayerEntity'; CC.avatar; allies[0].id"/>
-			<bind name="primaryEntityDH" value="'enemyPlayerEntity'; CC.avatar; enemies[0].id"/>
 			<styleClass value="$MiddleAlignedAbsolutely"/>
 			<style>
 				<top value="0"/>
 				<marginTop value="-140%"/>
 			</style>
-			<bind name="instance" value="'ClanBattleVS'; gameInfo.battleType == 'ClanBattle'	? {_allyClanId: allyPlayerEntity.clanman.clanId, _enemyClanId: enemyPlayerEntity.clanman.clanId}
+			<bind name="instance" value="'ClanBattleVS'; gameInfo.battleType == 'ClanBattle'	? {
+		                                                                    _allyPlayerEntityId: allies[0].id,
+		                                                                    _enemyPlayerEntityId: enemies[0].id
+		                                                                    }
 																			: null"/>
 		</block>
 		<block>
@@ -19471,10 +19613,14 @@
 										}"/>
 	</block>
 	<block className="ClanBattleVS">
-		<bind name="primaryEntityDH" value="'allyClanEntity'; CC.clan; _allyClanId"/>
-		<bind name="primaryEntityDH" value="'enemyClanEntity'; CC.clan; _enemyClanId"/>
-		<bind name="watchDH" value="'allyClanTag'; ['clanEntity.clan.evTagChanged'];		_allyClanTag	? _allyClanTag	: allyClanEntity.clan.tag"/>
-		<bind name="watchDH" value="'enemyClanTag'; ['clanEntity.clan.evTagChanged'];	_enemyClanTag 	? _enemyClanTag	: enemyClanEntity.clan.tag"/>
+		<bind name="primaryEntityDH" value="'allyPlayerEntity'; CC.avatar; _allyPlayerEntityId"/>
+		<bind name="primaryEntityDH" value="'enemyPlayerEntity'; CC.avatar; _enemyPlayerEntityId"/>
+		<bind name="primaryEntityDH" value="'allyClanEntity'; CC.clan; allyPlayerEntity.clanman.clanId"/>
+		<bind name="primaryEntityDH" value="'enemyClanEntity'; CC.clan; enemyPlayerEntity.clanman.clanId"/>
+		<bind name="watchDH" value="'allyClanTag'; ['allyClanEntity.clan.evTagChanged'];		_allyClanTag	? _allyClanTag	: allyClanEntity.clan.tag"/>
+		<bind name="watchDH" value="'enemyClanTag'; ['enemyClanEntity.clan.evTagChanged'];	_enemyClanTag 	? _enemyClanTag	: enemyClanEntity.clan.tag"/>
+		<bind name="watchDH" value="'allyRealm'; [];		_allyRealm	    ? _allyRealm	: allyPlayerEntity.accountRealm.realm"/>
+		<bind name="watchDH" value="'enemyRealm'; [];	_enemyRealm 	? _enemyRealm	: enemyPlayerEntity.accountRealm.realm"/>
 		<block>
 			<style>
 				<position value="absolute"/>
@@ -19482,7 +19628,7 @@
 			</style>
 			<block type="text">
 				<styleClass value="$TextDefaultBold21NM"/>
-				<bind name="text" value="allyClanTag"/>
+				<bind name="text" value="allyClanTag + ' ' + tr('IDS_REALM_' + toUpperCase(allyRealm))"/>
 			</block>
 		</block>
 		<block type="text">
@@ -19501,7 +19647,7 @@
 			</style>
 			<block type="text">
 				<styleClass value="$TextDefaultBold21NM"/>
-				<bind name="text" value="enemyClanTag"/>
+				<bind name="text" value="tr('IDS_REALM_' + toUpperCase(enemyRealm)) + ' ' + enemyClanTag"/>
 			</block>
 		</block>
 	</block>
