@@ -3614,9 +3614,9 @@
 		<bind name="stageSize"/>
 		<style>
 			<width value="100%"/>
+			<height value="720:630,1080:738ah"/>
 			<alpha value="0"/>
 		</style>
-		<bind name="style" value="'height'; (_PBSHeight + 'px')"/>
 		<block>
 			<style>
 				<width value="100%"/>
@@ -3630,28 +3630,32 @@
 																																		_PBSWidth: _PBSWidth}
 																																	: null"/>
 		</block>
-		<bind name="watch" value="'columnWidth'; ((_PBSWidth - 6) / 3) + 'px'"/>
 		<block>
 			<styleClass value="$DefaultScrollBar"/>
 			<style>
 				<height value="100%"/>
+				<width value="100%"/>
 				<overflow value="scroll"/>
 			</style>
 			<block>
 				<block>
-					<bind name="style" value="'width'; columnWidth"/>
+					<style>
+						<width value="1280:357,1920:471aw"/>
+					</style>
 					<bind name="instance" value="'BattleStatsDetailedReportColumn'; {_list: battleResultsDH.battleResultsStructured.causedDamage}"/>
 				</block>
 				<block>
 					<style>
 						<marginLeft value="3px"/>
 						<marginRight value="3px"/>
+						<width value="1280:357,1920:471aw"/>
 					</style>
-					<bind name="style" value="'width'; columnWidth"/>
 					<bind name="instance" value="'BattleStatsDetailedReportColumn'; {_list: battleResultsDH.battleResultsStructured.generalInfo}"/>
 				</block>
 				<block>
-					<bind name="style" value="'width'; columnWidth"/>
+					<style>
+						<width value="1280:357,1920:471aw"/>
+					</style>
 					<bind name="instance" value="'BattleStatsDetailedReportColumn'; {_list: battleResultsDH.battleResultsStructured.takenDamage, _battleResultsDH: battleResultsDH}"/>
 				</block>
 				<style>
@@ -4090,6 +4094,7 @@
 						_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_ARTILLERY		? 'TakenArtilleryTooltip'	:
 						_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_TORPEDOES		? 'TakenDamageTooltip'	:
 						_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_BOMBS			? 'TakenDamageTooltip'	:
+						_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_ROCKETS		? 'TakenDamageTooltip'	:
 						_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_NAVAL_MINES	? 'TakenDamageTooltip'	:
 						_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_DEPTH_CHARGES	? 'TakenDamageTooltip'	:
 						_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_OTHER			? 'TakenDamageTooltip'
@@ -4153,6 +4158,7 @@
 		</block>
 		<bind name="watch" value="'_list';	_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_TORPEDOES		? _battleResultsDH.battleResultsStructured.takenTorpedoesTooltip	:
 							_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_BOMBS			? _battleResultsDH.battleResultsStructured.takenBombsTooltip		:
+							_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_ROCKETS		? _battleResultsDH.battleResultsStructured.takenRocketsTooltip	:
 							_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_NAVAL_MINES	? _battleResultsDH.battleResultsStructured.takenNavalMinesTooltip	:
 							_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_DEPTH_CHARGES	? _battleResultsDH.battleResultsStructured.takenDepthChargesTooltip	:
 							_entity.battleResultsEntry.tooltipType == USSConstants.TOOLTIPTYPE_TAKEN_OTHER			? _battleResultsDH.battleResultsStructured.takenOtherTooltip
@@ -4546,10 +4552,9 @@
 		<bind name="appear" value="'statsLoaded'; 0.15; 0.4; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 		<style>
 			<width value="100%"/>
+			<height value="720:630,1080:738ah"/>
 			<alpha value="0"/>
 		</style>
-		<bind name="style" value="'height'; (_PBSHeight + 'px')"/>
-		<bind name="watch" value="'columnWidth'; ((_PBSWidth - 3) / 2) + 'px'"/>
 		<block>
 			<styleClass value="$DefaultScrollBar"/>
 			<style>
@@ -4559,15 +4564,17 @@
 			<block>
 				<block>
 					<bind name="style" value="'alpha'; battleResultsDH.battleResultsStructured.isPremium ? 0.5 : 1"/>
-					<bind name="style" value="'width'; columnWidth"/>
+					<style>
+						<width value="1280:537,1920:709aw"/>
+					</style>
 					<bind name="instance" value="'BattleStatsEconomicsColumn'; {list: battleResultsDH.battleResultsStructured.base_economics, _isPremium: battleResultsDH.battleResultsStructured.base_economics.premium_type != 0, _shipId: battleResultsDH.battleResultsStructured.shipId}"/>
 				</block>
 				<block>
 					<style>
 						<marginLeft value="3px"/>
+						<width value="1280:537,1920:709aw"/>
 					</style>
 					<bind name="style" value="'alpha'; battleResultsDH.battleResultsStructured.isPremium ? 1 : 0.5"/>
-					<bind name="style" value="'width'; columnWidth"/>
 					<bind name="instance" value="'BattleStatsEconomicsColumn'; {list: battleResultsDH.battleResultsStructured.prem_economics, _isPremium: battleResultsDH.battleResultsStructured.prem_economics.premium_type != 0, _shipId: battleResultsDH.battleResultsStructured.shipId}"/>
 				</block>
 				<style>
@@ -6448,9 +6455,9 @@
 		<bind name="appear" value="'statsLoaded'; 0.15; 0.4; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 		<style>
 			<width value="100%"/>
+			<height value="720:630,1080:738ah"/>
 			<alpha value="0"/>
 		</style>
-		<bind name="style" value="'height'; (_PBSHeight + 'px')"/>
 		<styleClass value="$MiddleAligned"/>
 	</block>
 	<block className="TempTestTask">
@@ -8930,7 +8937,6 @@
 				<marginBottom value="24px"/>
 			</style>
 			<block>
-				<bind name="visible" value="_gameInfo.battleType != BattleTypes.EVENT_BATTLE"/>
 				<block type="text">
 					<styleClass value="$TextDefaultBold23NM"/>
 					<style>
@@ -8943,16 +8949,17 @@
 					<style>
 						<marginTop value="9px"/>
 					</style>
-					<bind name="instance" value="'PointsCharge'; _gameInfo.battleType == BattleTypes.EVENT_BATTLE ? null : {_battleModeInfo: _battleModeInfo, _gameInfo: _gameInfo}"/>
+					<bind name="instance" value="'PointsCharge'; {_battleModeInfo: _battleModeInfo, _gameInfo: _gameInfo}"/>
 				</block>
 			</block>
 		</block>
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
 		<block>
 			<style>
 				<width value="100%"/>
 			</style>
-			<bind name="visible" value="_gameInfo.battleType == BattleTypes.EVENT_BATTLE"/>
-			<bind name="instance" value="'EventBattleDescription'; _gameInfo.battleType == BattleTypes.EVENT_BATTLE ? {} : null"/>
+			<bind name="visible" value="battleDataEntity.battleInfo.gameModeSubtype == 1"/>
+			<bind name="instance" value="'PowerupsDescription'; battleDataEntity.battleInfo.gameModeSubtype == 1 ? {} : null"/>
 		</block>
 		<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
 		<block>
@@ -8960,6 +8967,16 @@
 				<width value="100%"/>
 			</style>
 			<bind name="instance" value="'LocalWeatherDescription'; localWeatherEntity ? {} : null"/>
+		</block>
+		<block type="text">
+			<bind name="visible" value="battleDataEntity.battleInfo.gameModeSubtype == 1"/>
+			<style>
+				<width value="100%"/>
+				<marginTop value="8px"/>
+				<leading value="-3"/>
+			</style>
+			<styleClass value="$TextDefault19NM"/>
+			<bind name="substitute" value="'KEYS'; 6; null; tr('IDS_POWERUPS_CHECK_PARAMS_TIP'); '_bg'"/>
 		</block>
 		<block>
 			<bind name="visible" value="_gameInfo.gameModeId == GameMode.FORTS"/>
@@ -8990,6 +9007,31 @@
 										'[icon_3]' : 'icon_ground_artillery_type_1_enemy',
 										'[icon_4]' : 'icon_ground_radar_enemy'}"/>
 			</block>
+		</block>
+	</block>
+	<block className="PowerupsDescription">
+		<style>
+			<width value="100%"/>
+			<marginBottom value="12px"/>
+		</style>
+		<block type="text">
+			<styleClass value="$TextDefaultBold23NM"/>
+			<bind name="text" value="tr('IDS_LOADING_SCREEN_POWERUPS_HEADER')"/>
+		</block>
+		<block type="text">
+			<style>
+				<width value="100%"/>
+				<marginTop value="12px"/>
+			</style>
+			<styleClass value="$TextDefault19NM"/>
+			<bind name="text" value="'IDS_LOADING_SCREEN_POWERUPS_DESCRIPTION'"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+				<marginTop value="12px"/>
+			</style>
+			<bind name="repeat" value="2; 'ListWithBulletsElement'; {_marginBottom: '12px', _bulletType: '-', _textClass: '$TextDefault19NM', _text: ('IDS_LOADING_SCREEN_POWERUPS_BULLET_'), _bulletIndex: true}"/>
 		</block>
 	</block>
 	<block className="EventBattleDescription">
@@ -10993,6 +11035,7 @@
 		<bind name="name" value="_input"/>
 		<bind name="input"/>
 		<bind name="action" value="'click'; _action ? _action : null"/>
+		<bind name="action" value="'click'; 'log'; { event: 'click:banner.' + _logItemName }"/>
 		<block className="button_infopanel_no_label" type="native">
 			<styleClass value="$FullsizeAbsolute"/>
 		</block>
@@ -12501,6 +12544,97 @@
 				<margin value="16px"/>
 			</style>
 			<bind name="repeat" value="_multiParagraphArray; 'RepeatParagraphItemNM'; {_maxWidth: _maxWidth, _marginBottom: _marginBottom, _leading: (_leading ? _leading : -3)}"/>
+		</block>
+	</block>
+	<block className="AccountCompletionRewardTooltip">
+		<styleClass value="$DefaultTooltipBehaviour"/>
+		<style>
+			<width value="340px"/>
+		</style>
+		<block className="DeclareBlurLayer">
+			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
+			<block className="transparentPixel" type="native">
+				<bind name="blurLayer" value="0"/>
+			</block>
+			<style>
+				<position value="absolute"/>
+			</style>
+		</block>
+		<block className="BlurMap">
+			<bind name="visible" value="optionData.blurEnabled"/>
+			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<style>
+				<hitTest value="false"/>
+			</style>
+			<styleClass value="$FullsizeAbsolute"/>
+			<block className="mc_blurmap_medium" type="native">
+				<bind name="appear" value="'startShow'; 0.3; 0; {alpha: 0}; {alpha: 1}"/>
+				<bind name="appear" value="'startHide'; 0.15; 0; {alpha: 1}; {alpha: 0}"/>
+				<styleClass value="$FullsizeAbsolute"/>
+				<bind name="blurMap" value="0"/>
+			</block>
+			<block className="inner_panel" type="native">
+				<style>
+					<alpha value="0.5"/>
+				</style>
+				<styleClass value="$FullsizeAbsolute"/>
+			</block>
+		</block>
+		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+		<block className="contrast_panel" type="native">
+			<styleClass value="$FullsizeAbsolute"/>
+			<bind name="visible" value="optionData.contrast"/>
+		</block>
+		<block className="hint_panel" type="native">
+			<styleClass value="$FullsizeAbsolute"/>
+		</block>
+		<block>
+			<styleClass value="$InfoBlockIndentNoWidth"/>
+			<style>
+				<width value="100%"/>
+			</style>
+			<block type="text">
+				<styleClass value="$TextHeaderBold"/>
+				<style>
+					<leading value="-3"/>
+					<width value="100%"/>
+				</style>
+				<bind name="text" value="tooltipText"/>
+			</block>
+			<block type="text">
+				<styleClass value="$TextHeaderBigDefault"/>
+				<style>
+					<marginTop value="3px"/>
+					<leading value="-3"/>
+					<width value="100%"/>
+				</style>
+				<bind name="text" value="tooltipSubText"/>
+			</block>
+		</block>
+		<block className="HorizontalDivider">
+			<styleClass value="$PxHorizontalCorrection"/>
+			<style>
+				<width value="100%"/>
+				<height value="3px"/>
+			</style>
+			<block className="divider_h" type="native">
+				<styleClass value="$Fullsize"/>
+			</block>
+		</block>
+		<block>
+			<styleClass value="$InfoBlockIndentNoWidth"/>
+			<style>
+				<width value="100%"/>
+			</style>
+			<block type="text">
+				<styleClass value="$TextHeaderBigDefault"/>
+				<style>
+					<leading value="-3"/>
+					<width value="100%"/>
+				</style>
+				<bind name="text" value="'Награда за регистрацию аккаунта:'"/>
+			</block>
 		</block>
 	</block>
 	<block className="BattleStatsInteractionsCarousel">
@@ -20727,9 +20861,9 @@
 				</style>
 			</block>
 		</block>
-		<bind name="watch" value="'isSamobranka'; _gameInfo.battleType == BattleTypes.EVENT_BATTLE"/>
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
 		<block>
-			<bind name="instance" value="'PowerUpPointsCharge'; isSamobranka ? {} : null"/>
+			<bind name="instance" value="'PowerUpPointsCharge'; battleDataEntity.battleInfo.gameModeSubtype == 1 ? {} : null"/>
 		</block>
 		<block>
 			<bind name="visible" value="_battleModeInfo.buildingRewardList.length &gt; 0 || _battleModeInfo.buildingPenaltyList.length &gt; 0"/>
@@ -20805,13 +20939,21 @@
 		</block>
 		<block>
 			<block>
+				<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_SHIP_MODIFIER_PARAM_HEADER_PCOM001_VISIBILITY'}"/>
+				<style>
+					<width value="44px"/>
+					<height value="44px"/>
+					<backgroundImage value="symbol:icon_ship_modifier_PCOM001_Visibility"/>
+					<backgroundSize value="cover"/>
+				</style>
+			</block>
+			<block>
 				<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_SHIP_MODIFIER_PARAM_HEADER_PCOM002_REGENERATION'}"/>
 				<style>
 					<width value="44px"/>
 					<height value="44px"/>
-					<backgroundImage value="symbol:icon_powerup_health_active"/>
-					<backgroundStretchY value="true"/>
-					<backgroundStretchX value="true"/>
+					<backgroundImage value="symbol:icon_ship_modifier_PCOM002_Regeneration"/>
+					<backgroundSize value="cover"/>
 				</style>
 			</block>
 			<block>
@@ -20819,19 +20961,26 @@
 				<style>
 					<width value="44px"/>
 					<height value="44px"/>
-					<backgroundImage value="symbol:icon_powerup_reload_active"/>
-					<backgroundStretchY value="true"/>
-					<backgroundStretchX value="true"/>
+					<backgroundImage value="symbol:icon_ship_modifier_PCOM003_ShotDelay"/>
+					<backgroundSize value="cover"/>
 				</style>
 			</block>
 			<block>
-				<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_SHIP_MODIFIER_PARAM_HEADER_PCOM001_VISIBILITY'}"/>
+				<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_SHIP_MODIFIER_PARAM_HEADER_PCOM004_ENGINEBOOST'}"/>
 				<style>
 					<width value="44px"/>
 					<height value="44px"/>
-					<backgroundImage value="symbol:icon_powerup_visibility_active"/>
-					<backgroundStretchY value="true"/>
-					<backgroundStretchX value="true"/>
+					<backgroundImage value="symbol:icon_ship_modifier_PCOM004_EngineBoost"/>
+					<backgroundSize value="cover"/>
+				</style>
+			</block>
+			<block>
+				<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_SHIP_MODIFIER_PARAM_HEADER_PCOM006_CONSUMABLETIME'}"/>
+				<style>
+					<width value="44px"/>
+					<height value="44px"/>
+					<backgroundImage value="symbol:icon_ship_modifier_PCOM006_ConsumableTime"/>
+					<backgroundSize value="cover"/>
 				</style>
 			</block>
 			<style>
@@ -21339,7 +21488,8 @@
 											achievementCount: 'DogTagProgressDefault',
 										 	damage: 'DogTagProgressDefault',
 										 	clearExp: 'DogTagProgressDefault',
-										 	winRate: 'DogTagProgressDefault'	}"/>
+										 	winRate: 'DogTagProgressDefault',
+										 	uniqueStars: 'DogTagProgressDefault'	}"/>
 	</block>
 	<block className="DogTagComponentTooltip">
 		<styleClass value="$DefaultTooltipBehaviour"/>
@@ -22103,6 +22253,7 @@
 		<bind name="feature" value="21; 'click'"/>
 		<bind name="soundSet" value="'lootbox_banner'"/>
 		<bind name="tooltip" value="'MouseInstructionTooltip'; { _mouseInstructions: [{_type: 'left', _instructionText: 'IDS_GO_TO_LOOTBOXES'}], _maxWidth: 250 }; 0"/>
+		<bind name="action" value="'click'; 'log'; { event: 'click:banner.Lootboxes' }"/>
 		<block>
 			<styleClass value="$Fullsize"/>
 			<block className="quest_thumb_title" type="native">
@@ -24388,9 +24539,9 @@
 		</style>
 		<bind name="left" value="x * $parent.blockWidth"/>
 		<bind name="width" value="$parent.blocHalfWidth * 2"/>
-		<styleClass value="$MiddleVAligned"/>
+		<bind name="class" value="_noMiddle == true ? null : '$MiddleVAligned'"/>
 		<block>
-			<styleClass value="$MiddleAligned"/>
+			<bind name="class" value="_noMiddle == true ? null : '$MiddleAligned'"/>
 			<block type="text">
 				<styleClass value="$TextSecondary"/>
 				<style>
@@ -26363,6 +26514,10 @@
 			<block>
 				<bind name="instance" value="'TasksList'; { _gameInfo: gameInfo }"/>
 			</block>
+			<block>
+				<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+				<bind name="instance" value="'PowerupsList'; battleDataEntity.battleInfo.gameModeSubtype == 1 ? {} : null"/>
+			</block>
 		</block>
 		<block>
 			<style>
@@ -26372,6 +26527,67 @@
 			<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
 			<bind name="instance" value="'LocalWeatherDescription'; localWeatherEntity ? {} : null"/>
 			<bind name="instance" value="'EventBattleDescription'; gameInfo.battleType == BattleTypes.EVENT_BATTLE ? {} : null"/>
+		</block>
+	</block>
+	<block className="PowerupsList">
+		<style>
+			<width value="500px"/>
+			<marginBottom value="24px"/>
+		</style>
+		<block type="text">
+			<style>
+				<marginBottom value="12px"/>
+				<width value="100%"/>
+			</style>
+			<styleClass value="$TextDefaultBold23NM"/>
+			<bind name="text" value="'IDS_TAB_SCREEN_POWERUPS_HEADER'"/>
+		</block>
+		<bind name="var" value="{powerupItemsArr: [	{powerupName: 'PCOM001_Visibility'},
+									{powerupName: 'PCOM002_Regeneration'},
+									{powerupName: 'PCOM003_ShotDelay'},
+									{powerupName: 'PCOM004_EngineBoost'},
+									{powerupName: 'PCOM006_ConsumableTime'}
+								]}"/>
+		<bind name="repeat" value="powerupItemsArr; 'PowerupItem'; {}"/>
+	</block>
+	<block className="PowerupItem">
+		<style>
+			<marginBottom value="18px"/>
+			<flow value="horizontal"/>
+		</style>
+		<bind name="watch" value="'iconName'; 'icon_ship_modifier_' + powerupName "/>
+		<block>
+			<style>
+				<width value="44px"/>
+				<height value="44px"/>
+				<marginLeft value="-8px"/>
+				<backgroundSize value="cover"/>
+			</style>
+			<bind name="style" value="'backgroundImage'; 'symbol:' + iconName"/>
+		</block>
+		<block>
+			<style>
+				<marginLeft value="2px"/>
+				<marginTop value="14px"/>
+			</style>
+			<block type="text">
+				<style>
+					<leading value="-3"/>
+					<alpha value="0.85"/>
+				</style>
+				<styleClass value="$TextDefaultBold19NM"/>
+				<bind name="text" value="tr(toUpperCase('IDS_SHIP_MODIFIER_PARAM_HEADER_' + powerupName))"/>
+			</block>
+			<block type="text">
+				<style>
+					<leading value="-3"/>
+					<width value="300px"/>
+					<alpha value="0.75"/>
+					<marginTop value="6px"/>
+				</style>
+				<styleClass value="$TextDefaultNM"/>
+				<bind name="text" value="tr(toUpperCase('IDS_SHIP_MODIFIER_PARAM_DESCR_' + powerupName))"/>
+			</block>
 		</block>
 	</block>
 	<block className="PVEBattleGoal">
@@ -26416,7 +26632,6 @@
 		<block type="text">
 			<style>
 				<width value="100%"/>
-				<marginBottom value="24px"/>
 				<leading value="-3"/>
 				<alpha value="0.85"/>
 			</style>
@@ -26726,11 +26941,9 @@
 				<marginRight value="20px"/>
 			</style>
 			<block>
-				<styleClass value="$MiddleAligned"/>
 				<block type="text">
 					<style>
 						<maxWidth value="320"/>
-						<textAlign value="center"/>
 					</style>
 					<styleClass value="$TextHeaderWhiteBold"/>
 					<bind name="text" value="toUpperCase(tr(_description.textHeader))"/>
@@ -27244,8 +27457,8 @@
 			<styleClass value="$MiddleAligned"/>
 			<style>
 				<height value="100%"/>
+				<width value="1280:1077,1920:1420aw"/>
 			</style>
-			<bind name="style" value="'width'; PBSWidth + 'px'"/>
 			<block>
 				<style>
 					<width value="100%"/>
@@ -27319,9 +27532,9 @@
 				<bind name="appear" value="'startHide'; 0.15; 0; {alpha: 1, top: 0}; {alpha: 0, top: -10}"/>
 				<style>
 					<width value="100%"/>
+					<height value="720:630,1080:738ah"/>
 				</style>
 				<bind name="style" value="'marginTop'; 10 + (stageHeight - 720) * 0.2"/>
-				<bind name="style" value="'height'; PBSHeight + 'px'"/>
 				<bind name="child" value="validTabIndex; {	_data:	{team_results: team_results, received_damage: received_damage, given_damage: given_damage,
 											personal: personal, game_data: game_data, credits_experience: credits_experience,
 											resultText: resultText, commentText: commentText, _PBSWidth: PBSWidth, _PBSHeight: PBSHeight}};

@@ -336,17 +336,14 @@
 		<bind name="watchDH" value="'dogTagList';['entityAccount.dogTagView.evComponentsChanged']; entityAccount.dogTagView.components"/>
 		<bind name="collectionDH" value="CC.dogTagComponent; 'dogtagview'+'ROOT'"/>
 		<bind name="collectionDesign" value="'DES_'+'dogtagview'+'ROOT'; 'dogtagview'; {'filter':(dogTagList.indexOf(toLowerCase($entity.dogTagComponent.id)) &gt; -1), 'sort':['dogTagComponent.categoryId']}; []"/>
-		<bind name="collectionDH" value="CC.avatar; 'selfAvatarCollection'+'ROOT'"/>
-		<bind name="collectionDesign" value="'DES_'+'selfAvatarCollection'+'ROOT'; 'selfAvatarCollection'; {'filter':$entity.relation.value == 0}; []"/>
-		<bind name="watch" value="'selfAvatarEntityId'; selfAvatarCollection[0].id"/>
-		<bind name="entityDH" value="'selfAvatarEntity'; selfAvatarEntityId"/>
-		<bind name="watchDH" value="'playerIsAlive'; ['selfAvatarEntity.health.evKilled']; selfAvatarEntity.health.isAlive"/>
+		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'playerIsAlive'; ['selfAvatarEntity.playerAvatar.evKilled']; selfAvatarEntity.playerAvatar.isAlive"/>
 		<bind name="watchDH" value="'killerId'; ['selfAvatarEntity.health.evKillerIdChanged']; selfAvatarEntity.health.killerId"/>
 		<bind name="primaryEntityDH" value="'killerEntity'; CC.avatar; killerId"/>
 		<bind name="watchDH" value="'enemyName'; ['killerEntity.accountName.evChanged']; killerEntity.accountName.name"/>
 		<block>
 			<styleClass value="$Fullsize"/>
-			<bind name="instance" value="'BattleKillerDogTag'; killerId != 0 ? {_killerId: killerId, _enemyName: enemyName} : null"/>
+			<bind name="instance" value="'BattleKillerDogTag'; (!playerIsAlive) &amp;&amp; (killerId != 0) ? {_killerId: killerId, _enemyName: enemyName} : null"/>
 		</block>
 	</block>
 	<block className="BattleKillerDogTag">
@@ -429,14 +426,11 @@
 			<bind name="var" value="{currentDogTag:[]}"/>
 			<bind name="catch" value="'changeCurrentDogTag'"/>
 			<bind name="dispatch" value="'vehicleEntity'+varChanged; vehicleEntity != null ? 'changeCurrentDogTag' : ''; {currentDogTag:vehicleEntity.dogTagView.components}; 0; 0"/>
-			<bind name="collectionDH" value="CC.avatar; 'selfAvatarCollection'+'ROOT'"/>
-			<bind name="collectionDesign" value="'DES_'+'selfAvatarCollection'+'ROOT'; 'selfAvatarCollection'; {'filter':$entity.relation.value == 0}; []"/>
-			<bind name="watch" value="'selfAvatarEntityId'; selfAvatarCollection[0].id"/>
-			<bind name="entityDH" value="'selfAvatarEntity'; selfAvatarEntityId"/>
+			<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
 			<bind name="watchDH" value="'selfAvatarId'; []; selfAvatarEntity.accountSimple.dbId"/>
 			<bind name="watchDH" value="'killerId'; ['selfAvatarEntity.health.evKillerIdChanged']; selfAvatarEntity.health.killerId"/>
-			<bind name="watchDH" value="'isDead'; ['selfAvatarEntity.health.evKilled']; !selfAvatarEntity.health.isAlive"/>
-			<bind name="watch" value="'isVisible'; isDead || (killerId != 0)"/>
+			<bind name="watchDH" value="'isDead'; ['selfAvatarEntity.playerAvatar.evKilled']; !selfAvatarEntity.playerAvatar.isAlive"/>
+			<bind name="watch" value="'isVisible'; isDead &amp;&amp; (killerId != 0)"/>
 			<bind name="fade" value="isVisible; 0.2; {alpha: 0}; {alpha: 1}; {alpha: 0}; 1; 0.2"/>
 			<bind name="repeat" value=" (currentDogTag.length &gt; 0) ? currentDogTag : selfAvatarEntity.dogTagView.components; 'DogTagViewImageItemAvatarSpectator';
 		{_playerDbId : ((currentDogTag.length &gt; 0) ? vehicleAvatarId : selfAvatarId)}"/>
@@ -524,9 +518,8 @@
 		<styleClass value="$FullsizeAbsolute"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'gameInfo'"/>
 		<bind name="collectionDH" value="CC.avatar; 'allyCollection'; 'team.ally.sortedLeftTeam'"/>
-		<bind name="collectionDH" value="CC.avatar; 'selfAvatarCollection'+'ROOT'"/>
-		<bind name="collectionDesign" value="'DES_'+'selfAvatarCollection'+'ROOT'; 'selfAvatarCollection'; {'filter':$entity.relation.value == 0}; []"/>
-		<bind name="watch" value="'selfAvatarEntityId'; selfAvatarCollection[0].id"/>
+		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
+		<bind name="watch" value="'selfAvatarEntityId'; selfAvatarEntity.id"/>
 		<bind name="entityDH" value="'selfAvatarEntity'; selfAvatarEntityId"/>
 		<bind name="watchDH" value="'playerIsAlive'; ['selfAvatarEntity.health.evKilled']; selfAvatarEntity.health.isAlive"/>
 		<bind name="watchDH" value="'killerId'; ['selfAvatarEntity.health.evKillerIdChanged']; selfAvatarEntity.health.killerId"/>
@@ -1157,11 +1150,11 @@
 		<bind name="handleEventDH" value="'cmdEntity.commandMappingCommand.evCall'; 'evCommandCall'"/>
 		<bind name="catch" value="'evCommandCall'"/>
 		<bind name="watch" value="'isCommandDown'; $args[0]"/>
-		<bind name="collectionDH" value="CC.avatar; 'selfAvatarCollection'+'ROOT'"/>
-		<bind name="collectionDesign" value="'DES_'+'selfAvatarCollection'+'ROOT'; 'selfAvatarCollection'; {'filter':$entity.relation.value == 0}; []"/>
-		<bind name="watch" value="'selfAvatarEntityId'; selfAvatarCollection[0].id"/>
-		<bind name="entityDH" value="'selfAvatarEntity'; selfAvatarEntityId"/>
+		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
+		<bind name="watch" value="'selfAvatarEntityId'; selfAvatarEntity.id"/>
 		<bind name="watchDH" value="'playerIsAlive'; ['selfAvatarEntity.health.evKilled']; selfAvatarEntity.health.isAlive"/>
+		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
+		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
 		<block className="ShipParamsArray">
 			<bind name="primaryEntityDH" value="'mgVisibilityTimeEntity'; CC.parameter; selfAvatarEntityId + '_' + 'mgVisibilityTime'"/>
 			<bind name="watchDH" value="'mgVisibilityTime'; ['mgVisibilityTimeEntity.parameter.evChanged']; (format(mgVisibilityTimeEntity.parameter.currentValue, 1, true) + tr('IDS_SECOND_SPACE'))"/>
@@ -1197,25 +1190,25 @@
 			<bind name="watchDH" value="'aaBaseNearState'; ['aaBaseNearStateEntity.parameter.evChanged']; (format(aaBaseNearStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
 			<bind name="primaryEntityDH" value="'aaCurrentNearStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaCurrentNearState'"/>
 			<bind name="watchDH" value="'aaCurrentNearState'; ['aaCurrentNearStateEntity.parameter.evChanged']; (format(aaCurrentNearStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
-			<bind name="watch" value="'aaNearState'; aaCurrentNearState + ' / ' + aaBaseNearState"/>
+			<bind name="watch" value="'aaNearEfficiency'; format(aaCurrentNearState / aaBaseNearState * 100, 0) + '%'"/>
 			<bind name="primaryEntityDH" value="'aaBaseMidStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaBaseMidState'"/>
 			<bind name="watchDH" value="'aaBaseMidState'; ['aaBaseMidStateEntity.parameter.evChanged']; (format(aaBaseMidStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
 			<bind name="primaryEntityDH" value="'aaCurrentMidStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaCurrentMidState'"/>
 			<bind name="watchDH" value="'aaCurrentMidState'; ['aaCurrentMidStateEntity.parameter.evChanged']; (format(aaCurrentMidStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
-			<bind name="watch" value="'aaMidState'; aaCurrentMidState + ' / ' + aaBaseMidState"/>
+			<bind name="watch" value="'aaMidEfficiency'; format(aaCurrentMidState / aaBaseMidState * 100, 0) + '%'"/>
 			<bind name="primaryEntityDH" value="'aaBaseFarStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaBaseFarState'"/>
 			<bind name="watchDH" value="'aaBaseFarState'; ['aaBaseFarStateEntity.parameter.evChanged']; (format(aaBaseFarStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
 			<bind name="primaryEntityDH" value="'aaCurrentFarStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaCurrentFarState'"/>
 			<bind name="watchDH" value="'aaCurrentFarState'; ['aaCurrentFarStateEntity.parameter.evChanged']; (format(aaCurrentFarStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
-			<bind name="watch" value="'aaFarState'; aaCurrentFarState + ' / ' + aaBaseFarState"/>
+			<bind name="watch" value="'aaFarEfficiency'; format(aaCurrentFarState / aaBaseFarState * 100, 0) + '%'"/>
 			<bind name="primaryEntityDH" value="'atbaBaseStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'atbaBaseState'"/>
 			<bind name="watchDH" value="'atbaBaseState'; ['atbaBaseStateEntity.parameter.evChanged']; (format(atbaBaseStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
 			<bind name="primaryEntityDH" value="'atbaCurrentStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'atbaCurrentState'"/>
 			<bind name="watchDH" value="'atbaCurrentState'; ['atbaCurrentStateEntity.parameter.evChanged']; (format(atbaCurrentStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
-			<bind name="watch" value="'atbaState'; atbaCurrentState + ' / ' + atbaBaseState"/>
+			<bind name="watch" value="'atbaEfficiency'; format(atbaCurrentState / atbaBaseState * 100, 0)+ '%'"/>
 			<bind name="primaryEntityDH" value="'shootRangeEntity'; CC.parameter; selfAvatarEntityId + '_' + 'shootRange'"/>
 			<bind name="watchDH" value="'shootRange'; ['shootRangeEntity.parameter.evChanged']; (format(shootRangeEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
-			<bind name="watchDH" value="'shootRange_vis'+'_vis'; ['shootRangeEntity.parameter.evChanged']; shootRangeEntity.parameter.currentValue"/>
+			<bind name="watchDH" value="'shootRange'+'_vis'; ['shootRangeEntity.parameter.evChanged']; shootRangeEntity.parameter.currentValue"/>
 			<bind name="primaryEntityDH" value="'aaRangeNearEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaRangeNear'"/>
 			<bind name="watchDH" value="'aaRangeNear'; ['aaRangeNearEntity.parameter.evChanged']; (format(aaRangeNearEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
 			<bind name="primaryEntityDH" value="'aaRangeMidEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaRangeMid'"/>
@@ -1249,6 +1242,18 @@
 			<bind name="watchDH" value="'weatherName'; ['localWeatherEntity.localWeather.evChanged']; toUpperCase(localWeatherEntity.localWeather.gpName)"/>
 			<bind name="collectionDH" value="CC.state; 'avatarStatesRoot'; 'byEntity.' + selfAvatarEntityId"/>
 			<bind name="collectionDesign" value="DES_avatarStatesRoot; 'weatherStates'; {'filter': $entity.state.type == EntityState.INSIDE_WEATHER}"/>
+			<bind name="primaryEntityDH" value="'shipHangarSizeEntity'; CC.parameter; selfAvatarEntityId + '_' + 'shipHangarSize'"/>
+			<bind name="watchDH" value="'shipHangarSize'; ['shipHangarSizeEntity.parameter.evChanged']; (format(shipHangarSizeEntity.parameter.currentValue, 1, true) + tr(''))"/>
+			<bind name="watchDH" value="'shipHangarSize'+'_vis'; ['shipHangarSizeEntity.parameter.evChanged']; shipHangarSizeEntity.parameter.currentValue"/>
+			<bind name="primaryEntityDH" value="'hangarSizeFighterEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + 'Fighter' + '_' + 'hangarSize'"/>
+			<bind name="watchDH" value="'hangarSizeFighter'; ['hangarSizeFighterEntity.parameter.evChanged']; (format(hangarSizeFighterEntity.parameter.currentValue, 1, true) + tr(''))"/>
+			<bind name="watchDH" value="'hangarSizeFighter'+'_vis'; ['hangarSizeFighterEntity.parameter.evChanged']; hangarSizeFighterEntity.parameter.currentValue"/>
+			<bind name="primaryEntityDH" value="'hangarSizeBomberEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + 'Bomber' + '_' + 'hangarSize'"/>
+			<bind name="watchDH" value="'hangarSizeBomber'; ['hangarSizeBomberEntity.parameter.evChanged']; (format(hangarSizeBomberEntity.parameter.currentValue, 1, true) + tr(''))"/>
+			<bind name="watchDH" value="'hangarSizeBomber'+'_vis'; ['hangarSizeBomberEntity.parameter.evChanged']; hangarSizeBomberEntity.parameter.currentValue"/>
+			<bind name="primaryEntityDH" value="'hangarSizeDiveEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + 'Dive' + '_' + 'hangarSize'"/>
+			<bind name="watchDH" value="'hangarSizeDive'; ['hangarSizeDiveEntity.parameter.evChanged']; (format(hangarSizeDiveEntity.parameter.currentValue, 1, true) + tr(''))"/>
+			<bind name="watchDH" value="'hangarSizeDive'+'_vis'; ['hangarSizeDiveEntity.parameter.evChanged']; hangarSizeDiveEntity.parameter.currentValue"/>
 			<bind name="watch" value="'shipParams';
 			[	{ title: 'IDS_SHIP_TOOLTIP_VISIBILITY', value: visibilityRange, paramsArr:
 					[	{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_SHIP',									value: visibilityByShipRangeBase,
@@ -1268,28 +1273,112 @@
 						{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_IN_SMOKE', value: visibilityInSmokeRangeBase}
 					]
 				},
+
 				{ title: 'IDS_PARAM_HIGH_VISIBILITY_TIME',	value: mgVisibilityTime,	isInvisible: (shootMGRange_vis == 0)},
+
 				{ title: 'IDS_PARAM_SELF_VISIBLE_RANGE',	value: visionRange},
-				{ title: 'IDS_SHIP_PARAM_MAX_DIST',	value: ((shootRange_vis == 0) ? no_value : shootRange), 
+
+			{ title: 'IDS_SHIP_PARAM_MAX_DIST',	value: ((shootRange_vis == 0) ? no_value : shootRange), isInvisible: ((shootMGRange_vis + shootTARange_vis) == 0),
 					paramsArr:	[	{title: 'IDS_SHIP_PARAM_ARTILLERY',				value: shootMGRange,	isInvisible: (shootMGRange_vis == 0)},
 									{title: 'IDS_SHIP_PARAM_TORPEDOES',				value: shootTARange,	isInvisible: (shootTARange_vis == 0)},
-									{title: 'IDS_SHIP_PARAM_ATBA_SHORT',			value: atbaRange,		isInvisible: (atbaRange_vis == 0)},
-									{title: 'IDS_SHIP_PARAM_AA',					value: aaRange,			isInvisible: (aa_vis == 0)}
 								],
 				},
-				{ title: 'IDS_AA_ATBA_STATE_LABEL',	value: no_value, isInvisible: ((atbaRange_vis + aaBaseNearState_vis + aaBaseMidState_vis + aaBaseFarState_vis) == 0),
-					paramsArr:	[	{title: 'IDS_ATBA_STATE',		value: atbaState,	isInvisible: (atbaRange_vis == 0)},
-									{title: 'IDS_AA_NEAR_STATE',	value: aaNearState,	isInvisible: (aaBaseNearState_vis == 0)},									
-									{title: 'IDS_AA_MID_STATE',		value: aaMidState,	isInvisible: (aaBaseMidState_vis == 0)},
-									{title: 'IDS_AA_FAR_STATE',		value: aaFarState,	isInvisible: (aaBaseFarState_vis == 0)}
+
+			{ title: 'IDS_SHIP_PARAM_HANGAR_SIZE',	value: shipHangarSize, isInvisible: !(shipHangarSize_vis),
+				paramsArr:	[	{title: 'IDS_FIGHTER', 			value: hangarSizeFighter,	isInvisible: (hangarSizeFighter_vis == 0) || (hangarSizeFighter_vis == undefined)},
+								{title: 'IDS_TORPEDOBOMBER', 	value: hangarSizeBomber,	isInvisible: (hangarSizeBomber_vis == 0) || (hangarSizeBomber_vis == undefined)},
+								{title: 'IDS_DIVEBOMBER', 		value: hangarSizeDive,		isInvisible: (hangarSizeDive_vis == 0) || (hangarSizeDive_vis == undefined)},
+							],
+			},
+
+			{ title: 'IDS_SHIP_PARAM_ATBA_SHORT', value: no_value, isInvisible: (atbaRange_vis == 0),
+				paramsArr: 	[	{title: 'IDS_SHIP_PARAM_MAX_DIST', 	value: atbaRange},
+								{title: 'IDS_SHIP_PARAM_EFFICIENCY', value: atbaEfficiency},
+							],
+			},
+
+			{ title: 'IDS_SHIP_PARAM_AA', value: no_value, isInvisible: ((aaBaseNearState_vis + aaBaseMidState_vis + aaBaseFarState_vis) == 0),
+				paramsArr:	[	{title: 'IDS_SHIP_PARAM_MAX_DIST', 	value: aaRange},
+								{title: 'IDS_AA_NEAR_EFFICIENCY',	value: aaNearEfficiency,	isInvisible: (aaBaseNearState_vis == 0)},
+								{title: 'IDS_AA_MID_EFFICIENCY',	value: aaMidEfficiency,		isInvisible: (aaBaseMidState_vis == 0)},
+								{title: 'IDS_AA_FAR_EFFICIENCY',	value: aaFarEfficiency,		isInvisible: (aaBaseFarState_vis == 0)}
 								]
 				},
+
 				{ 	title: tr('IDS_LOCAL_WEATHER_SHIP_PARAM_HEADER_' + weatherName), 
 					value: no_value, isInvisible: (weatherName == null) || !(weatherStates.length), isNegative: true,
 					paramsArr: [ {title: 'IDS_LOCAL_WEATHER_SHIP_PARAM_DESCRIPTION_' + weatherName, value: no_value, isTextParam: true} ]
 				}
+		]"/>
+		</block>
+		<block className="PlaneParamsArray">
+			<bind name="firstEntityDH" value="'ownSquadronesEntity'; CC.ownSquadron; 'selected'"/>
+			<bind name="watchDH" value="'planeType'; []; ownSquadronesEntity.plane.planeType"/>
+			<bind name="var" value="{ planeIconNames: ['plane_scout_own', 'plane_bomber_own', 'plane_torpedo_own', 'plane_fighter_own_bg'] }"/>
+			<bind name="watch" value="'planeIconName'; planeIconNames[planeType]"/>
+			<bind name="watch" value="'planeTypeStr'; 	planeType == 1	? 'Dive' :
+									planeType == 2	? 'Bomber'
+													: 'Fighter'"/>
+			<bind name="primaryEntityDH" value="'maxPlanesNumEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'maxPlanesNum'"/>
+			<bind name="watchDH" value="'maxPlanesNum'; ['maxPlanesNumEntity.parameter.evChanged']; (format(maxPlanesNumEntity.parameter.currentValue, 1, true) + tr(''))"/>
+			<bind name="primaryEntityDH" value="'visibilityDistByShipEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'visibilityDistByShip'"/>
+			<bind name="watchDH" value="'visibilityDistByShip'; ['visibilityDistByShipEntity.parameter.evChanged']; (format(visibilityDistByShipEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+			<bind name="watchDH" value="'visibilityDistByShip'+'_vis'; ['visibilityDistByShipEntity.parameter.evChanged']; visibilityDistByShipEntity.parameter.currentValue"/>
+			<bind name="primaryEntityDH" value="'visibilityDistByPlaneEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'visibilityDistByPlane'"/>
+			<bind name="watchDH" value="'visibilityDistByPlane'; ['visibilityDistByPlaneEntity.parameter.evChanged']; (format(visibilityDistByPlaneEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+			<bind name="watchDH" value="'visibilityDistByPlane'+'_vis'; ['visibilityDistByPlaneEntity.parameter.evChanged']; visibilityDistByPlaneEntity.parameter.currentValue"/>
+			<bind name="primaryEntityDH" value="'visibilityDistGuaranteedEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'visibilityDistGuaranteed'"/>
+			<bind name="watchDH" value="'visibilityDistGuaranteed'; ['visibilityDistGuaranteedEntity.parameter.evChanged']; (format(visibilityDistGuaranteedEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+			<bind name="watchDH" value="'visibilityDistGuaranteed'+'_vis'; ['visibilityDistGuaranteedEntity.parameter.evChanged']; visibilityDistGuaranteedEntity.parameter.currentValue"/>
+			<bind name="primaryEntityDH" value="'planeVisionRangeEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'visionRange'"/>
+			<bind name="watchDH" value="'planeVisionRange'; ['planeVisionRangeEntity.parameter.evChanged']; (format(planeVisionRangeEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+			<bind name="primaryEntityDH" value="'attackPrepareTimeEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'attackPrepareTime'"/>
+			<bind name="watchDH" value="'attackPrepareTime'; ['attackPrepareTimeEntity.parameter.evChanged']; (format(attackPrepareTimeEntity.parameter.currentValue, 1, true) + tr('IDS_SECOND_SPACE'))"/>
+			<bind name="primaryEntityDH" value="'attackProcessTimeEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'attackProcessTime'"/>
+			<bind name="watchDH" value="'attackProcessTime'; ['attackProcessTimeEntity.parameter.evChanged']; (format(attackProcessTimeEntity.parameter.currentValue, 1, true) + tr('IDS_SECOND_SPACE'))"/>
+			<bind name="primaryEntityDH" value="'attackReloadTimeEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'attackReloadTime'"/>
+			<bind name="watchDH" value="'attackReloadTime'; ['attackReloadTimeEntity.parameter.evChanged']; (format(attackReloadTimeEntity.parameter.currentValue, 1, true) + tr('IDS_SECOND_SPACE'))"/>
+			<bind name="primaryEntityDH" value="'torpedoMaxDistEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'torpedoMaxDist'"/>
+			<bind name="watchDH" value="'torpedoMaxDist'; ['torpedoMaxDistEntity.parameter.evChanged']; (format(torpedoMaxDistEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+			<bind name="watchDH" value="'torpedoMaxDist'+'_vis'; ['torpedoMaxDistEntity.parameter.evChanged']; torpedoMaxDistEntity.parameter.currentValue"/>
+			<bind name="watch" value="'planeParams';
+		[	{ title: toUpperCase('IDS_SHIP_PARAM_PLANE_NAME_' + planeTypeStr), value: maxPlanesNum, iconPath: 'symbol:' + planeIconName },
+
+			{ title: 'IDS_SHIP_TOOLTIP_VISIBILITY', value: no_value,
+				paramsArr: 	[ 	{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_SHIP', value: visibilityDistByShip, isInvisible: (visibilityDistByShip_vis == 0) },
+								{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_PLANE', value: visibilityDistByPlane, isInvisible: (visibilityDistByPlane_vis == 0) },
+								{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_IN_SMOKE', value: visibilityDistGuaranteed, isInvisible: (visibilityDistGuaranteed_vis == 0) },
 			]
-		}"/>
+			},
+
+			{ title: 'IDS_PARAM_SELF_VISIBLE_RANGE', value: planeVisionRange},
+
+			{ title: 'IDS_SHIP_PARAM_TORPEDO_MAX_DIST', value: torpedoMaxDist, isInvisible: !(torpedoMaxDist_vis)},
+
+			{ title: 'IDS_SHIP_PARAM_PLANE_SQUAD', value: no_value,
+				paramsArr: 	[ 	{ title: 'IDS_SHIP_PARAM_PLANE_PREPARE_TIME', value: attackPrepareTime },
+								{ title: 'IDS_SHIP_PARAM_PLANE_PROCESS_TIME', value: attackProcessTime },
+								{ title: 'IDS_SHIP_PARAM_PLANE_RELOAD_TIME', value: attackReloadTime },
+							]
+			},
+
+
+			{ title: 'IDS_SPECTATE_CARRIER', iconName: 'carrier_small_own', iconHeight: '11px'},
+			{ title: 'IDS_SHIP_TOOLTIP_VISIBILITY', value: visibilityRange, paramsArr:
+				[	{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_SHIP',	value: visibilityByShipRangeBase },
+					{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_PLANE', value: visibilityPlaneRange },
+					{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_IN_SMOKE', value: visibilityInSmokeRangeBase}
+				]
+			},
+
+			{ title: 'IDS_SHIP_PARAM_HANGAR_SIZE',	value: shipHangarSize, isInvisible: !(shipHangarSize_vis),
+				paramsArr:	[	{title: 'IDS_FIGHTER', 			value: hangarSizeFighter,	isInvisible: (hangarSizeFighter_vis == 0) || (hangarSizeFighter_vis == undefined)},
+								{title: 'IDS_TORPEDOBOMBER', 	value: hangarSizeBomber,	isInvisible: (hangarSizeBomber_vis == 0) || (hangarSizeBomber_vis == undefined)},
+								{title: 'IDS_DIVEBOMBER', 		value: hangarSizeDive,		isInvisible: (hangarSizeDive_vis == 0) || (hangarSizeDive_vis == undefined)},
+							],
+			},
+
+		]"/>
 		</block>
 		<block>
 			<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
@@ -1321,18 +1410,27 @@
 					<bind name="instance" value="'TooltipBackground'; {_isInBattle: true}"/>
 				</block>
 				<block>
+					<bind name="visible" value="activeSquadron == -1"/>
 					<style>
 						<width value="100%"/>
 						<margin value="2px|2px|3px|2px"/>
 					</style>
 					<bind name="repeat" value="shipParams; 'ShipParamsTooltipHeader'; {_paramsLength: shipParams.length}"/>
 				</block>
+				<block>
+					<bind name="visible" value="activeSquadron != -1"/>
+					<style>
+						<width value="100%"/>
+						<margin value="2px|2px|3px|2px"/>
+					</style>
+					<bind name="repeat" value="planeParams; 'ShipParamsTooltipHeader'; {_paramsLength: planeParams.length}"/>
+				</block>
 			</block>
 			<bind name="firstEntityDH" value="'selfVehicleEntity'; CC.selfVehicle"/>
 			<bind name="watch" value="'modifiersCollectionPath'; 'byOwner.' + selfVehicleEntity.vehicle.id"/>
 			<bind name="collectionDH" value="CC.shipModifier; 'modifiersCollection'; modifiersCollectionPath"/>
 			<block>
-				<bind name="instance" value="'ShipModifiersTooltipContent'; modifiersCollection.length &gt; 0 ? {_modifiersCollectionPath: modifiersCollectionPath} : null"/>
+				<bind name="instance" value="'ShipModifiersTooltipContent'; modifiersCollection.length &gt; 0 ? {_modifiersCollectionPath: modifiersCollectionPath, _modifiersCount: modifiersCollection.length} : null"/>
 			</block>
 			<style>
 				<flow value="horizontal"/>
@@ -1355,7 +1453,7 @@
 				<width value="100%"/>
 				<margin value="2px|2px|3px|2px"/>
 			</style>
-			<bind name="collectionRepeatDH" value="CC.shipModifier; 'ShipModifierParams'; _modifiersCollectionPath; {}"/>
+			<bind name="collectionRepeatDH" value="CC.shipModifier; 'ShipModifierParams'; _modifiersCollectionPath; {_modifiersCount: _modifiersCount}"/>
 		</block>
 	</block>
 	<block className="ShipModifierParams">
@@ -1366,13 +1464,87 @@
 		<bind name="watchDH" value="'name'; []; modifierEntity.shipModifier.name"/>
 		<bind name="watchDH" value="'level'; ['modifierEntity.shipModifier.evLevelChanged']; modifierEntity.shipModifier.level"/>
 		<bind name="watchDH" value="'maxLevel'; []; modifierEntity.shipModifier.maxLevel"/>
-		<bind name="watch" value="'modifierParams';
-		{ 	title: tr(toUpperCase('IDS_SHIP_MODIFIER_PARAM_HEADER_' + name)), 
-			value: maxLevel != 0 ? subst('IDS_SHIP_MODIFIER_PARAM_LEVEL', [], {level: level, maxLevel: maxLevel}) : no_value, isNegative: modifierEntity.shipModifier.isNegative,
-			paramsArr: [ {title: toUpperCase('IDS_SHIP_MODIFIER_PARAM_DESCRIPTION_' + name + '_LEVEL_' + level), value: no_value, isTextParam: true} ]
+		<bind name="watchDH" value="'attributes'; ['modifierEntity.attributes.evChanged']; modifierEntity.attributes"/>
+		<bind name="watch" value="'modifierHeader';
+		{ 	title: tr(toUpperCase('IDS_SHIP_MODIFIER_PARAM_HEADER_' + name)), iconPath: 'symbol:icon_ship_modifier_' + name + '_small',
+			value: maxLevel != 0 ? subst('IDS_SHIP_MODIFIER_PARAM_LEVEL', [], {level: level, maxLevel: maxLevel}) : no_value, isNegative: modifierEntity.shipModifier.isNegative
 		}
 	"/>
-		<bind name="instance" value="'ShipParamsTooltipHeader'; modifierParams"/>
+		<block>
+			<style>
+				<width value="100%"/>
+			</style>
+			<bind name="instance" value="'ShipParamsTooltipHeader'; modifierHeader"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+				<marginBottom value="2px"/>
+			</style>
+			<block>
+				<style>
+					<width value="100%"/>
+					<top value="-3px"/>
+					<marginLeft value="-1px"/>
+					<marginRight value="-1px"/>
+					<position value="absolute"/>
+				</style>
+				<block className="HorizontalDivider">
+					<styleClass value="$PxHorizontalCorrection"/>
+					<style>
+						<width value="100%"/>
+						<height value="3px"/>
+					</style>
+					<block className="divider_h" type="native">
+						<styleClass value="$Fullsize"/>
+					</block>
+				</block>
+			</block>
+			<block>
+				<styleClass value="$FullsizeAbsolute"/>
+				<block className="inner_panel" type="native">
+					<bind name="style" value="'marginBottom'; (($index &lt; (_modifiersCount - 1)) ? '0px' : '-2px')"/>
+					<style>
+						<alpha value="1.5"/>
+					</style>
+					<styleClass value="$Fullsize"/>
+				</block>
+			</block>
+			<block>
+				<style>
+					<width value="100%"/>
+					<alpha value="0.9"/>
+					<paddingTop value="18px"/>
+					<paddingLeft value="12px"/>
+					<paddingRight value="12px"/>
+					<marginBottom value="-8px"/>
+				</style>
+				<bind name="instance" value="'ParamsModifierList'; { _attributesPositive: attributes.positive,
+													_attributesNegative: attributes.negative,
+													_attributesNeutral:	attributes.neutral, 
+													_shrinkHeight: true}"/>
+			</block>
+		</block>
+		<block>
+			<bind name="visible" value="($index &lt; (_modifiersCount - 1)) ? true : false"/>
+			<style>
+				<width value="100%"/>
+				<position value="absolute"/>
+				<marginLeft value="-1px"/>
+				<marginRight value="-1px"/>
+				<bottom value="1"/>
+			</style>
+			<block className="HorizontalDivider">
+				<styleClass value="$PxHorizontalCorrection"/>
+				<style>
+					<width value="100%"/>
+					<height value="3px"/>
+				</style>
+				<block className="divider_h" type="native">
+					<styleClass value="$Fullsize"/>
+				</block>
+			</block>
+		</block>
 	</block>
 	<block className="ShipParamsArray">
 		<bind name="primaryEntityDH" value="'mgVisibilityTimeEntity'; CC.parameter; selfAvatarEntityId + '_' + 'mgVisibilityTime'"/>
@@ -1409,25 +1581,25 @@
 		<bind name="watchDH" value="'aaBaseNearState'; ['aaBaseNearStateEntity.parameter.evChanged']; (format(aaBaseNearStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
 		<bind name="primaryEntityDH" value="'aaCurrentNearStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaCurrentNearState'"/>
 		<bind name="watchDH" value="'aaCurrentNearState'; ['aaCurrentNearStateEntity.parameter.evChanged']; (format(aaCurrentNearStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
-		<bind name="watch" value="'aaNearState'; aaCurrentNearState + ' / ' + aaBaseNearState"/>
+		<bind name="watch" value="'aaNearEfficiency'; format(aaCurrentNearState / aaBaseNearState * 100, 0) + '%'"/>
 		<bind name="primaryEntityDH" value="'aaBaseMidStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaBaseMidState'"/>
 		<bind name="watchDH" value="'aaBaseMidState'; ['aaBaseMidStateEntity.parameter.evChanged']; (format(aaBaseMidStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
 		<bind name="primaryEntityDH" value="'aaCurrentMidStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaCurrentMidState'"/>
 		<bind name="watchDH" value="'aaCurrentMidState'; ['aaCurrentMidStateEntity.parameter.evChanged']; (format(aaCurrentMidStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
-		<bind name="watch" value="'aaMidState'; aaCurrentMidState + ' / ' + aaBaseMidState"/>
+		<bind name="watch" value="'aaMidEfficiency'; format(aaCurrentMidState / aaBaseMidState * 100, 0) + '%'"/>
 		<bind name="primaryEntityDH" value="'aaBaseFarStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaBaseFarState'"/>
 		<bind name="watchDH" value="'aaBaseFarState'; ['aaBaseFarStateEntity.parameter.evChanged']; (format(aaBaseFarStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
 		<bind name="primaryEntityDH" value="'aaCurrentFarStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaCurrentFarState'"/>
 		<bind name="watchDH" value="'aaCurrentFarState'; ['aaCurrentFarStateEntity.parameter.evChanged']; (format(aaCurrentFarStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
-		<bind name="watch" value="'aaFarState'; aaCurrentFarState + ' / ' + aaBaseFarState"/>
+		<bind name="watch" value="'aaFarEfficiency'; format(aaCurrentFarState / aaBaseFarState * 100, 0) + '%'"/>
 		<bind name="primaryEntityDH" value="'atbaBaseStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'atbaBaseState'"/>
 		<bind name="watchDH" value="'atbaBaseState'; ['atbaBaseStateEntity.parameter.evChanged']; (format(atbaBaseStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
 		<bind name="primaryEntityDH" value="'atbaCurrentStateEntity'; CC.parameter; selfAvatarEntityId + '_' + 'atbaCurrentState'"/>
 		<bind name="watchDH" value="'atbaCurrentState'; ['atbaCurrentStateEntity.parameter.evChanged']; (format(atbaCurrentStateEntity.parameter.currentValue, 1, true) + tr(''))"/>
-		<bind name="watch" value="'atbaState'; atbaCurrentState + ' / ' + atbaBaseState"/>
+		<bind name="watch" value="'atbaEfficiency'; format(atbaCurrentState / atbaBaseState * 100, 0)+ '%'"/>
 		<bind name="primaryEntityDH" value="'shootRangeEntity'; CC.parameter; selfAvatarEntityId + '_' + 'shootRange'"/>
 		<bind name="watchDH" value="'shootRange'; ['shootRangeEntity.parameter.evChanged']; (format(shootRangeEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
-		<bind name="watchDH" value="'shootRange_vis'+'_vis'; ['shootRangeEntity.parameter.evChanged']; shootRangeEntity.parameter.currentValue"/>
+		<bind name="watchDH" value="'shootRange'+'_vis'; ['shootRangeEntity.parameter.evChanged']; shootRangeEntity.parameter.currentValue"/>
 		<bind name="primaryEntityDH" value="'aaRangeNearEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaRangeNear'"/>
 		<bind name="watchDH" value="'aaRangeNear'; ['aaRangeNearEntity.parameter.evChanged']; (format(aaRangeNearEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
 		<bind name="primaryEntityDH" value="'aaRangeMidEntity'; CC.parameter; selfAvatarEntityId + '_' + 'aaRangeMid'"/>
@@ -1461,6 +1633,18 @@
 		<bind name="watchDH" value="'weatherName'; ['localWeatherEntity.localWeather.evChanged']; toUpperCase(localWeatherEntity.localWeather.gpName)"/>
 		<bind name="collectionDH" value="CC.state; 'avatarStatesRoot'; 'byEntity.' + selfAvatarEntityId"/>
 		<bind name="collectionDesign" value="DES_avatarStatesRoot; 'weatherStates'; {'filter': $entity.state.type == EntityState.INSIDE_WEATHER}"/>
+		<bind name="primaryEntityDH" value="'shipHangarSizeEntity'; CC.parameter; selfAvatarEntityId + '_' + 'shipHangarSize'"/>
+		<bind name="watchDH" value="'shipHangarSize'; ['shipHangarSizeEntity.parameter.evChanged']; (format(shipHangarSizeEntity.parameter.currentValue, 1, true) + tr(''))"/>
+		<bind name="watchDH" value="'shipHangarSize'+'_vis'; ['shipHangarSizeEntity.parameter.evChanged']; shipHangarSizeEntity.parameter.currentValue"/>
+		<bind name="primaryEntityDH" value="'hangarSizeFighterEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + 'Fighter' + '_' + 'hangarSize'"/>
+		<bind name="watchDH" value="'hangarSizeFighter'; ['hangarSizeFighterEntity.parameter.evChanged']; (format(hangarSizeFighterEntity.parameter.currentValue, 1, true) + tr(''))"/>
+		<bind name="watchDH" value="'hangarSizeFighter'+'_vis'; ['hangarSizeFighterEntity.parameter.evChanged']; hangarSizeFighterEntity.parameter.currentValue"/>
+		<bind name="primaryEntityDH" value="'hangarSizeBomberEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + 'Bomber' + '_' + 'hangarSize'"/>
+		<bind name="watchDH" value="'hangarSizeBomber'; ['hangarSizeBomberEntity.parameter.evChanged']; (format(hangarSizeBomberEntity.parameter.currentValue, 1, true) + tr(''))"/>
+		<bind name="watchDH" value="'hangarSizeBomber'+'_vis'; ['hangarSizeBomberEntity.parameter.evChanged']; hangarSizeBomberEntity.parameter.currentValue"/>
+		<bind name="primaryEntityDH" value="'hangarSizeDiveEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + 'Dive' + '_' + 'hangarSize'"/>
+		<bind name="watchDH" value="'hangarSizeDive'; ['hangarSizeDiveEntity.parameter.evChanged']; (format(hangarSizeDiveEntity.parameter.currentValue, 1, true) + tr(''))"/>
+		<bind name="watchDH" value="'hangarSizeDive'+'_vis'; ['hangarSizeDiveEntity.parameter.evChanged']; hangarSizeDiveEntity.parameter.currentValue"/>
 		<bind name="watch" value="'shipParams';
 			[	{ title: 'IDS_SHIP_TOOLTIP_VISIBILITY', value: visibilityRange, paramsArr:
 					[	{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_SHIP',									value: visibilityByShipRangeBase,
@@ -1480,28 +1664,112 @@
 						{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_IN_SMOKE', value: visibilityInSmokeRangeBase}
 					]
 				},
+
 				{ title: 'IDS_PARAM_HIGH_VISIBILITY_TIME',	value: mgVisibilityTime,	isInvisible: (shootMGRange_vis == 0)},
+
 				{ title: 'IDS_PARAM_SELF_VISIBLE_RANGE',	value: visionRange},
-				{ title: 'IDS_SHIP_PARAM_MAX_DIST',	value: ((shootRange_vis == 0) ? no_value : shootRange), 
+
+			{ title: 'IDS_SHIP_PARAM_MAX_DIST',	value: ((shootRange_vis == 0) ? no_value : shootRange), isInvisible: ((shootMGRange_vis + shootTARange_vis) == 0),
 					paramsArr:	[	{title: 'IDS_SHIP_PARAM_ARTILLERY',				value: shootMGRange,	isInvisible: (shootMGRange_vis == 0)},
 									{title: 'IDS_SHIP_PARAM_TORPEDOES',				value: shootTARange,	isInvisible: (shootTARange_vis == 0)},
-									{title: 'IDS_SHIP_PARAM_ATBA_SHORT',			value: atbaRange,		isInvisible: (atbaRange_vis == 0)},
-									{title: 'IDS_SHIP_PARAM_AA',					value: aaRange,			isInvisible: (aa_vis == 0)}
 								],
 				},
-				{ title: 'IDS_AA_ATBA_STATE_LABEL',	value: no_value, isInvisible: ((atbaRange_vis + aaBaseNearState_vis + aaBaseMidState_vis + aaBaseFarState_vis) == 0),
-					paramsArr:	[	{title: 'IDS_ATBA_STATE',		value: atbaState,	isInvisible: (atbaRange_vis == 0)},
-									{title: 'IDS_AA_NEAR_STATE',	value: aaNearState,	isInvisible: (aaBaseNearState_vis == 0)},									
-									{title: 'IDS_AA_MID_STATE',		value: aaMidState,	isInvisible: (aaBaseMidState_vis == 0)},
-									{title: 'IDS_AA_FAR_STATE',		value: aaFarState,	isInvisible: (aaBaseFarState_vis == 0)}
+
+			{ title: 'IDS_SHIP_PARAM_HANGAR_SIZE',	value: shipHangarSize, isInvisible: !(shipHangarSize_vis),
+				paramsArr:	[	{title: 'IDS_FIGHTER', 			value: hangarSizeFighter,	isInvisible: (hangarSizeFighter_vis == 0) || (hangarSizeFighter_vis == undefined)},
+								{title: 'IDS_TORPEDOBOMBER', 	value: hangarSizeBomber,	isInvisible: (hangarSizeBomber_vis == 0) || (hangarSizeBomber_vis == undefined)},
+								{title: 'IDS_DIVEBOMBER', 		value: hangarSizeDive,		isInvisible: (hangarSizeDive_vis == 0) || (hangarSizeDive_vis == undefined)},
+							],
+			},
+
+			{ title: 'IDS_SHIP_PARAM_ATBA_SHORT', value: no_value, isInvisible: (atbaRange_vis == 0),
+				paramsArr: 	[	{title: 'IDS_SHIP_PARAM_MAX_DIST', 	value: atbaRange},
+								{title: 'IDS_SHIP_PARAM_EFFICIENCY', value: atbaEfficiency},
+							],
+			},
+
+			{ title: 'IDS_SHIP_PARAM_AA', value: no_value, isInvisible: ((aaBaseNearState_vis + aaBaseMidState_vis + aaBaseFarState_vis) == 0),
+				paramsArr:	[	{title: 'IDS_SHIP_PARAM_MAX_DIST', 	value: aaRange},
+								{title: 'IDS_AA_NEAR_EFFICIENCY',	value: aaNearEfficiency,	isInvisible: (aaBaseNearState_vis == 0)},
+								{title: 'IDS_AA_MID_EFFICIENCY',	value: aaMidEfficiency,		isInvisible: (aaBaseMidState_vis == 0)},
+								{title: 'IDS_AA_FAR_EFFICIENCY',	value: aaFarEfficiency,		isInvisible: (aaBaseFarState_vis == 0)}
 								]
 				},
+
 				{ 	title: tr('IDS_LOCAL_WEATHER_SHIP_PARAM_HEADER_' + weatherName), 
 					value: no_value, isInvisible: (weatherName == null) || !(weatherStates.length), isNegative: true,
 					paramsArr: [ {title: 'IDS_LOCAL_WEATHER_SHIP_PARAM_DESCRIPTION_' + weatherName, value: no_value, isTextParam: true} ]
 				}
+		]"/>
+	</block>
+	<block className="PlaneParamsArray">
+		<bind name="firstEntityDH" value="'ownSquadronesEntity'; CC.ownSquadron; 'selected'"/>
+		<bind name="watchDH" value="'planeType'; []; ownSquadronesEntity.plane.planeType"/>
+		<bind name="var" value="{ planeIconNames: ['plane_scout_own', 'plane_bomber_own', 'plane_torpedo_own', 'plane_fighter_own_bg'] }"/>
+		<bind name="watch" value="'planeIconName'; planeIconNames[planeType]"/>
+		<bind name="watch" value="'planeTypeStr'; 	planeType == 1	? 'Dive' :
+									planeType == 2	? 'Bomber'
+													: 'Fighter'"/>
+		<bind name="primaryEntityDH" value="'maxPlanesNumEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'maxPlanesNum'"/>
+		<bind name="watchDH" value="'maxPlanesNum'; ['maxPlanesNumEntity.parameter.evChanged']; (format(maxPlanesNumEntity.parameter.currentValue, 1, true) + tr(''))"/>
+		<bind name="primaryEntityDH" value="'visibilityDistByShipEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'visibilityDistByShip'"/>
+		<bind name="watchDH" value="'visibilityDistByShip'; ['visibilityDistByShipEntity.parameter.evChanged']; (format(visibilityDistByShipEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+		<bind name="watchDH" value="'visibilityDistByShip'+'_vis'; ['visibilityDistByShipEntity.parameter.evChanged']; visibilityDistByShipEntity.parameter.currentValue"/>
+		<bind name="primaryEntityDH" value="'visibilityDistByPlaneEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'visibilityDistByPlane'"/>
+		<bind name="watchDH" value="'visibilityDistByPlane'; ['visibilityDistByPlaneEntity.parameter.evChanged']; (format(visibilityDistByPlaneEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+		<bind name="watchDH" value="'visibilityDistByPlane'+'_vis'; ['visibilityDistByPlaneEntity.parameter.evChanged']; visibilityDistByPlaneEntity.parameter.currentValue"/>
+		<bind name="primaryEntityDH" value="'visibilityDistGuaranteedEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'visibilityDistGuaranteed'"/>
+		<bind name="watchDH" value="'visibilityDistGuaranteed'; ['visibilityDistGuaranteedEntity.parameter.evChanged']; (format(visibilityDistGuaranteedEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+		<bind name="watchDH" value="'visibilityDistGuaranteed'+'_vis'; ['visibilityDistGuaranteedEntity.parameter.evChanged']; visibilityDistGuaranteedEntity.parameter.currentValue"/>
+		<bind name="primaryEntityDH" value="'planeVisionRangeEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'visionRange'"/>
+		<bind name="watchDH" value="'planeVisionRange'; ['planeVisionRangeEntity.parameter.evChanged']; (format(planeVisionRangeEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+		<bind name="primaryEntityDH" value="'attackPrepareTimeEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'attackPrepareTime'"/>
+		<bind name="watchDH" value="'attackPrepareTime'; ['attackPrepareTimeEntity.parameter.evChanged']; (format(attackPrepareTimeEntity.parameter.currentValue, 1, true) + tr('IDS_SECOND_SPACE'))"/>
+		<bind name="primaryEntityDH" value="'attackProcessTimeEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'attackProcessTime'"/>
+		<bind name="watchDH" value="'attackProcessTime'; ['attackProcessTimeEntity.parameter.evChanged']; (format(attackProcessTimeEntity.parameter.currentValue, 1, true) + tr('IDS_SECOND_SPACE'))"/>
+		<bind name="primaryEntityDH" value="'attackReloadTimeEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'attackReloadTime'"/>
+		<bind name="watchDH" value="'attackReloadTime'; ['attackReloadTimeEntity.parameter.evChanged']; (format(attackReloadTimeEntity.parameter.currentValue, 1, true) + tr('IDS_SECOND_SPACE'))"/>
+		<bind name="primaryEntityDH" value="'torpedoMaxDistEntity'; CC.parameter; selfAvatarEntityId + '_squad_' + planeTypeStr + '_' + 'torpedoMaxDist'"/>
+		<bind name="watchDH" value="'torpedoMaxDist'; ['torpedoMaxDistEntity.parameter.evChanged']; (format(torpedoMaxDistEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
+		<bind name="watchDH" value="'torpedoMaxDist'+'_vis'; ['torpedoMaxDistEntity.parameter.evChanged']; torpedoMaxDistEntity.parameter.currentValue"/>
+		<bind name="watch" value="'planeParams';
+		[	{ title: toUpperCase('IDS_SHIP_PARAM_PLANE_NAME_' + planeTypeStr), value: maxPlanesNum, iconPath: 'symbol:' + planeIconName },
+
+			{ title: 'IDS_SHIP_TOOLTIP_VISIBILITY', value: no_value,
+				paramsArr: 	[ 	{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_SHIP', value: visibilityDistByShip, isInvisible: (visibilityDistByShip_vis == 0) },
+								{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_PLANE', value: visibilityDistByPlane, isInvisible: (visibilityDistByPlane_vis == 0) },
+								{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_IN_SMOKE', value: visibilityDistGuaranteed, isInvisible: (visibilityDistGuaranteed_vis == 0) },
 			]
-		}"/>
+			},
+
+			{ title: 'IDS_PARAM_SELF_VISIBLE_RANGE', value: planeVisionRange},
+
+			{ title: 'IDS_SHIP_PARAM_TORPEDO_MAX_DIST', value: torpedoMaxDist, isInvisible: !(torpedoMaxDist_vis)},
+
+			{ title: 'IDS_SHIP_PARAM_PLANE_SQUAD', value: no_value,
+				paramsArr: 	[ 	{ title: 'IDS_SHIP_PARAM_PLANE_PREPARE_TIME', value: attackPrepareTime },
+								{ title: 'IDS_SHIP_PARAM_PLANE_PROCESS_TIME', value: attackProcessTime },
+								{ title: 'IDS_SHIP_PARAM_PLANE_RELOAD_TIME', value: attackReloadTime },
+							]
+			},
+
+
+			{ title: 'IDS_SPECTATE_CARRIER', iconName: 'carrier_small_own', iconHeight: '11px'},
+			{ title: 'IDS_SHIP_TOOLTIP_VISIBILITY', value: visibilityRange, paramsArr:
+				[	{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_SHIP',	value: visibilityByShipRangeBase },
+					{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_PLANE', value: visibilityPlaneRange },
+					{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_IN_SMOKE', value: visibilityInSmokeRangeBase}
+				]
+			},
+
+			{ title: 'IDS_SHIP_PARAM_HANGAR_SIZE',	value: shipHangarSize, isInvisible: !(shipHangarSize_vis),
+				paramsArr:	[	{title: 'IDS_FIGHTER', 			value: hangarSizeFighter,	isInvisible: (hangarSizeFighter_vis == 0) || (hangarSizeFighter_vis == undefined)},
+								{title: 'IDS_TORPEDOBOMBER', 	value: hangarSizeBomber,	isInvisible: (hangarSizeBomber_vis == 0) || (hangarSizeBomber_vis == undefined)},
+								{title: 'IDS_DIVEBOMBER', 		value: hangarSizeDive,		isInvisible: (hangarSizeDive_vis == 0) || (hangarSizeDive_vis == undefined)},
+							],
+			},
+
+		]"/>
 	</block>
 	<block className="ShipParamsTooltipHeader">
 		<bind name="visible" value="(isInvisible != true)"/>
@@ -1516,6 +1784,7 @@
 				<marginRight value="12px"/>
 				<marginBottom value="10px"/>
 				<marginTop value="8px"/>
+				<align value="middle"/>
 			</style>
 			<block className="battle_stats_backgrounds" type="native">
 				<bind name="visible" value="isNegative == true"/>
@@ -1528,11 +1797,22 @@
 				<styleClass value="$FullsizeAbsolute"/>
 				<bind name="gotoAndStop!" value="'red'"/>
 			</block>
+			<block>
+				<bind name="visible" value="!!(iconPath)"/>
+				<styleClass value="$MiddleVAlignedAbsolutely"/>
+				<style>
+					<width value="20px"/>
+					<height value="20px"/>
+					<backgroundSize value="cover"/>
+				</style>
+				<bind name="style" value="'backgroundImage'; iconPath"/>
+			</block>
 			<block type="text">
 				<style>
 					<width value="100%"/>
 					<leading value="-3"/>
 				</style>
+				<bind name="style" value="'marginLeft'; !!(iconPath) ? 24 : 0"/>
 				<styleClass value="$TextDefaultBold17NM"/>
 				<bind name="text" value="title"/>
 			</block>
@@ -1723,12 +2003,581 @@
 			</block>
 		</block>
 	</block>
-	<block className="SubmarineHUD">
-		<bind name="collectionDH" value="CC.consumable; 'consumables'"/>
-		<bind name="firstEntityDH" value="'selfVehicleEntity'; CC.selfVehicle"/>
+	<block className="CentralDangersIndicationContainer">
+		<styleClass value="$FullsizeAbsolute"/>
+		<style>
+			<align value="center|middle"/>
+			<hitTest value="false"/>
+		</style>
+		<bind name="watch" value="'farDist'; _farDist ? _farDist : 260"/>
+		<bind name="watch" value="'nearDist'; _nearDist ? _nearDist : 230"/>
+		<bind name="watch" value="'innerDist'; _innerDist ? _innerDist : 190"/>
+		<bind name="firstEntityDH" value="'airDefenseFocusEntity'; CC.airDefenseFocus"/>
+		<bind name="watchDH" value="'airDefenseFocusActive'; ['airDefenseFocusEntity.airDefenseFocus.evActiveChanged']; airDefenseFocusEntity.airDefenseFocus.active"/>
+		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
+		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
+		<bind name="watch" value="'dangersCollectionPath'; activeSquadron == -1 ? 'shipDangers' : 'aircraftDangers'"/>
+		<block>
+			<style>
+				<width value="0"/>
+				<height value="0"/>
+			</style>
+			<block>
+				<styleClass value="$FullsizeAbsolute"/>
+				<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
+				<bind name="watchDH" value="'cameraMode'; ['cameraEntity.camera.evModeChanged']; cameraEntity.camera.mode"/>
+				<bind name="firstEntityDH" value="'nearEntity'; CC.nearestEnemyIndication"/>
+				<bind name="watchDH" value="'showNearestEnemy'; ['nearEntity.nearestEnemyIndication.evShowNearestEnemyChanged']; nearEntity.nearestEnemyIndication.showNearestEnemy"/>
+				<bind name="instance" value="'NearEnemyItemContainer'; cameraMode != 5 &amp;&amp; showNearestEnemy ? {_farDist: farDist, _nearDist: nearDist, _innerDist: innerDist} : null"/>
+			</block>
+			<block>
+				<bind name="visible" value="activeSquadron == -1"/>
+				<styleClass value="$FullsizeAbsolute"/>
+				<bind name="instance" value="'RecievedDamageContainer'; {_farDist: farDist, _nearDist: nearDist, _innerDist: innerDist}"/>
+			</block>
+			<block>
+				<bind name="visible" value="!(airDefenseFocusActive)"/>
+				<styleClass value="$FullsizeAbsolute"/>
+				<bind name="instance" value="'DangerItemContainer'; {_dangersPath: dangersCollectionPath, _farDist: farDist, _nearDist: nearDist, _innerDist: innerDist}"/>
+			</block>
+		</block>
+	</block>
+	<block className="NearEnemyItemContainer">
+		<styleClass value="$FullsizeAbsolute"/>
 		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
 		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
-		<bind name="visible" value="(selfVehicleEntity.selfVehicle.subtype == ShipTypes.Submarine) &amp;&amp; isAlive"/>
+		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
+		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
+		<bind name="watch" value="'isOnPlane'; activeSquadron != -1"/>
+		<bind name="visible" value="isAlive || isOnPlane"/>
+		<bind name="firstEntityDH" value="'nearEntity'; CC.nearestEnemyIndication"/>
+		<bind name="watchDH" value="'yawToNearestEnemyDegrees'; ['nearEntity.nearestEnemyIndication.evYawToNearestEnemyRelativeDegreesChanged']; nearEntity.nearestEnemyIndication.yawToNearestEnemyRelativeDegrees"/>
+		<bind name="instance" value="'CenteredRotationItem'; {_item: 'NearEnemyItem', _rotation: yawToNearestEnemyDegrees, _itemData: {_nearDist: _nearDist}}"/>
+	</block>
+	<block className="NearEnemyItem">
+		<block>
+			<style>
+				<position value="absolute"/>
+				<top value="-230px"/>
+				<marginLeft value="-50%"/>
+			</style>
+			<bind name="style" value="'top'; -(_nearDist) + 'px'"/>
+			<block className="sector_nearest_enemy" type="native"/>
+		</block>
+	</block>
+	<block className="RecievedDamageContainer">
+		<styleClass value="$FullsizeAbsolute"/>
+		<bind name="firstEntityDH" value="'dmgEntity'; CC.damageDanger"/>
+		<bind name="handleEventDH" value="'dmgEntity.damageDanger.evDamage'; 'evReceiveDamage'"/>
+		<bind name="fxInstance" value="'evReceiveDamage'; 'RecievedDamageItem'; {lifetime: 5, _innerDist: _innerDist}"/>
+	</block>
+	<block className="RecievedDamageItem">
+		<styleClass value="$FullsizeAbsolute"/>
+		<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
+		<bind name="firstEntityDH" value="'timerEntity'; CC.timer"/>
+		<bind name="watchDH" value="'damageYaw'; ['timerEntity.timer.evFrequent']; $args[0] - cameraEntity.camera.yaw"/>
+		<bind name="watch" value="'damageYawDegrees'; math.radToGrad(damageYaw)"/>
+		<bind name="instance" value="'CenteredRotationItem'; {_item: 'RecievedDamageItemClip', _rotation: damageYawDegrees, _itemData: {_lifetime: lifetime, _innerDist: _innerDist}}"/>
+	</block>
+	<block className="RecievedDamageItemClip">
+		<bind name="dispatch" value="'addedToStage'; 'evShow'; {}; 2"/>
+		<bind name="dispatch" value="'evShow'; 'evFadeOut'; {}; 2; 0.3"/>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<top value="190px"/>
+			</style>
+			<bind name="style" value="'top'; _innerDist + 'px'"/>
+			<bind name="appear" value="'evShow'; 0.2; 0; {scaleX: 2, scaleY: 2, alpha:0}; {scaleX: 1, scaleY: 1, alpha: 1}; 1"/>
+			<bind name="appear" value="'evFadeOut'; _lifetime-0.2; 0; {alpha: 1}; {alpha: 0}"/>
+			<block className="danger_damage" type="native"/>
+		</block>
+	</block>
+	<block className="DangerItemContainer">
+		<styleClass value="$FullsizeAbsolute"/>
+		<bind name="collectionRepeatDH" value="CC.visibleDanger; 'DangerItem'; _dangersPath; {_farDist: _farDist, _nearDist: _nearDist}"/>
+	</block>
+	<block className="DangerItem">
+		<styleClass value="$FullsizeAbsolute"/>
+		<bind name="entityDH" value="'dangerEntity'; $dataRef.ref.id"/>
+		<bind name="watchDH" value="'dangerYawDegrees'; ['dangerEntity.visibleDanger.evChanged']; dangerEntity.visibleDanger.yawRelativeDegrees"/>
+		<bind name="watchDH" value="'dangerType'; ['dangerEntity.visibleDanger.evChanged']; dangerEntity.visibleDanger.type"/>
+		<bind name="watch" value="'typeToChild'; dangerType == 0 ? 'CollisionDangerItem' : 'SimpleDangerItem'"/>
+		<bind name="instance" value="'CenteredRotationItem'; {_item: typeToChild, _rotation: dangerYawDegrees, _itemData: {_dangerEntityId: dangerEntity.id, _rotation: -(dangerYawDegrees), _farDist: _farDist, _nearDist: _nearDist}}"/>
+	</block>
+	<block className="CollisionDangerItem">
+		<bind name="visible" value="dist == 'near'"/>
+		<bind name="entityDH" value="'dangerEntity'; _dangerEntityId"/>
+		<bind name="watchDH" value="'state'; ['dangerEntity.collisionDanger.evChanged']; dangerEntity.collisionDanger.state"/>
+		<bind name="watch" value="'dist'; state &lt; 3 ? 'far' : 'near'"/>
+		<block>
+			<bind name="appear" value="'addedToStage'; 0.2; 0; {scaleX: 2, scaleY: 2, alpha:0}; {scaleX: 1, scaleY: 1, alpha: 1}; 1"/>
+			<style>
+				<position value="absolute"/>
+				<top value="-260px"/>
+				<marginLeft value="-50%"/>
+				<width value="208px"/>
+				<height value="52px"/>
+				<align value="center|middle"/>
+				<backgroundSize value="cover"/>
+				<backgroundImage value="symbol:sector_collision_shallow_large"/>
+			</style>
+			<bind name="style" value="'top'; -(_farDist) + 'px'"/>
+			<block className="icon_collision_terrain_center" type="native">
+				<style>
+					<marginLeft value="32px"/>
+					<marginTop value="20px"/>
+				</style>
+				<bind name="rotation" value="_rotation"/>
+			</block>
+		</block>
+	</block>
+	<block className="SimpleDangerItem">
+		<styleClass value="$FullsizeAbsolute"/>
+		<bind name="entityDH" value="'dangerEntity'; _dangerEntityId"/>
+		<bind name="watchDH" value="'dangerType'; ['dangerEntity.visibleDanger.evChanged']; dangerEntity.visibleDanger.type"/>
+		<bind name="watchDH" value="'dist'; ['dangerEntity.simpleDanger.evChanged']; dangerEntity.simpleDanger.dist"/>
+		<bind name="watchDH" value="'shipSubtype'; []; dangerEntity.avatar.ship.ref.ship.subtype"/>
+		<bind name="watch" value="'type'; 	dangerType == 1 ? 'torpedo' : 
+							dangerType == 4	? toLowerCase(shipSubtype)
+															: 'plane'"/>
+		<bind name="y" value="dist == 'near' ? -(_nearDist) : -(_farDist)"/>
+		<bind name="changeDispatch" value="dist; 'evToFar'; {}; 2; 'far'"/>
+		<bind name="changeDispatch" value="dist; 'evToNear'; {}; 2; 'near'"/>
+		<bind name="catch" value="'evToFar'; {secondEvToFar: true}"/>
+		<bind name="watch" value="'nearDist'; secondEvToFar ? -(_nearDist) : -(_farDist + 20)"/>
+		<bind name="appear" value="'addedToStage'; 0.2; 0; {alpha: 0}; {alpha: 1}; 2"/>
+		<bind name="appear" value="'evToFar'; 0.2; 0; { y: nearDist }; { y: -(_farDist) }; 2"/>
+		<bind name="appear" value="'evToNear'; 0.2; 0; { y: -(_farDist) }; { y: -(_nearDist) }; 2"/>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<width value="32px"/>
+				<height value="32px"/>
+				<marginLeft value="-50%"/>
+			</style>
+			<bind name="style" value="'backgroundImage'; 'symbol:icon_danger_' + type + '_' + dist"/>
+		</block>
+	</block>
+	<block className="CenteredRotationItem">
+		<styleClass value="$FullsizeAbsolute"/>
+		<style>
+			<top value="50%"/>
+			<left value="50%"/>
+		</style>
+		<bind name="rotation" value="_rotation"/>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<width value="0"/>
+				<height value="0"/>
+				<marginLeft value="-50%"/>
+				<marginTop value="-50%"/>
+			</style>
+			<bind name="instance" value="_item; _itemData ? _itemData : {}"/>
+		</block>
+	</block>
+	<css name="$IndicatorText">
+		<fontFamily value="$WWSDefaultFontBold"/>
+		<mouseEnabled value="false"/>
+		<mouseChildren value="false"/>
+		<fontSize value="13"/>
+		<marginText value="-3px|-3px|-6px|-5px"/>
+		<dropShadowFilter value="0 0 0x000000 0.7 2.0 2.0 1.0 1"/>
+		<selectable value="false"/>
+		<textColor value="0xFFFFFF"/>
+	</css>
+	<css name="$IndicatorTextWarning">
+		<textColor value="0xFFFF9900"/>
+	</css>
+	<css name="$IndicatorTextCritical">
+		<textColor value="0xFFFF7000"/>
+	</css>
+	<block className="BattleIndicatorsContainer">
+		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
+		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
+		<bind name="watch" value="'isOnPlane'; activeSquadron != -1"/>
+		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
+		<bind name="visible" value="isAlive || isOnPlane"/>
+		<styleClass value="$FullsizeAbsolute"/>
+		<style>
+			<align value="center|middle"/>
+			<hitTest value="false"/>
+		</style>
+		<block>
+			<style>
+				<width value="0"/>
+				<height value="0"/>
+			</style>
+			<block>
+				<style>
+					<position value="absolute"/>
+					<left value="250"/>
+					<bottom value="217"/>
+				</style>
+				<bind name="instance" value="'DetectIndicator'; {_isPlane: isOnPlane}"/>
+			</block>
+			<block>
+				<style>
+					<position value="absolute"/>
+					<left value="340"/>
+					<bottom value="226"/>
+				</style>
+				<bind name="instance" value="'IntuitionIndicator';  (isOnPlane == false) ? {} : null"/>
+			</block>
+			<block>
+				<style>
+					<position value="absolute"/>
+					<left value="-250"/>
+					<bottom value="156"/>
+				</style>
+				<bind name="instance" value="'FightersWardIndicator'; isOnPlane ? {} : null"/>
+			</block>
+			<block>
+				<style>
+					<position value="absolute"/>
+					<left value="-250"/>
+					<bottom value="217"/>
+				</style>
+				<bind name="instance" value="'DetectIndicator';  isOnPlane ? {_isPlane: false, _isOnSquadron: true} : null"/>
+			</block>
+			<block>
+				<style>
+					<position value="absolute"/>
+					<left value="-340"/>
+					<bottom value="226"/>
+				</style>
+				<bind name="instance" value="'WeatherIndicator'; {}"/>
+			</block>
+		</block>
+	</block>
+	<block className="DetectIndicator">
+		<bind name="firstEntityDH" value="'bi'; CC.battleIndication"/>
+		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'shipSpotType'; 			['bi.alertIndication.evSpottedChanged']; 		bi.alertIndication.spotType"/>
+		<bind name="watchDH" value="'shipSpotFlags'; 		['bi.alertIndication.evSpottedChanged']; 		bi.alertIndication.spotFlags"/>
+		<bind name="watchDH" value="'shipFocusedEnemies'; 	['bi.alertIndication.evFocusedEnemiesChanged']; bi.alertIndication.focusedEnemies"/>
+		<bind name="watchDH" value="'squadronSpotType'; 		['bi.alertIndication.evSquadronSpottedChanged']; 			bi.alertIndication.squadronSpotType"/>
+		<bind name="watchDH" value="'squadronSpotFlags'; 	['bi.alertIndication.evSquadronSpottedChanged']; 			bi.alertIndication.squadronSpotFlags"/>
+		<bind name="watchDH" value="'underFighterAttack'; 	['bi.alertIndication.evUnderFighterAttackStatusChanged']; 	bi.alertIndication.underFighterAttackStatus"/>
+		<bind name="watchDH" value="'underAntiAirAttack'; 	['bi.alertIndication.evUnderAntiAirAttackChanged'];			bi.alertIndication.underAntiAirAttack"/>
+		<bind name="watchDH" value="'antiAirThreatCount'; 	['bi.alertIndication.evAntiAirThreatCountChanged']; 		bi.alertIndication.antiAirThreatCount"/>
+		<bind name="watch" value="'isUnderFighterAttack'; _isPlane &amp;&amp; underFighterAttack &gt; 0"/>
+		<bind name="watch" value="'isUnderAntiAirAttack'; _isPlane &amp;&amp; underAntiAirAttack"/>
+		<bind name="watch" value="'spotType'; _isPlane ? squadronSpotType : shipSpotType"/>
+		<bind name="watch" value="'focusedEnemies'; _isPlane ? (underAntiAirAttack ? antiAirThreatCount : 0) 
+											: shipFocusedEnemies"/>
+		<bind name="watch" value="'alertVisible'; _isPlane ? squadronSpotFlags &gt; 0 : shipSpotFlags &gt; 0"/>
+		<bind name="var" value="{isVolley: false, volleyLifeTime: 1.0}"/>
+		<bind name="catch" value="'evSetVolley'"/>
+		<bind name="handleEventDH" value="'bi.alertIndication.evArtilleryAlert'; 'evVolley'; {}; 2"/>
+		<bind name="dispatch" value="'evVolley'; !(_isPlane) ? 'evSetVolley' : ''; {isVolley: true}"/>
+		<bind name="dispatchDelayReset" value="'evVolley'; 'evSetVolley'; {isVolley: false}; 2; volleyLifeTime"/>
+		<bind name="transition" value="alertVisible; 0.3; 	{alpha: 0, scaleX: 2, scaleY: 2};
+											{alpha: 1, scaleX: 1, scaleY: 1};
+											{alpha: 0, scaleX: 2, scaleY: 2};
+											alertVisible ? 2 : 1"/>
+		<bind name="watch" value="'iconName'; 	isUnderFighterAttack		? (underFighterAttack == 1 ? 'fighters_warning' : 'fighters_critical') :
+							 	isHit &amp;&amp; _isOnSquadron 		? 'attacked':
+							 	isUnderAntiAirAttack 		? 'antiAir' :
+							 	isVolley 					? 'volley' :
+							 	spotType 					? spotType 
+															: 'ship'"/>
+		<bind name="var" value="{showDuration: 4}"/>
+		<bind name="var" value="{isHit:	false}"/>
+		<bind name="handleEventDH" value="'selfAvatarEntity.vehicle.evHit'; 'evAircraftHit'"/>
+		<bind name="catch" value="'evAircraftHit'; {isHit: true}"/>
+		<bind name="dispatchDelayReset" value="'evAircraftHit'; 'evDelayedAircraftHit'; {}; 2; showDuration"/>
+		<bind name="catch" value="'evDelayedAircraftHit'; {isHit: false}"/>
+		<block>
+			<styleClass value="$MiddleVHAbsolutely"/>
+			<block>
+				<bind name="appear" value="'iconName'+varChanged; 0.2; 0; 	{scaleX: 2, scaleY: 2, left: -32, top: -32};
+															{scaleX: 1, scaleY: 1, left: 0, top: 0}; 2"/>
+				<style>
+					<align value="center"/>
+					<width value="64px"/>
+					<height value="64px"/>
+				</style>
+				<block>
+					<style>
+						<width value="32px"/>
+						<height value="32px"/>
+						<align value="center|bottom"/>
+					</style>
+					<bind name="instance" value="'VisibilityItemsClip'; {_iconName: iconName ? iconName : 'ship'}"/>
+				</block>
+				<block type="text">
+					<styleClass value="$IndicatorText"/>
+					<style>
+						<marginTop value="5px"/>
+						<textAlign value="center"/>
+						<leading value="-3"/>
+					</style>
+					<bind name="class" value="isVolley || ((underFighterAttack == 2) &amp;&amp; _isPlane) || (isHit &amp;&amp; (_isOnSquadron == true)) ? '$IndicatorTextCritical' : '$IndicatorTextWarning'"/>
+					<bind name="watch" value="'iconLabel';	isUnderFighterAttack				? 'IDS_UNDER_FIGHTERS_ATTACK' :
+							 				isUnderAntiAirAttack 				? 'IDS_UNDER_ANTI_AIR_ATTACK' :
+							 				isVolley 							? 'IDS_VOLLEY':
+							 				isHit &amp;&amp; (_isOnSquadron == true)	? 'IDS_ATTACKED'
+												 								: 'IDS_DETECTED'"/>
+					<bind name="text" value="(_isOnSquadron == true) &amp;&amp; (_isPlane == false) ? iconLabel + '_AIRCARRIER' : iconLabel"/>
+				</block>
+			</block>
+		</block>
+		<block>
+			<bind name="fade" value="(focusedEnemies &gt; 0) &amp;&amp; (_isOnSquadron != true); 0.15; {alpha: 0}; {alpha: 1}; {alpha: 0}; 2"/>
+			<style>
+				<position value="absolute"/>
+				<top value="-27px"/>
+				<left value="17px"/>
+				<align value="center|middle"/>
+				<height value="0px"/>
+				<width value="0px"/>
+			</style>
+			<bind name="style" value="'top'; _isPlane || _isOnSquadron ? '-32px' : '-27px'"/>
+			<bind name="style" value="'left'; _isPlane || _isOnSquadron ? '24px' : '17px'"/>
+			<block>
+				<style>
+					<position value="absolute"/>
+				</style>
+				<bind name="fade" value="(focusedEnemies &gt; 0) &amp;&amp; (_isOnSquadron != true); 0.15; {alpha: 0, scaleX: 2, scaleY: 2}; {alpha: 1, scaleX: 1, scaleY: 1}; {alpha: 0, scaleX: 2, scaleY: 2}; 2"/>
+				<block>
+					<style>
+						<position value="absolute"/>
+						<width value="32px"/>
+						<height value="32px"/>
+						<left value="50%"/>
+						<top value="50%"/>
+						<marginLeft value="-50%"/>
+						<marginTop value="-50%"/>
+						<backgroundImage value="symbol:icon_visibility_priority"/>
+					</style>
+				</block>
+			</block>
+			<block type="text">
+				<bind name="visible" value="focusedEnemies &gt; 0"/>
+				<styleClass value="$TextDefaultBoldNM"/>
+				<styleClass value="$IndicatorTextWarning"/>
+				<style>
+					<fontSize value="18"/>
+					<marginTop value="-1px"/>
+				</style>
+				<bind name="text" value="focusedEnemies"/>
+			</block>
+		</block>
+	</block>
+	<block className="VisibilityItemsClip">
+		<bind name="child" value="_iconName; {}; {	fighters_warning: 		'IconVisibilityFightersWarning',
+									fighters_critical: 		'IconVisibilityFightersCritical',
+									antiAir:				'IconVisibilityAntiAir',
+									volley: 				'IconVisibilityVolley',
+									ship: 					'IconVisibilityShip',
+									plane: 					'IconVisibilityPlane',
+									xray: 					'IconVisibilityRadar',
+									attacked:				'IconVisibilityAircarrierAttacked',
+									radar: 					'IconVisibilityRadar'}"/>
+	</block>
+	<block className="IconVisibilityFightersWarning">
+		<style>
+			<width value="31px"/>
+			<height value="30px"/>
+			<backgroundImage value="symbol:icon_visibility_fighters_warning"/>
+		</style>
+	</block>
+	<block className="IconVisibilityFightersCritical">
+		<style>
+			<width value="31px"/>
+			<height value="30px"/>
+			<backgroundImage value="symbol:icon_visibility_fighters_critical"/>
+		</style>
+	</block>
+	<block className="IconVisibilityAntiAir">
+		<style>
+			<width value="32px"/>
+			<height value="32px"/>
+			<backgroundImage value="symbol:icon_visibility_antiair"/>
+		</style>
+	</block>
+	<block className="IconVisibilityVolley">
+		<style>
+			<width value="6px"/>
+			<height value="24px"/>
+			<backgroundImage value="symbol:icon_visibility_volley"/>
+		</style>
+	</block>
+	<block className="IconVisibilityShip">
+		<style>
+			<width value="6px"/>
+			<height value="24px"/>
+			<backgroundImage value="symbol:icon_visibility_ship"/>
+		</style>
+	</block>
+	<block className="IconVisibilityPlane">
+		<style>
+			<width value="28px"/>
+			<height value="28px"/>
+			<backgroundImage value="symbol:icon_visibility_plane"/>
+		</style>
+	</block>
+	<block className="IconVisibilityRadar">
+		<style>
+			<width value="28px"/>
+			<height value="28px"/>
+			<backgroundImage value="symbol:icon_visibility_radar"/>
+		</style>
+	</block>
+	<block className="IconVisibilityAircarrierAttacked">
+		<style>
+			<width value="30px"/>
+			<height value="30px"/>
+			<backgroundImage value="symbol:icon_aircarrier_attacked"/>
+		</style>
+	</block>
+	<block className="IntuitionIndicator">
+		<bind name="firstEntityDH" value="'bi'; CC.battleIndication"/>
+		<bind name="watchDH" value="'intuitionActive'; ['bi.alertIndication.evIntuitionActiveChanged']; bi.alertIndication.intuitionActive"/>
+		<bind name="fade" value="intuitionActive; 0.15; {alpha: 0, scaleX: 2, scaleY: 2}; {alpha: 1, scaleX: 1, scaleY: 1}; {alpha: 0, scaleX: 2, scaleY: 2}; 2"/>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<left value="50%"/>
+				<top value="50%"/>
+				<marginLeft value="-50%"/>
+				<marginTop value="-50%"/>
+				<align value="center"/>
+			</style>
+			<block>
+				<style>
+					<width value="32px"/>
+					<height value="32px"/>
+					<align value="center|bottom"/>
+				</style>
+				<block>
+					<style>
+						<width value="25px"/>
+						<height value="25px"/>
+						<backgroundImage value="symbol:icon_anti_intuition"/>
+					</style>
+				</block>
+			</block>
+			<block type="text">
+				<styleClass value="$IndicatorText"/>
+				<style>
+					<marginTop value="5px"/>
+				</style>
+				<bind name="text" value="'IDS_DETECTED_BY_ENEMY_SHIP'"/>
+			</block>
+		</block>
+	</block>
+	<block className="FightersWardIndicator">
+		<bind name="firstEntityDH" value="'bi'; CC.battleIndication"/>
+		<bind name="watchDH" value="'wardInsideLifeTime'; 	['bi.fightersWardIndication.evWardTimerChanged']; bi.fightersWardIndication.wardInsideLifeTime"/>
+		<bind name="var" value="{curState: 'normal'}"/>
+		<bind name="watch" value="'state'; 	wardInsideLifeTime == 0		? curState :
+							wardInsideLifeTime &lt;= 5		? 'critical' :
+						 	wardInsideLifeTime &lt;= 20	? 'warning'
+														: 'normal'"/>
+		<bind name="catch" value="'state' + varChanged; {curState: state}"/>
+		<bind name="watch" value="'iconName'; 'symbol:icon_inside_fighters_ward_' + state"/>
+		<bind name="visible" value="wardInsideLifeTime &gt; 0"/>
+		<bind name="fade" value="wardInsideLifeTime &gt; 0.2; 0.15; {alpha: 0, scaleX: 2, scaleY: 2}; {alpha: 1, scaleX: 1, scaleY: 1}; {alpha: 0, scaleX: 2, scaleY: 2}; 2"/>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<left value="50%"/>
+				<top value="50%"/>
+				<marginLeft value="-50%"/>
+				<marginTop value="-50%"/>
+				<align value="center"/>
+			</style>
+			<block>
+				<style>
+					<width value="32px"/>
+					<height value="32px"/>
+					<align value="center|bottom"/>
+				</style>
+				<block>
+					<style>
+						<width value="30px"/>
+						<height value="32px"/>
+						<align value="center|middle"/>
+					</style>
+					<bind name="style" value="'backgroundImage'; iconName"/>
+				</block>
+			</block>
+			<block type="text">
+				<style>
+					<height value="20px"/>
+					<marginTop value="1px"/>
+				</style>
+				<bind name="style" value="'alpha'; wardInsideLifeTime != 0 ? 1 : 0"/>
+				<styleClass value="$IndicatorText"/>
+				<bind name="class" value="	state == 'critical'	? '$IndicatorTextCritical' :
+						 	state == 'warning'  	? '$IndicatorTextWarning'
+															: '$None'"/>
+				<bind name="text" value="countdownFormat(wardInsideLifeTime, 0, true)"/>
+			</block>
+		</block>
+	</block>
+	<block className="WeatherIndicator">
+		<bind name="firstEntityDH" value="'bi'; CC.battleIndication"/>
+		<bind name="watchDH" value="'weatherVisible';	['bi.weatherIndication.evWeatherStateChanged']; 	bi.weatherIndication.weatherState &amp;&amp; bi.weatherIndication.weatherState != 'inv'"/>
+		<bind name="watchDH" value="'weatherState'; 		['bi.weatherIndication.evWeatherStateChanged']; 	bi.weatherIndication.weatherState"/>
+		<bind name="watchDH" value="'weatherTimeLeft'; 	['bi.weatherIndication.evWeatherTimeLeftChanged']; 	bi.weatherIndication.weatherTimeLeft"/>
+		<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
+		<bind name="watchDH" value="'visibilityRange'; 	['cameraEntity.camera.evVisibilityRangeChanged']; 	cameraEntity.camera.visibilityRange"/>
+		<bind name="fade" value="weatherVisible; 0.15; {alpha: 0, scaleX: 2, scaleY: 2}; {alpha: 1, scaleX: 1, scaleY: 1}; {alpha: 0, scaleX: 2, scaleY: 2}; 2"/>
+		<bind name="watch" value="'cycloneInProgress'; weatherState == 'cyclone' || weatherState == 'cyclone_end'"/>
+		<bind name="changeDispatch" value="weatherState; 'evCycloneStart'; {}; 2; 'cyclone_start'"/>
+		<bind name="changeDispatch" value="weatherState; 'evCycloneEnd'; {}; 2; 'cyclone_end'"/>
+		<block>
+			<style>
+				<align value="center"/>
+			</style>
+			<styleClass value="$MiddleVHAbsolutely"/>
+			<bind name="style" value="'alpha'; weatherState == 'cyclone_start' ? 0.7 : 1"/>
+			<block>
+				<style>
+					<width value="32px"/>
+					<height value="32px"/>
+					<align value="center|bottom"/>
+				</style>
+				<block>
+					<style>
+						<width value="28px"/>
+						<height value="23px"/>
+						<backgroundImage value="symbol:icon_cyclone_active"/>
+					</style>
+					<bind name="style" value="'backgroundImage'; 'symbol:icon_cyclone_' + (weatherState == 'cyclone_start' ? 'inactive' : 'active')"/>
+				</block>
+			</block>
+			<block type="text">
+				<styleClass value="$IndicatorText"/>
+				<style>
+					<marginTop value="5px"/>
+					<width value="100px"/>
+					<textAlign value="center"/>
+				</style>
+				<bind name="appear" value="'evCycloneStart'; 0.15; 0; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+				<bind name="appear" value="'evCycloneEnd'; 0.15; 0; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+				<bind name="text" value="weatherState == 'cyclone' ? toUpperCase(tr('IDS_CYCLONE')) : countdownFormat(weatherTimeLeft, 0, true)"/>
+			</block>
+			<block type="text">
+				<bind name="fade" value="cycloneInProgress; 0.15; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
+				<styleClass value="$IndicatorText"/>
+				<style>
+					<position value="absolute"/>
+					<width value="100px"/>
+					<textAlign value="center"/>
+					<top value="-5px"/>
+				</style>
+				<bind name="text" value="visibilityRange + tr('IDS_KILOMETER_SPACE')"/>
+			</block>
+		</block>
+	</block>
+	<block className="SubmarineHUD">
+		<bind name="collectionDH" value="CC.consumable; 'consumables'"/>
 		<styleClass value="$FullsizeAbsolute"/>
 		<block>
 			<styleClass value="$MiddleVHAbsolutely"/>
@@ -1773,6 +2622,78 @@
 					<bind name="instance" value="'SubmarineWeaponsPanel'; {}"/>
 				</block>
 			</block>
+		</block>
+	</block>
+	<block className="AircraftHUD">
+		<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
+		<bind name="watchDH" value="'tacticalMap'; ['cameraEntity.camera.evTacticalStateChanged']; cameraEntity.camera.isTactical"/>
+		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
+		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity.aircarrier.activeSquadron"/>
+		<bind name="watchDH" value="'squadronCameraMode'; ['ownCarrierEntity.aircarrier.evSquadronCameraModeChanged']; ownCarrierEntity.aircarrier.squadronCameraMode"/>
+		<bind name="firstEntityDH" value="'airDefenseFocusEntity'; CC.airDefenseFocus"/>
+		<bind name="watchDH" value="'airDefenseFocusActive'; ['airDefenseFocusEntity.airDefenseFocus.evActiveChanged']; airDefenseFocusEntity.airDefenseFocus.active"/>
+		<bind name="primaryEntityDH" value="'currentSquadronEntity'; CC.ownSquadron; activeSquadron"/>
+		<bind name="watchDH" value="'flightState';	['currentSquadronEntity.ownSquadron.evStateChanged']; currentSquadronEntity.ownSquadron.state"/>
+		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'timeToLive'; ['avatar.playerAvatar.evWillDieSoon']; avatar.playerAvatar.timeToLive"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
+		<styleClass value="$FullsizeAbsolute"/>
+		<bind name="watch" value="'isOnSquadron'; activeSquadron != -1 &amp;&amp; squadronCameraMode == 'default'"/>
+		<bind name="watch" value="'isOnNoAvatarCamera'; squadronCameraMode != 'default'"/>
+		<bind name="watch" value="'isTimerToDieVisible'; (isOnSquadron &amp;&amp; timeToLive != 0)"/>
+		<bind name="watch" value="'isDeathCamera'; !(isOnSquadron || isAlive)"/>
+		<bind name="fade" value="!tacticalMap &amp;&amp; !airDefenseFocusActive; 0.08; {alpha: 0}; {alpha: 1}; {alpha: 0}; 0"/>
+		<block>
+			<styleClass value="$FullsizeAbsolute"/>
+			<bind name="fade" value="isOnSquadron; 0.1; {alpha: 0}; {alpha:1}; {alpha: 0}; isOnSquadron ? 0.18 : 0.05"/>
+			<bind name="instance" value="'AirplaneAimIndicators'; {}"/>
+		</block>
+		<block>
+			<styleClass value="$FullsizeAbsolute"/>
+			<bind name="watch" value="'isFlying'; flightState == 5"/>
+			<bind name="fade" value="isFlying; 0.1; {alpha: 0, top: 5}; {alpha:1, top: 0}; {alpha: 0, top: 5}; 0; isFlying ? 0.18 : 0.1"/>
+			<bind name="instance" value="'AirplaneHealthBar'; isFlying ? {} : null"/>
+		</block>
+		<block>
+			<styleClass value="$MiddleAlignedAbsolutely"/>
+			<style>
+				<bottom value="180px"/>
+			</style>
+			<bind name="fade" value="isTimerToDieVisible; 0.1; {alpha: 0, top: 5}; {alpha:1, top: 0}; {alpha: 0, top: 5}; 0; isTimerToDieVisible ? 0.25 : 0"/>
+			<bind name="instance" value="'AirplaneDeathWarning'; {}"/>
+		</block>
+		<block>
+			<bind name="fade" value="isOnNoAvatarCamera &amp;&amp; isAlive; 0.08; {alpha: 0, top: 5}; {alpha:1, top: 0}; {alpha: 0, top: 5}; 0; 0.08"/>
+			<styleClass value="$MiddleAlignedAbsolutely"/>
+			<style>
+				<bottom value="92px"/>
+			</style>
+			<block type="text">
+				<style>
+					<maxWidth value="590"/>
+					<textAlign value="center"/>
+					<leading value="-6"/>
+				</style>
+				<styleClass value="$TextDefaultBold21NM"/>
+				<bind name="substitute" value="'KEYS'; 8; null; tr('IDS_CLICK_TO_RETURN_TO_AIRCARRIER_INFO'); '_bg'"/>
+			</block>
+		</block>
+		<block>
+			<style>
+				<bottom value="0px"/>
+				<left value="50%"/>
+				<position value="absolute"/>
+			</style>
+			<bind name="fade" value="!isOnNoAvatarCamera &amp;&amp; !isDeathCamera; 0.08; {alpha: 0, top: 5}; {alpha:1, top: 0}; {alpha: 0, top: 5}; 0; 0.08"/>
+			<bind name="instance" value="'AircraftCarrierWeaponsPanel'; {}"/>
+		</block>
+		<block>
+			<style>
+				<left value="50%"/>
+				<position value="absolute"/>
+			</style>
+			<bind name="fade" value="(isOnSquadron || isOnNoAvatarCamera) &amp;&amp; isAlive; 0.1; {alpha: 0, top: 5}; {alpha:1, top: 0}; {alpha: 0, top: 5}; 0; isOnSquadron ? 0.18 : 0.08"/>
+			<bind name="instance" value="'AirCraftStatusLog'; {}"/>
 		</block>
 	</block>
 	<css name="$TextNano">
@@ -3040,6 +3961,97 @@
 			<bind name="repeat" value="_multiParagraphArray; 'RepeatParagraphItemNM'; {_maxWidth: _maxWidth, _marginBottom: _marginBottom, _leading: (_leading ? _leading : -3)}"/>
 		</block>
 	</block>
+	<block className="AccountCompletionRewardTooltip">
+		<styleClass value="$DefaultTooltipBehaviour"/>
+		<style>
+			<width value="340px"/>
+		</style>
+		<block className="DeclareBlurLayer">
+			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
+			<block className="transparentPixel" type="native">
+				<bind name="blurLayer" value="0"/>
+			</block>
+			<style>
+				<position value="absolute"/>
+			</style>
+		</block>
+		<block className="BlurMap">
+			<bind name="visible" value="optionData.blurEnabled"/>
+			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<style>
+				<hitTest value="false"/>
+			</style>
+			<styleClass value="$FullsizeAbsolute"/>
+			<block className="mc_blurmap_medium" type="native">
+				<bind name="appear" value="'startShow'; 0.3; 0; {alpha: 0}; {alpha: 1}"/>
+				<bind name="appear" value="'startHide'; 0.15; 0; {alpha: 1}; {alpha: 0}"/>
+				<styleClass value="$FullsizeAbsolute"/>
+				<bind name="blurMap" value="0"/>
+			</block>
+			<block className="inner_panel" type="native">
+				<style>
+					<alpha value="0.5"/>
+				</style>
+				<styleClass value="$FullsizeAbsolute"/>
+			</block>
+		</block>
+		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+		<block className="contrast_panel" type="native">
+			<styleClass value="$FullsizeAbsolute"/>
+			<bind name="visible" value="optionData.contrast"/>
+		</block>
+		<block className="hint_panel" type="native">
+			<styleClass value="$FullsizeAbsolute"/>
+		</block>
+		<block>
+			<styleClass value="$InfoBlockIndentNoWidth"/>
+			<style>
+				<width value="100%"/>
+			</style>
+			<block type="text">
+				<styleClass value="$TextHeaderBold"/>
+				<style>
+					<leading value="-3"/>
+					<width value="100%"/>
+				</style>
+				<bind name="text" value="tooltipText"/>
+			</block>
+			<block type="text">
+				<styleClass value="$TextHeaderBigDefault"/>
+				<style>
+					<marginTop value="3px"/>
+					<leading value="-3"/>
+					<width value="100%"/>
+				</style>
+				<bind name="text" value="tooltipSubText"/>
+			</block>
+		</block>
+		<block className="HorizontalDivider">
+			<styleClass value="$PxHorizontalCorrection"/>
+			<style>
+				<width value="100%"/>
+				<height value="3px"/>
+			</style>
+			<block className="divider_h" type="native">
+				<styleClass value="$Fullsize"/>
+			</block>
+		</block>
+		<block>
+			<styleClass value="$InfoBlockIndentNoWidth"/>
+			<style>
+				<width value="100%"/>
+			</style>
+			<block type="text">
+				<styleClass value="$TextHeaderBigDefault"/>
+				<style>
+					<leading value="-3"/>
+					<width value="100%"/>
+				</style>
+				<bind name="text" value="'Награда за регистрацию аккаунта:'"/>
+			</block>
+		</block>
+	</block>
 	<block className="VoiceChatOutgoingIcon">
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'VoiceChatState'"/>
 		<bind name="transition" value="VoiceChatState.outgoing; 0.15; {alpha: 0}; {alpha: 1}"/>
@@ -3207,8 +4219,28 @@
 	<css name="$FontDropShadowWhite">
 		<dropShadowFilter value="0 90 0xffffff 1.0 3.0 3.0 0.3"/>
 	</css>
+	<css name="$TextDefault12NM">
+		<fontFamily value="$WWSDefaultFont"/>
+		<mouseEnabled value="false"/>
+		<mouseChildren value="false"/>
+		<fontSize value="12"/>
+		<marginText value="-3px|-3px|-6px|-5px"/>
+		<dropShadowFilter value="1 90 0x08222a 0.5 2.0 2.0 1.0 2"/>
+		<selectable value="false"/>
+		<textColor value="0xFFFFFF"/>
+	</css>
 	<css name="$TextDefault13NM">
 		<fontFamily value="$WWSDefaultFont"/>
+		<mouseEnabled value="false"/>
+		<mouseChildren value="false"/>
+		<fontSize value="13"/>
+		<marginText value="-3px|-3px|-6px|-5px"/>
+		<dropShadowFilter value="1 90 0x08222a 0.5 2.0 2.0 1.0 2"/>
+		<selectable value="false"/>
+		<textColor value="0xFFFFFF"/>
+	</css>
+	<css name="$TextDefaultBold13NM">
+		<fontFamily value="$WWSDefaultFontBold"/>
 		<mouseEnabled value="false"/>
 		<mouseChildren value="false"/>
 		<fontSize value="13"/>
@@ -4764,6 +5796,7 @@
 		<bind name="name" value="_input"/>
 		<bind name="input"/>
 		<bind name="action" value="'click'; _action ? _action : null"/>
+		<bind name="action" value="'click'; 'log'; { event: 'click:banner.' + _logItemName }"/>
 		<block className="button_infopanel_no_label" type="native">
 			<styleClass value="$FullsizeAbsolute"/>
 		</block>
@@ -5340,6 +6373,67 @@
 			</block>
 		</block>
 	</block>
+	<block className="ParamsModifierItem">
+		<style>
+			<width value="100%"/>
+			<flow value="horizontal"/>
+			<marginBottom value="16px"/>
+		</style>
+		<bind name="style" value="'paddingTop'; (_shrinkHeight == true) ? '-8px' : '0'"/>
+		<block type="text">
+			<styleClass value="$TextDefaultNM"/>
+			<style>
+				<leading value="-3"/>
+				<alpha value="0.8"/>
+				<width value="100%"/>
+			</style>
+			<bind name="text" value="attributeIDS"/>
+		</block>
+		<block type="text">
+			<style>
+				<marginLeft value="12px"/>
+			</style>
+			<styleClass value="$TextDefaultNM"/>
+			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
+					 category == 'negative'	? '$FontColorCompareNegative'
+					 						: '$FontColorDefault'"/>
+			<bind name="text" value="measuredValue"/>
+		</block>
+		<block type="text">
+			<style>
+				<marginLeft value="4px"/>
+			</style>
+			<styleClass value="$TextDefaultNM"/>
+			<bind name="style" value="'alpha'; category == 'positive' ? 0.65 : 0.8"/>
+			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
+					 category == 'negative'	? '$FontColorCompareNegative'
+					 						: '$FontColorDefault'"/>
+			<bind name="text" value="measure"/>
+		</block>
+	</block>
+	<block className="ParamsModifierList">
+		<style>
+			<width value="100%"/>
+		</style>
+		<block>
+			<style>
+				<width value="100%"/>
+			</style>
+			<bind name="repeat" value="_attributesPositive; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+			</style>
+			<bind name="repeat" value="_attributesNegative; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+			</style>
+			<bind name="repeat" value="_attributesNeutral; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
+		</block>
+	</block>
 	<block className="SubmarineWeaponsPanel">
 		<style>
 			<flow value="horizontal"/>
@@ -5836,6 +6930,1296 @@
 			<bind name="style" value="'textColor'; _blinkOnColor"/>
 			<bind name="class" value="_textClass"/>
 			<bind name="pureText" value="_text"/>
+		</block>
+	</block>
+	<block className="AirplaneAimIndicators">
+		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
+		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity.aircarrier.activeSquadron"/>
+		<styleClass value="$FullsizeAbsolute"/>
+		<style>
+			<hitTest value="false"/>
+		</style>
+		<block>
+			<styleClass value="$MiddleVHAbsolutely"/>
+			<bind name="instance" value="'AirplaneForsageIndicator'; {_activeSquadron: activeSquadron}"/>
+		</block>
+		<block>
+			<styleClass value="$MiddleVHAbsolutely"/>
+			<bind name="instance" value="'AirplaneCentralAim'; false ? {_activeSquadron: activeSquadron} : null"/>
+		</block>
+		<block>
+			<styleClass value="$MiddleVHAbsolutely"/>
+			<bind name="instance" value="'AirplaneAttackIndicator'; {_activeSquadron: activeSquadron}"/>
+		</block>
+	</block>
+	<block className="AirplaneCentralAim">
+		<bind name="primaryEntityDH" value="'currentSquadronEntity'; CC.ownSquadron; _activeSquadron"/>
+		<bind name="watchDH" value="'attackState'; ['currentSquadronEntity.ownSquadron.evAttackingStateChanged']; currentSquadronEntity.ownSquadron.attackState"/>
+		<bind name="firstEntityDH" value="'timerEntity'; CC.timer"/>
+		<bind name="watchDH" value="'timeRemain'; ['timerEntity.timer.evFrequent']; currentSquadronEntity.countDown ? currentSquadronEntity.countDown.endTime - timerEntity.timer.currentTime : 0"/>
+		<bind name="watchDH" value="'reloadPercent'; []; currentSquadronEntity.countDown ? 1 - timeRemain / currentSquadronEntity.countDown.duration : 1"/>
+		<bind name="watch" value="'showReload'; reloadPercent &lt; 1 &amp;&amp; (timeRemain &gt; 0.15)"/>
+		<bind name="watch" value="'curMaskY'; 	!(showReload) 		? 0 :
+								attackState == 2 	? 9 * reloadPercent
+												 	: 9 * (1 - reloadPercent)"/>
+		<style>
+			<width value="20px"/>
+			<height value="11px"/>
+		</style>
+		<bind name="watch" value="'crosshairColor'; showReload &amp;&amp; isIn(attackState, [0, 1, 3]) 	? 'prepare' :
+									attackState == 2							? 'attack'
+																				: ''"/>
+		<block className="universal_mask" type="native">
+			<bind name="visible" value="showReload"/>
+			<bind name="y" value="math.floor(curMaskY)"/>
+			<bind name="isMask" value="true"/>
+			<style>
+				<width value="18px"/>
+				<height value="9px"/>
+				<top value="1px"/>
+				<left value="1px"/>
+			</style>
+			<block>
+				<bind name="fade" value="showReload &amp;&amp; crosshairColor; 0.2; {alpha: 0}; {alpha: 1}; {alpha: 0}; 0; 0.2"/>
+				<styleClass value="$FullsizeAbsolute"/>
+				<bind name="style" value="'backgroundImage'; 'url:../service_kit/hud_elements/plane_crosshair/' + crosshairColor + '.png'"/>
+			</block>
+		</block>
+		<block>
+			<bind name="fade" value="!(showReload); 0.2; {alpha: 0}; {alpha: 1}; {alpha: 0}; 0; showReload ? 0 : 0.2"/>
+			<style>
+				<width value="18px"/>
+				<height value="9px"/>
+				<top value="1px"/>
+				<left value="1px"/>
+				<position value="absolute"/>
+				<backgroundImage value="url:../service_kit/hud_elements/plane_crosshair/default.png"/>
+			</style>
+		</block>
+		<block>
+			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<backgroundImage value="url:../service_kit/hud_elements/plane_crosshair/bgr.png"/>
+			</style>
+		</block>
+	</block>
+	<block className="AirplaneForsageIndicator">
+		<bind name="primaryEntityDH" value="'currentSquadronEntity'; CC.ownSquadron; _activeSquadron"/>
+		<bind name="watchDH" value="'isForsageUsing';		['currentSquadronEntity.forsageElement.evForsageStateChanged'];	currentSquadronEntity.forsageElement.isUsing"/>
+		<bind name="watchDH" value="'forsageCurrentValue';	['currentSquadronEntity.forsageElement.evCurrentChanged'];		currentSquadronEntity.forsageElement.current"/>
+		<bind name="watchDH" value="'healState';				['currentSquadronEntity.forsageElement.evHealStateChanged'];	currentSquadronEntity.forsageElement.healState"/>
+		<bind name="watchDH" value="'flightSpeed';			['currentSquadronEntity.flightSpeed.evValueChanged'];			currentSquadronEntity.flightSpeed.value"/>
+		<bind name="watchDH" value="'forsageMaxValue';		[]; currentSquadronEntity.forsageElement.max"/>
+		<bind name="watchDH" value="'forsageMaxRegenTime';	[]; currentSquadronEntity.forsageElement.maxRegenTime"/>
+		<bind name="handleEventDH" value="'currentSquadronEntity.forsageElement.evForsageFinished'; 'evForsageFinished'"/>
+		<bind name="dispatch" value="'evForsageFinished'; 'evForsageFinishedAnimate'"/>
+		<bind name="watch" value="'currentPersent'; (forsageCurrentValue / forsageMaxValue)"/>
+		<style>
+			<left value="3px"/>
+			<position value="absolute"/>
+		</style>
+		<block>
+			<style>
+				<right value="122px"/>
+				<top value="-80px"/>
+				<width value="28px"/>
+				<height value="160px"/>
+				<position value="absolute"/>
+				<backgroundImage value="url:../aircraft/forsage_aim_bgr.png"/>
+			</style>
+		</block>
+		<bind name="watch" value="'radiusCircle'; 152"/>
+		<block className="lesta.display.Sector" type="native">
+			<style>
+				<position value="absolute"/>
+			</style>
+			<bind name="rotation" value="0"/>
+			<bind name="offset" value="145"/>
+			<bind name="color" value="0xFFFFFF"/>
+			<bind name="arc" value="1 + 67 * currentPersent"/>
+			<bind name="radius" value="radiusCircle"/>
+			<bind name="innerRadius" value="radiusCircle - 8"/>
+			<bind name="isMask" value="true"/>
+			<block className="forsage_progress_bar" type="native">
+				<bind name="transition" value="currentPersent != 1 || showForsageIndicator; 0.2; {alpha: 0}; {alpha: 1}; {alpha: 0}; 2; currentPersent != 1 ? 0 : 0.2"/>
+				<style>
+					<position value="absolute"/>
+				</style>
+			</block>
+		</block>
+		<block>
+			<style>
+				<right value="164px"/>
+				<position value="absolute"/>
+			</style>
+			<block type="text">
+				<style>
+					<textAlign value="right"/>
+					<alpha value="0.9"/>
+				</style>
+				<styleClass value="$TextDefaultBold19NM"/>
+				<bind name="text" value="math.round(flightSpeed)"/>
+			</block>
+			<block type="text">
+				<style>
+					<textAlign value="right"/>
+					<marginTop value="1px"/>
+					<alpha value="0.7"/>
+					<marginLeft value="2px"/>
+				</style>
+				<styleClass value="$TextDefault17NM"/>
+				<bind name="text" value="' ' + tr('IDS_FORSAGE_INDICATOR_KILOMETERS')"/>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+		<bind name="watch" value="'showForsageIndicator'; (isForsageUsing || healState == 1)"/>
+		<block>
+			<style>
+				<alpha value="0"/>
+				<position value="absolute"/>
+				<right value="188px"/>
+				<top value="24px"/>
+			</style>
+			<bind name="fade" value="showForsageIndicator; 0.2; {alpha: 0}; {alpha: 1}; {alpha: 0}; 2; showForsageIndicator ? 0 : 0.2"/>
+			<bind name="appear" value="'evForsageFinishedAnimate'; 0.2; 0.0; {alpha: 1}; {alpha: 0.5}"/>
+			<bind name="appear" value="'evForsageFinishedAnimate'; 0.2; 0.25; {alpha: 0.5}; {alpha: 1}"/>
+			<bind name="instance" value="'ForsageIndicatorConsumableIcon'; {_healState: healState, _currentPersent: currentPersent}"/>
+		</block>
+	</block>
+	<block className="AirplaneAttackIndicator">
+		<bind name="primaryEntityDH" value="'currentSquadronEntity'; CC.ownSquadron; _activeSquadron"/>
+		<bind name="watchDH" value="'attackState'; ['currentSquadronEntity.ownSquadron.evAttackingStateChanged']; currentSquadronEntity.ownSquadron.attackState"/>
+		<bind name="firstEntityDH" value="'timerEntity'; CC.timer"/>
+		<bind name="watchDH" value="'timeRemain'; ['timerEntity.timer.evFrequent']; currentSquadronEntity.countDown ? currentSquadronEntity.countDown.endTime - timerEntity.timer.currentTime : 0"/>
+		<bind name="watchDH" value="'reloadPercent'; []; currentSquadronEntity.countDown ? 1 - timeRemain / currentSquadronEntity.countDown.duration : 1"/>
+		<bind name="watch" value="'reloadPercentFX'; reloadPercent &lt; 1 ? reloadPercent : attackState == 0 ? 0 : 1"/>
+		<bind name="watch" value="'showReload'; reloadPercent &lt; 1 &amp;&amp; (timeRemain &gt; 0.15)"/>
+		<bind name="watch" value="'isReloadHacked'; (reloadPercent != 1 &amp;&amp; attackState == 0)"/>
+		<bind name="watch" value="'colorState';	isReloadHacked								? '0xffff9933' :
+								attackState == 0			? '0xFFf5f5f5' :
+								attackState == 1	? '0xffff9933' :
+								attackState == 2		? '0xFF4ce7a9' :
+								attackState == 3			? '0xffff9933' 
+																			: '0xff0000ff'"/>
+		<bind name="watch" value="'radiusCircle'; 150"/>
+		<block>
+			<style>
+				<left value="124px"/>
+				<top value="-80px"/>
+				<width value="26px"/>
+				<height value="160px"/>
+				<position value="absolute"/>
+				<backgroundImage value="url:../aircraft/attack_aim_bgr.png"/>
+			</style>
+		</block>
+		<block>
+			<bind name="fade" value="showReload; 0.15; {alpha: 0}; {alpha: 1}; {alpha: 0}; 2"/>
+			<bind name="instance" value="'AttackIndicatorProgress';
+			{
+				_rotation: 0,
+				_angle: 33,
+				_radius: radiusCircle,
+				_innerRadius: radiusCircle - 2,
+				_arc: -66,
+				_color: colorState,
+				_reloadPercentFX: ((attackState == 1 || isReloadHacked) ? 1 - reloadPercentFX : reloadPercentFX)
+			}
+		"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<left value="162px"/>
+				<height value="196px"/>
+			</style>
+			<bind name="fade" value="showReload; 0.15; {alpha: 0}; {alpha: 1}; {alpha: 0}; 2"/>
+			<bind name="watch" value="'reloadTextColor'; attackState &gt;= 2 &amp;&amp; timeRemain &lt;= 1 ? '0xFF0000' : '0xFFFFFF'"/>
+			<block type="text">
+				<style>
+					<textAlign value="left"/>
+					<alpha value="0.9"/>
+				</style>
+				<styleClass value="$TextDefaultBold19NM"/>
+				<bind name="style" value="'textColor'; reloadTextColor"/>
+				<bind name="transition" value="timeRemain &gt;= 60; 0.15;	{scaleX:1, ubScaleX:1, scaleY:1, ubScaleY:1};
+														{scaleX:0.8, ubScaleX:0.8, scaleY:0.8, ubScaleY:0.8}"/>
+				<bind name="text" value="(showReload ? countdownFormat(timeRemain) : '')"/>
+			</block>
+			<block type="text">
+				<style>
+					<textAlign value="left"/>
+					<marginTop value="1px"/>
+					<alpha value="0.7"/>
+					<marginLeft value="2px"/>
+				</style>
+				<styleClass value="$TextDefault17NM"/>
+				<bind name="style" value="'textColor'; reloadTextColor"/>
+				<bind name="text" value="(showReload ? (' ' + tr('s')) : '')"/>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+	</block>
+	<block className="AttackIndicatorProgress">
+		<style>
+			<position value="absolute"/>
+			<top value="0px"/>
+		</style>
+		<bind name="watch" value="'energyInPercent'; _arc * (1 - _reloadPercentFX)"/>
+		<block className="lesta.display.Sector" type="native">
+			<bind name="rotation" value="_rotation"/>
+			<bind name="offset" value="_angle"/>
+			<bind name="color" value="_color"/>
+			<bind name="arc" value="energyInPercent"/>
+			<bind name="radius" value="_radius"/>
+			<bind name="innerRadius" value="_innerRadius"/>
+		</block>
+	</block>
+	<block className="ForsageIndicatorConsumableIcon">
+		<style>
+			<width value="30px"/>
+			<height value="28px"/>
+			<position value="absolute"/>
+		</style>
+		<bind name="watch" value="'itemImageUrl'; _healState == 1 	? '../aircraft/forsage_indicator_icon_enabled.png'
+								 					: '../aircraft/forsage_indicator_icon.png'"/>
+		<bind name="style" value="'backgroundImage'; 'url:' + itemImageUrl"/>
+		<block>
+			<bind name="fade" value="_currentPersent == 0; 0.25; {alpha: 0}; {alpha: 0.8}; {alpha: 0}; 2"/>
+			<bind name="style" value="'backgroundImage';	'url:../aircraft/forsage_indicator_icon_low.png'"/>
+		</block>
+	</block>
+	<css name="$ColorStatePlaneLowHP">
+		<backgroundColor value="0xFFFF3300"/>
+	</css>
+	<css name="$ColorStatePlaneHalfHP">
+		<backgroundColor value="0xFFFF9900"/>
+	</css>
+	<css name="$ColorStatePlaneFullHP">
+		<backgroundColor value="0xFF4CE8AA"/>
+	</css>
+	<css name="$ColorStatePlaneDamage">
+		<backgroundColor value="0xFFFFFFFF"/>
+	</css>
+	<block className="AirplaneHealthBar">
+		<bind name="firstEntityDH" value="'ownSquadronesEntity'; CC.ownSquadron; 'selected'"/>
+		<bind name="watchDH" value="'maxPlanes';			['ownSquadronesEntity.health.evValueChanged']; ownSquadronesEntity.health.max"/>
+		<bind name="watchDH" value="'currentHP_points';	['ownSquadronesEntity.squadron.evCurrentHPChanged'];	ownSquadronesEntity.squadron.currentHP"/>
+		<bind name="watchDH" value="'maxHP_points';		['ownSquadronesEntity.squadron.evMaxHPChanged'];		ownSquadronesEntity.squadron.maxHP"/>
+		<bind name="watchDH" value="'planeNameIDS';		[]; ownSquadronesEntity.plane.planeNameIDS"/>
+		<bind name="watchDH" value="'levelRome';			[]; ownSquadronesEntity.plane.levelRome"/>
+		<bind name="var" value="{ planeIconNames: ['plane_scout_own', 'plane_bomber_own', 'plane_torpedo_own', 'plane_fighter_own_bg'] }"/>
+		<bind name="var" value="{ planeIconTopOffset: ['-6px', '-5px', '-6px', '-4px'] }"/>
+		<bind name="watch" value="'healthPointWidth'; math.round(314/maxPlanes)}"/>
+		<bind name="fade" value="currentHP_points &gt; 0; 0.1; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: -10}; 1; 0.05"/>
+		<styleClass value="$MiddleAlignedAbsolutely"/>
+		<style>
+			<width value="314px"/>
+			<bottom value="115px"/>
+		</style>
+		<block>
+			<style>
+				<position value="absolute"/>
+			</style>
+			<bind name="repeat" value="maxPlanes; 'AirplanesHealthPointBgr'; {_healthPointWidth:	healthPointWidth}"/>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+			</style>
+			<bind name="collectionRepeatDH" value="CC.aircraft; 'AirplanesHealthPoint';	'bySquadron.' + ownSquadronesEntity.squadron.id;
+																		{_healthPointWidth:	healthPointWidth}"/>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+		<block>
+			<bind name="visible" value="currentHP_points ? true : false"/>
+			<style>
+				<width value="314px"/>
+				<top value="12px"/>
+				<position value="absolute"/>
+			</style>
+			<block>
+				<style>
+					<position value="absolute"/>
+					<left value="1px"/>
+					<width value="22px"/>
+				</style>
+				<bind name="style" value="'top'; planeIconTopOffset[ownSquadronesEntity.plane.planeType]"/>
+				<bind name="style" value="'backgroundImage'; 'symbol:' + planeIconNames[ownSquadronesEntity.plane.planeType]"/>
+			</block>
+			<block type="text">
+				<style>
+					<left value="23px"/>
+					<position value="absolute"/>
+					<width value="200px"/>
+					<multiline value="false"/>
+				</style>
+				<styleClass value="$TextDefaultBoldNM"/>
+				<bind name="text" value="levelRome + ' ' + tr(planeNameIDS)"/>
+			</block>
+			<block>
+				<style>
+					<position value="absolute"/>
+					<right value="1px"/>
+				</style>
+				<bind name="watch" value="'healthPercent'; currentHP_points/maxHP_points"/>
+				<block type="text">
+					<style>
+						<marginRight value="3px"/>
+					</style>
+					<styleClass value="$TextDefaultBoldNM"/>
+					<bind name="class" value="	healthPercent &gt;= 0.75	? '$TextColorHUDPositivePC' :
+								healthPercent &gt;= 0.25	? '$TextColorHUDWarningPC' :
+								healthPercent &gt; 0		? '$TextColorHUDCriticalPC'
+														: '$TextColorHUDDeadPC'"/>
+					<bind name="text" value="format(currentHP_points, -1)"/>
+				</block>
+				<block type="text">
+					<styleClass value="$TextDefaultNM"/>
+					<bind name="text" value="'/' + format(maxHP_points, -1)"/>
+				</block>
+				<style>
+					<flow value="horizontal"/>
+				</style>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+	</block>
+	<block className="AirplanesHealthPointBgr">
+		<block className="hud_bar_bg_sliced" type="native">
+			<bind name="style" value="'width'; _healthPointWidth + 'px'"/>
+		</block>
+	</block>
+	<block className="HUDHealthLabel">
+		<style>
+			<flow value="horizontal"/>
+		</style>
+		<bind name="watch" value="'_healthPercent'; _healthValue/_maxHealth"/>
+		<block type="text">
+			<style>
+				<marginRight value="3px"/>
+			</style>
+			<styleClass value="$TextDefaultBoldNM"/>
+			<bind name="class" value="	_healthPercent &gt;= 0.75	? '$TextColorHUDPositivePC' :
+						_healthPercent &gt;= 0.25	? '$TextColorHUDWarningPC' :
+						_healthPercent &gt; 0		? '$TextColorHUDCriticalPC'
+												: '$TextColorHUDDeadPC'"/>
+			<bind name="text" value="format(_healthValue, -1)"/>
+		</block>
+		<block type="text">
+			<styleClass value="$TextDefaultNM"/>
+			<bind name="text" value="'/' + format(_maxHealth, -1)"/>
+		</block>
+	</block>
+	<block className="AirplanesHealthPoint">
+		<bind name="dataRefDH" value="'selectedOwnPlaneEntity'; '$dataRef.ref'"/>
+		<bind name="watchDH" value="'currentState'; ['selectedOwnPlaneEntity.health.evValueChanged']; selectedOwnPlaneEntity.health.value"/>
+		<bind name="watch" value="'airplaneColorStatus';	(currentState	==	0)		? '$ColorStatePlaneFullHP' :
+										(currentState	==	1)		? '$ColorStatePlaneHalfHP'
+																	: '$ColorStatePlaneLowHP'"/>
+		<bind name="var" value="{bufferColorStatus: airplaneColorStatus}"/>
+		<bind name="watch" value="'startPlanePosition'; $index * _healthPointWidth"/>
+		<bind name="handleEventDH" value="'selectedOwnPlaneEntity.aircraftAnimation.evPlayOutAnimation'; 'evPlayOut'"/>
+		<bind name="dispatch" value="'evPlayOut'; 'evPlayOut_animation'; {}; 0; 0"/>
+		<bind name="dispatch" value="'evPlayOut'; 'evPlayOut_blink'; {}; 0; 0"/>
+		<bind name="appear" value="'evPlayOut_animation'; 0.25; 2; {alpha: 1}; {alpha: 0}"/>
+		<bind name="handleEventDH" value="'selectedOwnPlaneEntity.aircraftAnimation.evPlayDeathAnimation'; 'evPlaneDeath'"/>
+		<bind name="dispatch" value="'evPlaneDeath'; 'evPlaneDeath_animation'; []; 0; 0"/>
+		<bind name="appear" value="'evPlaneDeath_animation'; 0.3; 0.0; {alpha: 1}; {alpha: 0}	"/>
+		<bind name="changeDispatch" value="airplaneColorStatus; bufferColorStatus != airplaneColorStatus ? 'evPlayBlink' : null; {}; true"/>
+		<bind name="style" value="'width'; (_healthPointWidth-2) + 'px'"/>
+		<style>
+			<height value="2px"/>
+			<marginLeft value="1px"/>
+			<marginRight value="1px"/>
+			<marginTop value="1px"/>
+		</style>
+		<bind name="var" value="{playOutStart: false}"/>
+		<bind name="catch" value="'evPlayOut'; {playOutStart: true}"/>
+		<bind name="class" value="airplaneColorStatus"/>
+		<block>
+			<styleClass value="$FullsizeAbsolute"/>
+			<styleClass value="$ColorStatePlaneDamage"/>
+			<bind name="style" value="'alpha'; 0.0"/>
+			<bind name="catch" value="'evPlayBlink'; {bufferColorStatus: airplaneColorStatus}"/>
+			<bind name="appear" value="'evPlayBlink'; 0.25; 0; {alpha: 0}; {alpha: 1}"/>
+			<bind name="appear" value="'evPlayBlink'; 0.25; 0.3; {alpha: 1}; {alpha: 0}"/>
+			<bind name="appear" value="'evPlayOut_blink'; 0.25; 0.0; {alpha: 0}; {alpha: 1}"/>
+			<bind name="appear" value="'evPlayOut_blink'; 0.25; 0.3; {alpha: 1}; {alpha: 0}"/>
+			<bind name="appear" value="'evPlayOut_blink'; 0.25; 0.6; {alpha: 0}; {alpha: 1}"/>
+			<bind name="appear" value="'evPlayOut_blink'; 0.25; 0.9; {alpha: 1}; {alpha: 0}"/>
+			<bind name="appear" value="'evPlayOut_blink'; 0.25; 1.2; {alpha: 0}; {alpha: 1}"/>
+			<bind name="appear" value="'evPlayOut_blink'; 0.25; 1.5; {alpha: 1}; {alpha: 0}"/>
+		</block>
+	</block>
+	<css name="$TextColorHUDPositivePC">
+		<textColor value="0xFF4CE8AA"/>
+	</css>
+	<css name="$TextColorHUDWarningPC">
+		<textColor value="0xFFFF9933"/>
+	</css>
+	<css name="$TextColorHUDCriticalPC">
+		<textColor value="0xFFFE4D2A"/>
+	</css>
+	<css name="$TextColorHUDDeadPC">
+		<textColor value="0xFF111111"/>
+	</css>
+	<block className="AircraftCarrierWeaponsPanel">
+		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
+		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
+		<bind name="collectionDH" value="CC.ownSquadron; 'ownSquadrons'"/>
+		<bind name="collectionDesign" value="DES_ownSquadrons; 'selectedOwnSquadron'; {'filter': $entity.selection.value == true}; ['selection.evChanged']"/>
+		<style>
+			<top value="-74px"/>
+		</style>
+		<block>
+			<style>
+				<bottom value="40px"/>
+				<marginLeft value="-50%"/>
+				<position value="absolute"/>
+			</style>
+			<bind name="visible" value="(activeSquadron == -1)"/>
+			<bind name="instance" value="'AircraftCarrierPanelInstruction'; {_selectedSquadronEntityId: selectedOwnSquadron[0].id}"/>
+		</block>
+		<bind name="instance" value="'CarrierControlPanel'; {_activeSquadron: activeSquadron}"/>
+		<bind name="instance" value="'SquadronControlPanel'; {_activeSquadron: activeSquadron}"/>
+	</block>
+	<block className="ATBAOffIndicator">
+		<bind name="primaryEntityDH" value="'controlEntity'; CC.simpleControl; 1"/>
+		<bind name="watchDH" value="'atbaSwitchedOn'; ['controlEntity.simpleControl.evChanged']; controlEntity.simpleControl.enabled"/>
+		<style>
+			<marginLeft value="-29px"/>
+			<marginTop value="-3px"/>
+			<position value="absolute"/>
+		</style>
+		<block className="atbaOffIndicator" type="native">
+			<bind name="isShown" value="atbaSwitchedOn == false"/>
+		</block>
+	</block>
+	<block className="PlanePullItem">
+		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
+		<bind name="entityDH" value="'squadronEntity'; $dataRef.ref.id"/>
+		<bind name="watchDH" value="'ammoType';			[]; squadronEntity.plane.ammoType"/>
+		<bind name="watchDH" value="'curPlanesInHangar';	['squadronEntity.hangar.evChanged'];		squadronEntity.hangar.planeCount"/>
+		<bind name="style" value="'marginLeft'; $index == 0 ? '16px' : '14px'"/>
+		<style>
+			<width value="32px"/>
+			<top value="26px"/>
+		</style>
+		<bind name="var" value="{ planeIconNames: [	'planes_hangar_rocket_HE',
+									'planes_hangar_bomb_HE',
+									'planes_hangar_bomb_AP',
+									'planes_hangar_torpedo',
+									'planes_hangar_torpedo_deepwater'] }"/>
+		<bind name="watch" value="'planeIconPath'; 'url:../aircraft/hangar_icons/' + planeIconNames[ammoType] + '.png'"/>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<left value="-129"/>
+				<bottom value="24px"/>
+			</style>
+			<bind name="instance" value="'PlanePullItemHint'; rollOver ? {_squadronEntityId: $dataRef.ref.id, _planeIconPath: planeIconPath} : null"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<top value="-7px"/>
+			</style>
+			<bind name="instance" value="'PlaneReloadProgress'; {squadronEntityId: $dataRef.ref.id, _width: 32}"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<width value="30px"/>
+				<height value="30px"/>
+				<left value="1px"/>
+			</style>
+			<bind name="style" value="'alpha'; (curPlanesInHangar &gt; 0 ? 1 : 0.5)"/>
+			<bind name="style" value="'backgroundImage'; planeIconPath"/>
+		</block>
+	</block>
+	<block className="PlanePullItemHint">
+		<bind name="entityDH" value="'squadronEntity'; _squadronEntityId"/>
+		<bind name="watchDH" value="'planeCount';				[]; squadronEntity.hangar.planeCount"/>
+		<bind name="watchDH" value="'maxPlaneCount';				[]; squadronEntity.hangar.maxPlaneCount"/>
+		<bind name="watchDH" value="'planesInAirCount';			[]; squadronEntity.hangar.planesInAirCount"/>
+		<bind name="watchDH" value="'timeToRestore';				[]; squadronEntity.hangar.timeToRestore"/>
+		<bind name="watchDH" value="'ammoType';					[]; squadronEntity.plane.ammoType"/>
+		<bind name="watch" value="'squadronType'; 	ammoType == 0				?  tr('IDS_DOCK_AMMO_TITLE_FIGHTER'):
+									ammoType == 1 				?  tr('IDS_DOCK_AMMO_TITLE_DIVE'):
+									ammoType == 2			?  tr('IDS_DOCK_AMMO_TITLE_DIVE_AP'):
+									ammoType == 3				?  tr('IDS_DOCK_AMMO_TITLE_BOMBER'):
+									ammoType == 4	?  tr('IDS_DOCK_AMMO_TITLE_BOMBER_DEEPWATER')
+																					:  ''"/>
+		<bind name="watch" value="'attributesNeutral'; [	{attributeIDS: 'IDS_HANGAR_SQUADRON_PLANES_CURRENT',		measuredValue: planeCount,			measure: ''},
+										{attributeIDS: 'IDS_HANGAR_SQUADRON_PLANES_MAX',			measuredValue: maxPlaneCount,		measure: ''},
+										{attributeIDS: 'IDS_HANGAR_SQUADRON_PLANES_IN_THE_AIR',		measuredValue: planesInAirCount,	measure: ''},
+										{attributeIDS: 'IDS_HANGAR_SQUADRON_PLANES_TIME_RESTORE',	measuredValue: timeToRestore,		measure: 'IDS_SECOND'}]"/>
+		<bind name="appear" value="'addedToStage'; 0.1; 0; {alpha: 0}; {alpha: 1}"/>
+		<style>
+			<width value="290px"/>
+			<hitTest value="false"/>
+		</style>
+		<block>
+			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<alpha value="1.2"/>
+			</style>
+			<bind name="instance" value="'TooltipBackground'; {_isInBattle: true}"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+				<marginTop value="14px"/>
+				<marginLeft value="2px"/>
+				<marginRight value="2px"/>
+				<marginLeft value="2px"/>
+				<marginBottom value="2px"/>
+			</style>
+			<block>
+				<style>
+					<marginLeft value="12px"/>
+					<marginRight value="12px"/>
+					<width value="100%"/>
+					<marginBottom value="8px"/>
+				</style>
+				<block>
+					<style>
+						<width value="30px"/>
+						<height value="30px"/>
+					</style>
+					<bind name="style" value="'backgroundImage'; _planeIconPath"/>
+				</block>
+				<block type="text">
+					<style>
+						<marginLeft value="12px"/>
+						<width value="100%"/>
+						<alpha value="0.9"/>
+						<leading value="-3"/>
+					</style>
+					<styleClass value="$TextDefaultBold17NM"/>
+					<bind name="text" value="squadronType"/>
+				</block>
+				<style>
+					<flow value="horizontal"/>
+				</style>
+			</block>
+			<block>
+				<style>
+					<width value="100%"/>
+				</style>
+				<block className="HorizontalDivider">
+					<styleClass value="$PxHorizontalCorrection"/>
+					<style>
+						<width value="100%"/>
+						<height value="3px"/>
+					</style>
+					<block className="divider_h" type="native">
+						<styleClass value="$Fullsize"/>
+					</block>
+				</block>
+			</block>
+			<block>
+				<style>
+					<width value="100%"/>
+					<alpha value="1"/>
+				</style>
+				<block className="inner_panel" type="native">
+					<style>
+						<alpha value="1.5"/>
+					</style>
+					<styleClass value="$FullsizeAbsolute"/>
+				</block>
+				<block>
+					<style>
+						<width value="100%"/>
+						<alpha value="1"/>
+						<marginLeft value="12px"/>
+						<marginRight value="12px"/>
+						<marginTop value="18px"/>
+						<marginBottom value="-4px"/>
+					</style>
+					<bind name="repeat" value="attributesNeutral; 'ParamsModifierItem'; {_shrinkHeight: true}"/>
+				</block>
+			</block>
+		</block>
+	</block>
+	<block className="CarrierControlPanel">
+		<style>
+			<flow value="horizontal"/>
+			<marginLeft value="-50%"/>
+			<position value="absolute"/>
+		</style>
+		<bind name="fade" value="_activeSquadron == -1; _activeSquadron == -1 ? 0.2 : 0;	{alpha: 0, top: 5};
+																										{alpha: 1, top: 0};
+																										{alpha: 0, top: 5};
+				_activeSquadron == -1 ? 0.15 : 0 "/>
+		<bind name="instance" value="'ATBAOffIndicator'; {}"/>
+		<block>
+			<bind name="collectionRepeatDH" value="CC.ownSquadron; 'CarrierControlItem'; ''; {}"/>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+		<block>
+			<style>
+				<marginLeft value="16px"/>
+			</style>
+			<bind name="instance" value="'CarrierControlConsumables'; {}"/>
+		</block>
+	</block>
+	<block className="SquadronControlPanel">
+		<style>
+			<flow value="horizontal"/>
+			<marginLeft value="-50%"/>
+			<position value="absolute"/>
+		</style>
+		<bind name="fade" value="_activeSquadron != -1; _activeSquadron != -1 ? 0.2 : 0; {alpha: 0, top: 5};
+																										{alpha: 1, top: 0};
+																										{alpha: 0, top: 5};
+				_activeSquadron != -1 ? 0.15 : 0"/>
+		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'isAlive'; ['selfAvatarEntity.health.evKilled']; selfAvatarEntity.health.isAlive"/>
+		<block>
+			<bind name="instance" value="'SquadronControlWeapon';		{_activeSquadron: _activeSquadron}"/>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+		<block>
+			<style>
+				<marginLeft value="16px"/>
+			</style>
+			<bind name="instance" value="'SquadronControlConsumables';	{_activeSquadron: _activeSquadron}"/>
+			<bind name="instance" value="'SquadronControlItemReturn';	{_activeSquadron: _activeSquadron}"/>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+		<block>
+			<style>
+				<left value="100%"/>
+				<marginLeft value="1280:10,1920:18aw"/>
+				<position value="absolute"/>
+			</style>
+			<bind name="visible" value="isAlive"/>
+			<bind name="collectionRepeatDH" value="CC.ownSquadron; 'PlanePullItem'; ''; {}"/>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+	</block>
+	<block className="SquadronControlConsumables">
+		<style>
+			<flow value="horizontal"/>
+		</style>
+		<bind name="primaryEntityDH" value="'currentSquadronEntity'; CC.ownSquadron; _activeSquadron"/>
+		<bind name="collectionRepeatDH" value="CC.battleConsumable; 'ConsumableControlItem'; 'bySquadron.' + currentSquadronEntity.squadron.id; {}"/>
+	</block>
+	<block className="CarrierControlConsumables">
+		<style>
+			<flow value="horizontal"/>
+		</style>
+		<bind name="collectionRepeatDH" value="CC.battleConsumable; 'ConsumableControlItem'; 'shipConsumables'; {_isAircarrier: true}"/>
+	</block>
+	<block className="ConsumableControlItem">
+		<bind name="dataRefDH" value="'consumableEntity'; '$dataRef.ref'"/>
+		<bind name="watchDH" value="'consumableName';	[];															consumableEntity.battleConsumable.ident"/>
+		<bind name="watchDH" value="'consumableCmd';		[];															consumableEntity.battleConsumable.cmd"/>
+		<bind name="watchDH" value="'consumableIndex';	['consumableEntity.battleConsumable.evStateChanged'];		consumableEntity.battleConsumable.index"/>
+		<bind name="watchDH" value="'consumableNum';		['consumableEntity.battleConsumable.evConsumeNumChanged'];	consumableEntity.battleConsumable.consumeNum"/>
+		<bind name="watchDH" value="'consumableState';	['consumableEntity.battleConsumable.evStateChanged'];		consumableEntity.battleConsumable.state"/>
+		<bind name="watchDH" value="'ownerSquadronId';	['consumableEntity.battleConsumable.evStateChanged'];		consumableEntity.battleConsumable.ownerSquadronId"/>
+		<bind name="watch" value="'atWork';		consumableState == 1"/>
+		<bind name="watch" value="'isReloading';	consumableState == 2"/>
+		<bind name="watch" value="'isEmpty';		consumableState == 3"/>
+		<bind name="watch" value="'consumePostfix'; consumableNum == 0 &amp;&amp; !atWork ? '_empty' : ''"/>
+		<bind name="watch" value="'itemImageUrl'; '../consumables/' + consumableName + consumePostfix + '.png'"/>
+		<bind name="action" value="'click'; _isAircarrier ? null : 'useConsumable'; {consumableIndex: consumableIndex, squadronId: ownerSquadronId}"/>
+		<bind name="battleHint" value="['CONSUME', consumableEntity.id]"/>
+		<bind name="primaryEntityDH" value="'cmdEntity'; CC.commandMappingCommandName; consumableCmd"/>
+		<bind name="watchDH" value="'commandId'; ['cmdEntity.commandMappingCommand.evChanged']; _isAircarrier ? null : cmdEntity.commandMappingCommand.id"/>
+		<block>
+			<bind name="instance" value="'SlotItem'; {	_itemImageUrl: itemImageUrl, _charges: consumableNum,
+										_cmd: commandId}"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<width value="60px"/>
+				<height value="60px"/>
+				<left value="6px"/>
+			</style>
+			<bind name="visible" value="isReloading || atWork"/>
+			<bind name="instance" value="'SlotReloadFXTimestamp'; {	_reloadEntityId: consumableEntity.id,
+													_atWork: atWork}"/>
+		</block>
+		<block className="HotkeyAnimation" type="native">
+			<bind name="visible" value="!!commandId"/>
+			<style>
+				<position value="absolute"/>
+				<bottom value="-23px"/>
+				<left value="36px"/>
+				<height value="21px"/>
+			</style>
+			<bind name="commandId" value="commandId"/>
+			<bind name="active" value="!(atWork || isReloading || consumableNum == 0)"/>
+		</block>
+		<block>
+			<bind name="visible" value="!commandId"/>
+			<style>
+				<position value="absolute"/>
+				<width value="46px"/>
+				<height value="16px"/>
+				<alpha value="0.8"/>
+				<left value="13px"/>
+				<bottom value="-10px"/>
+				<backgroundImage value="url:../aircraft/key_auto_label.png"/>
+			</style>
+		</block>
+	</block>
+	<block className="SquadronControlWeapon">
+		<bind name="primaryEntityDH" value="'currentSquadronEntity'; CC.ownSquadron; _activeSquadron"/>
+		<bind name="watchDH" value="'ammoType';			[]; currentSquadronEntity.plane.ammoType"/>
+		<bind name="watchDH" value="'numPlanes';			['currentSquadronEntity.health.evValueChanged']; currentSquadronEntity.health.value"/>
+		<bind name="watchDH" value="'attackState';		['currentSquadronEntity.ownSquadron.evAttackingStateChanged'];	currentSquadronEntity.ownSquadron.attackState"/>
+		<bind name="watchDH" value="'flightState';		['currentSquadronEntity.ownSquadron.evStateChanged']; currentSquadronEntity.ownSquadron.state"/>
+		<bind name="primaryEntityDH" value="'cmdEntity'; CC.commandMappingCommandName; 'CMD_WEAPON_0'"/>
+		<bind name="watchDH" value="'commandId'; ['cmdEntity.commandMappingCommand.evChanged']; cmdEntity.commandMappingCommand.id"/>
+		<bind name="watch" value="'weaponImageUrl';  '../aircraft/planetype_weapon_' + ammoType + '.png'"/>
+		<bind name="watch" value="'atWork';		attackState == 2"/>
+		<bind name="watch" value="'isLocked';	flightState == 4"/>
+		<bind name="firstEntityDH" value="'timerEntity'; CC.timer"/>
+		<bind name="watchDH" value="'timeRemain'; ['timerEntity.timer.evFrequent']; currentSquadronEntity.countDown	? currentSquadronEntity.countDown.endTime - timerEntity.timer.currentTime
+																									: 0"/>
+		<bind name="watch" value="'showReload'; (timeRemain &gt; 0)"/>
+		<block>
+			<bind name="instance" value="'SlotItem'; {	_isSelected: true,
+										_itemImageUrl: weaponImageUrl,
+										_isLocked: isLocked,
+										_cmd: commandId,
+										_hideCharges: true}"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<width value="60px"/>
+				<height value="60px"/>
+				<left value="6px"/>
+			</style>
+			<bind name="visible" value="showReload == true"/>
+			<bind name="instance" value="'SlotReloadFX'; {	_reloadEntityId: currentSquadronEntity.id,
+											_atWork: atWork}"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<bottom value="-23px"/>
+				<left value="36px"/>
+			</style>
+			<block className="HotkeyAnimation" type="native">
+				<style>
+					<height value="21px"/>
+				</style>
+				<bind name="commandId" value="commandId"/>
+				<bind name="active" value="!(isLocked || atWork || showReload || numPlanes == 0)"/>
+			</block>
+		</block>
+		<bind name="battleHint" value="['SQUADRON_WEAPON', _activeSquadron]"/>
+	</block>
+	<block className="CarrierControlItem">
+		<bind name="entityDH" value="'squadronEntity'; $dataRef.ref.id"/>
+		<bind name="watchDH" value="'isSelected';		['squadronEntity.selection.evChanged'];		squadronEntity.selection.value"/>
+		<bind name="watchDH" value="'ammoType';			[];											squadronEntity.plane.ammoType"/>
+		<bind name="watchDH" value="'squadronID';		[];											squadronEntity.ownSquadron.id"/>
+		<bind name="watchDH" value="'curPlanesInHangar';	['squadronEntity.hangar.evChanged'];		squadronEntity.hangar.planeCount"/>
+		<bind name="watchDH" value="'maxSquadPlanes';	[];											squadronEntity.health.max"/>
+		<bind name="watchDH" value="'curSquadPlanes';	['squadronEntity.health.evValueChanged']; squadronEntity.health.value"/>
+		<bind name="action" value="'click'; 'selectSquadron'; {id: squadronID}"/>
+		<bind name="battleHint" value="['SQUADRON', $index]"/>
+		<bind name="watch" value="'consumePostfix'; curSquadPlanes == 0 ? '_empty' : ''"/>
+		<bind name="watch" value="'itemImageUrl'; '../aircraft/planetype_' + ammoType + consumePostfix + '.png'"/>
+		<bind name="primaryEntityDH" value="'cmdEntity'; CC.commandMappingCommandName; 'CMD_SQUADRON_' + $index"/>
+		<bind name="watchDH" value="'commandId'; ['cmdEntity.commandMappingCommand.evChanged']; cmdEntity.commandMappingCommand.id"/>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<top value="-6px"/>
+				<left value="5px"/>
+			</style>
+			<bind name="instance" value="'PlaneReloadProgress'; {squadronEntityId: $dataRef.ref.id, _width: 62}"/>
+		</block>
+		<block>
+			<bind name="instance" value="'SlotItem'; {	_itemImageUrl: itemImageUrl,
+										_isSelected: isSelected,
+										_charges: curSquadPlanes,
+										_cmd: commandId,
+										_hideCharges: true}"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<bottom value="-23px"/>
+				<left value="36px"/>
+			</style>
+			<block className="HotkeyAnimation" type="native">
+				<style>
+					<height value="21px"/>
+				</style>
+				<bind name="commandId" value="commandId"/>
+				<bind name="active" value="!(isLocked || atWork || showReload || curSquadPlanes == 0)"/>
+			</block>
+		</block>
+		<block type="text">
+			<style>
+				<position value="absolute"/>
+				<textAlign value="right"/>
+				<top value="5px"/>
+				<right value="6px"/>
+				<hitTest value="false"/>
+			</style>
+			<styleClass value="$TextDefaultBoldNM"/>
+			<bind name="style" value="'alpha';	((curPlanesInHangar &gt;= maxSquadPlanes) || (curPlanesInHangar == 0)) ? 1 : 0.65"/>
+			<bind name="class" value="curPlanesInHangar != 0 ? '$FontColorWhite' : '$TextColorHUDCriticalPC'"/>
+			<bind name="text" value="curSquadPlanes"/>
+		</block>
+	</block>
+	<block className="PlaneReloadProgress">
+		<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
+		<bind name="watchDH" value="'altVision'; ['cameraEntity.camera.evAltVisionChanged']; cameraEntity.camera.altVision"/>
+		<bind name="entityDH" value="'squadronEntity'; squadronEntityId"/>
+		<bind name="watchDH" value="'curPlanesInHangar';     ['squadronEntity.hangar.evChanged'];		squadronEntity.hangar.planeCount"/>
+		<bind name="watchDH" value="'maxPlanesInHangar';     ['squadronEntity.hangar.evChanged'];		squadronEntity.hangar.maxPlaneCount"/>
+		<bind name="watchDH" value="'restoreEndTimestamp';   ['squadronEntity.hangar.evChanged'];        squadronEntity.hangar.restoreTime"/>
+		<bind name="watchDH" value="'restoreDuration';	[]; squadronEntity.hangar.timeToRestore"/>
+		<bind name="watchDH" value="'maxSquadPlanes';	['squadronEntity.health.evValueChanged'];	squadronEntity.health.max"/>
+		<bind name="watchDH" value="'curSquadPlanes';	['squadronEntity.health.evValueChanged'];	squadronEntity.health.value"/>
+		<block>
+			<bind name="visible" value="!(altVision &amp;&amp; restoreAnimation)"/>
+			<styleClass value="$MiddleAlignedAbsolutely"/>
+			<style>
+				<top value="-11px"/>
+			</style>
+			<block type="text">
+				<style>
+					<alpha value="0.8"/>
+					<marginRight value="3px"/>
+				</style>
+				<styleClass value="$TextDefault13NM"/>
+				<bind name="class" value="curPlanesInHangar &gt;= maxSquadPlanes	? '$TextDefaultBold13NM'
+																: '$TextDefault13NM'"/>
+				<bind name="text" value="curPlanesInHangar"/>
+			</block>
+			<block type="text">
+				<style>
+					<marginTop value="1px"/>
+					<alpha value="0.8"/>
+				</style>
+				<styleClass value="$TextDefault12NM"/>
+				<bind name="text" value="'/' + maxPlanesInHangar"/>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+		<block>
+			<bind name="visible" value="(altVision &amp;&amp; restoreAnimation)"/>
+			<styleClass value="$MiddleAlignedAbsolutely"/>
+			<style>
+				<top value="-11px"/>
+			</style>
+			<block type="text">
+				<style>
+					<alpha value="0.8"/>
+					<marginRight value="1px"/>
+				</style>
+				<styleClass value="$TextDefaultBold13NM"/>
+				<bind name="textCountdown" value="true; restoreEndTimestamp; 'mm:ss'"/>
+			</block>
+		</block>
+		<block className="hud_bar_bg_sliced" type="native">
+			<style>
+				<height value="4px"/>
+			</style>
+			<bind name="style" value="'width'; _width + 'px'"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<height value="2px"/>
+				<marginLeft value="1px"/>
+				<marginTop value="1px"/>
+			</style>
+			<bind name="style" value="'backgroundColor'; _color ? _color : '0xFF4CE8AA'"/>
+			<bind name="style" value="'width'; (_width - 2) + 'px'"/>
+			<bind name="timestampTween" value="true; restoreDuration; restoreEndTimestamp; {scaleX:0}; {scaleX:1}; 'onRestoreStart'; 'onRestoreEnd'"/>
+		</block>
+		<bind name="catch" value="'onRestoreStart'; {restoreAnimation: true}"/>
+		<bind name="catch" value="'onRestoreEnd'; {restoreAnimation: false}"/>
+	</block>
+	<block className="SquadronControlItemReturn">
+		<bind name="primaryEntityDH" value="'currentSquadronEntity'; CC.ownSquadron; _activeSquadron"/>
+		<bind name="watchDH" value="'attackState'; ['currentSquadronEntity.ownSquadron.evAttackingStateChanged']; currentSquadronEntity.ownSquadron.attackState"/>
+		<bind name="watchDH" value="'flightState'; ['currentSquadronEntity.ownSquadron.evStateChanged']; currentSquadronEntity.ownSquadron.state"/>
+		<bind name="primaryEntityDH" value="'cmdEntity'; CC.commandMappingCommandName; 'CMD_LAND'"/>
+		<bind name="watchDH" value="'commandId'; ['cmdEntity.commandMappingCommand.evChanged']; cmdEntity.commandMappingCommand.id"/>
+		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'isDead'; ['selfAvatarEntity.health.evKilled']; !selfAvatarEntity.health.isAlive"/>
+		<bind name="battleHint" value="['SIMPLE', 'IDS_BATTLE_HINT_SQUADRON_CONTROL_RETURN']"/>
+		<bind name="watch" value="'itemImageUrl'; '../aircraft/plane_return.png'"/>
+		<bind name="watch" value="'isLocked'; (attackState != 0) || isDead || (flightState == 4)"/>
+		<bind name="action" value="'click'; isLocked ? null : 'landPlane'"/>
+		<block>
+			<bind name="instance" value="'SlotItem'; {_itemImageUrl: itemImageUrl, _isLocked: isLocked, _cmd: commandId}"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<bottom value="-23px"/>
+				<left value="36px"/>
+			</style>
+			<block className="HotkeyAnimation" type="native">
+				<style>
+					<height value="21px"/>
+				</style>
+				<bind name="commandId" value="commandId"/>
+				<bind name="active" value="!(isLocked)"/>
+			</block>
+		</block>
+	</block>
+	<block className="SlotItem">
+		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
+		<bind name="watch" value="'isSelectable'; !!(_cmd)"/>
+		<style>
+			<width value="60px"/>
+			<height value="60px"/>
+			<marginRight value="6px"/>
+			<marginLeft value="6px"/>
+		</style>
+		<block>
+			<style>
+				<position value="absolute"/>
+			</style>
+			<bind name="style" value="'backgroundImage'; 'url:' + _itemImageUrl"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+			</style>
+			<bind name="visible" value="_isSelected == true"/>
+			<bind name="style" value="'backgroundImage'; 'url:../aircraft/isSelected.png'"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+			</style>
+			<bind name="transition" value="rollOver &amp;&amp; isSelectable; 0.15; {alpha: 0}; {alpha: 1}"/>
+			<bind name="watch" value="'itemImageUrl'; _isLocked	? 'url:../aircraft/isDisabled.png'
+												: 'url:../aircraft/isHovered.png'"/>
+			<bind name="style" value="'backgroundImage'; itemImageUrl"/>
+		</block>
+		<block>
+			<bind name="fade" value="_isLocked; 0.1; {alpha: 0}; {alpha:1}"/>
+			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<backgroundColor value="0x80000000"/>
+			</style>
+			<block>
+				<styleClass value="$FullsizeAbsolute"/>
+				<bind name="style" value="'backgroundImage'; 'url:../aircraft/icon_lock.png'"/>
+			</block>
+		</block>
+		<block type="text">
+			<bind name="visible" value="((_charges &gt; 0) &amp;&amp; (_hideCharges != true))"/>
+			<style>
+				<position value="absolute"/>
+				<textAlign value="right"/>
+				<top value="5px"/>
+				<right value="0px"/>
+			</style>
+			<styleClass value="$TextDefaultBoldNM"/>
+			<bind name="text" value="_charges"/>
+		</block>
+	</block>
+	<block className="AircraftCarrierPanelInstruction">
+		<bind name="entityDH" value="'selectedSquadronEntity'; _selectedSquadronEntityId"/>
+		<bind name="watchDH" value="'numPlanes';		['selectedSquadronEntity.health.evValueChanged']; selectedSquadronEntity.health.value"/>
+		<bind name="watchDH" value="'flightState'; ['selectedSquadronEntity.ownSquadron.evStateChanged']; selectedSquadronEntity.ownSquadron.state"/>
+		<bind name="watchDH" value="'ammoType';		[]; selectedSquadronEntity.plane.ammoType"/>
+		<bind name="watchDH" value="'commandId';		[]; selectedSquadronEntity.ownSquadron.commandId"/>
+		<bind name="primaryEntityDH" value="'cmdEntity'; CC.commandMappingCommand; commandId"/>
+		<bind name="watchDH" value="'commandName'; ['cmdEntity.commandMappingCommandName.evChanged']; cmdEntity.commandMappingCommandName.commandName"/>
+		<bind name="watch" value="'notEnough'; numPlanes == 0 ? '_NOT_ENOUGH' : ''"/>
+		<bind name="watch" value="'logMessage'; 	ammoType == 0				?  tr('IDS_AIRCRAFT_CARRIER_LOGMESSAGE_FIGHTER' + notEnough):
+								ammoType == 1 				?  tr('IDS_AIRCRAFT_CARRIER_LOGMESSAGE_BOMBER' + notEnough):
+								ammoType == 2			?  tr('IDS_AIRCRAFT_CARRIER_LOGMESSAGE_BOMBER_AP' + notEnough):
+								ammoType == 3				?  tr('IDS_AIRCRAFT_CARRIER_LOGMESSAGE_TORPEDO' + notEnough):
+								ammoType == 4	?  tr('IDS_AIRCRAFT_CARRIER_LOGMESSAGE_TORPEDO_DEEPWATER' + notEnough)
+																				:  ''"/>
+		<bind name="fade" value="flightState == 2; 0.15; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: 10}; 2"/>
+		<bind name="watch" value="'logMessageSubst'; subst(logMessage, [], {_cmd: '[' + commandName + ']'})"/>
+		<block type="text">
+			<style>
+				<maxWidth value="590"/>
+				<textAlign value="center"/>
+				<leading value="-6"/>
+			</style>
+			<styleClass value="$TextDefaultBold21NM"/>
+			<bind name="substitute" value="'KEYS'; 8; null; logMessageSubst; '_bg'"/>
+		</block>
+	</block>
+	<block className="SlotReloadFXTimestamp">
+		<bind name="entityDH" value="'reloadEntity'; _reloadEntityId"/>
+		<style>
+			<align value="center|middle"/>
+			<width value="60px"/>
+			<height value="60px"/>
+		</style>
+		<bind name="watchDH" value="'duration'; ['reloadEntity.countDown.evChanged']; reloadEntity.countDown.duration"/>
+		<bind name="watchDH" value="'endTime'; ['reloadEntity.countDown.evChanged']; reloadEntity.countDown.endTime"/>
+		<bind name="catch" value="'evStartReload'; {reloadState: 1}"/>
+		<bind name="catch" value="'evCheckStartUsing'; {reloadState: 2}"/>
+		<bind name="catch" value="'evReloaded'; {reloadState: 3}"/>
+		<bind name="catch" value="'evUsed'; {reloadState: 4}"/>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<alpha value="0.5"/>
+				<width value="60px"/>
+				<height value="60px"/>
+				<backgroundColor value="0xFF000000"/>
+			</style>
+			<bind name="fade" value="reloadEntity.countDown &amp;&amp; reloadState &amp;&amp; (reloadState &lt; 3); 0.1; {alpha: 0}; {alpha:0.5}"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<width value="60px"/>
+				<height value="60px"/>
+				<top value="100%"/>
+				<alpha value="0.25"/>
+				<backgroundColor value="0xFFFF9933"/>
+			</style>
+			<bind name="style" value="'backgroundColor'; _atWork ? '0xFF4CE8AA' : '0xFFFF9933'"/>
+			<bind name="timestampTween" value="reloadEntity.countDown &amp;&amp; _atWork &amp;&amp; reloadState!=4; duration; endTime; { scaleY: -1 }; { scaleY: 0 }; 'evCheckStartUsing'; 'evUsed'"/>
+			<bind name="timestampTween" value="reloadEntity.countDown &amp;&amp; !(_atWork); duration; endTime; { scaleY: 0}; { scaleY: -1 }; 'evStartReload'; 'evReloaded' "/>
+		</block>
+		<bind name="changeDispatch" value="reloadState == 2; 'evStartUsing'; {}; 2; true"/>
+		<bind name="dispatch" value="'evStartUsing'; (getTimeTo(endTime) + 0.5 &gt;= duration) ? 'evShowEffect' : null"/>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<top value="30px"/>
+				<left value="30px"/>
+				<alpha value="0"/>
+			</style>
+			<bind name="appear" value="'evShowEffect'; 0.5; 0; {alpha: 1, scaleX: 0.8, scaleY: 0.8}; {alpha: 0, scaleX: 1.5, scaleY: 1.5}; 1"/>
+			<block>
+				<style>
+					<position value="absolute"/>
+					<marginLeft value="-30px"/>
+					<marginTop value="-30px"/>
+					<width value="60px"/>
+					<height value="60px"/>
+					<backgroundColor value="0xFFF1F1F1"/>
+				</style>
+			</block>
+		</block>
+		<block type="text">
+			<styleClass value="$TextDefault21NM"/>
+			<bind name="class" value="_atWork ? '$TextColorHUDPositivePC' : '$TextColorHUDWarningPC'"/>
+			<bind name="fade" value="reloadState &amp;&amp; (reloadState &lt; 3); 0.1; {alpha: 0, top: 5}; {alpha: 1, top: 0}; {alpha: 0, top: 5}; 2"/>
+			<bind name="textCountdown" value="reloadEntity.countDown; endTime"/>
+		</block>
+		<block>
+			<bind name="fade" value="_atWork; 0.1; {alpha: 0}; {alpha:1}"/>
+			<style>
+				<position value="absolute"/>
+				<width value="60px"/>
+				<height value="2px"/>
+				<bottom value="0px"/>
+				<backgroundColor value="0xFF4CE8AA"/>
+			</style>
+		</block>
+	</block>
+	<block className="SlotReloadFX">
+		<bind name="entityDH" value="'reloadEntity'; _reloadEntityId"/>
+		<bind name="firstEntityDH" value="'timerEntity'; CC.timer"/>
+		<bind name="watchDH" value="'timeRemain'; ['timerEntity.timer.evFrequent'];	reloadEntity.countDown	? reloadEntity.countDown.endTime - timerEntity.timer.currentTime
+																							: 0"/>
+		<bind name="watchDH" value="'reloadPercent'; []; reloadEntity.countDown	? (_atWork	? timeRemain / reloadEntity.countDown.duration
+																			: 1 - timeRemain / reloadEntity.countDown.duration)
+																: (_atWork ? 1 : 0)"/>
+		<bind name="watch" value="'showReload'; (timeRemain &gt; 0)"/>
+		<style>
+			<align value="center|middle"/>
+			<width value="60px"/>
+			<height value="60px"/>
+		</style>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<alpha value="0.5"/>
+				<width value="60px"/>
+				<height value="60px"/>
+				<backgroundColor value="0xFF000000"/>
+			</style>
+			<bind name="fade" value="showReload; 0.1; {alpha: 0}; {alpha:0.5}"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<width value="60px"/>
+				<height value="60px"/>
+				<top value="100%"/>
+				<alpha value="0.25"/>
+				<backgroundColor value="0xFFFF9933"/>
+			</style>
+			<bind name="style" value="'backgroundColor'; _atWork ? '0xFF4CE8AA' : '0xFFFF9933'"/>
+			<bind name="scaleY" value="-(reloadPercent)"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<top value="30px"/>
+				<left value="30px"/>
+				<alpha value="0"/>
+			</style>
+			<bind name="changeDispatch" value="reloadPercent == 1; 'evReloaded'; {}; 2; true"/>
+			<bind name="appear" value="'evReloaded'; 0.5; 0; {alpha: 1, scaleX: 0.8, scaleY: 0.8}; {alpha: 0, scaleX: 1.5, scaleY: 1.5}; 1"/>
+			<block>
+				<style>
+					<position value="absolute"/>
+					<marginLeft value="-30px"/>
+					<marginTop value="-30px"/>
+					<width value="60px"/>
+					<height value="60px"/>
+					<backgroundColor value="0xFFF1F1F1"/>
+				</style>
+			</block>
+		</block>
+		<block type="text">
+			<styleClass value="$TextDefault21NM"/>
+			<bind name="class" value="_atWork ? '$TextColorHUDPositivePC' : '$TextColorHUDWarningPC'"/>
+			<bind name="fade" value="showReload; 0.1; {alpha: 0, top: 5}; {alpha: 1, top: 0}; {alpha: 0, top: 5}; 2"/>
+			<bind name="text" value="countdownFormat(timeRemain)"/>
+		</block>
+		<block>
+			<bind name="fade" value="_atWork; 0.1; {alpha: 0}; {alpha:1}"/>
+			<style>
+				<position value="absolute"/>
+				<width value="60px"/>
+				<height value="2px"/>
+				<bottom value="0px"/>
+				<backgroundColor value="0xFF4CE8AA"/>
+			</style>
+		</block>
+	</block>
+	<block className="AirCraftStatusLog">
+		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
+		<bind name="firstEntityDH" value="'battleIndicationEntity'; CC.battleIndication"/>
+		<bind name="watchDH" value="'shipSpotType';	['battleIndicationEntity.alertIndication.evSpottedChanged'];	battleIndicationEntity.alertIndication.spotType"/>
+		<bind name="watchDH" value="'isSpotted';		['battleIndicationEntity.alertIndication.evSpottedChanged'];	battleIndicationEntity.alertIndication.spotFlags"/>
+		<bind name="dispatch" value="'isSpotted' + varChanged; 'isSpottedChanged'; {}; 2; 0.05"/>
+		<bind name="var" value="{isThisSpottingNotShowed: true}"/>
+		<bind name="catch" value="'isSpottedChanged'; {isThisSpottingNotShowed: !isSpotted ? true : isThisSpottingNotShowed}"/>
+		<bind name="var" value="{showDuration: 4}"/>
+		<bind name="var" value="{messageCooldown: 0.8}"/>
+		<bind name="var" value="{isHit:	false}"/>
+		<bind name="handleEventDH" value="'selfAvatarEntity.vehicle.evHit'; 'evAircraftHit'"/>
+		<bind name="catch" value="'evAircraftHit';	{isHit: true}"/>
+		<bind name="dispatchDelayReset" value="'evAircraftHit'; 'evDelayedAircraftHit'; {}; 2; showDuration"/>
+		<bind name="catch" value="'evDelayedAircraftHit';	{isHit: false}"/>
+		<bind name="dispatch" value="'isSpottedChanged';		'checkNewMessage'; {}; 2"/>
+		<bind name="dispatch" value="'isHit' + varChanged;	'checkNewMessage'; {}; 2"/>
+		<bind name="dispatch" value="'curMessageShown'; 'checkNewMessage'; {}; 2; messageCooldown"/>
+		<bind name="var" value="{isMessageShown: true}"/>
+		<bind name="var" value="{newMessage: 'no_new_message'}"/>
+		<bind name="var" value="{curMessage: 'no_new_message'}"/>
+		<bind name="dispatch" value="'showNewMessage'; 'curMessageShown'; {}; 2; showDuration"/>
+		<bind name="catch" value="'curMessageShown'; {isMessageShown: true, newMessage: 'no_new_message'}"/>
+		<bind name="catch" value="'checkNewMessage'; {newMessage:	(isHit										? 'IDS_AIRCARRIER_LOG_FEEDBACK_HIT' :
+													isSpotted &gt; 0 &amp;&amp; isThisSpottingNotShowed	? 'IDS_AIRCARRIER_LOG_FEEDBACK_SPOTTED'
+																								: 'no_new_message')};
+									'newMessageChecked'"/>
+		<bind name="dispatch" value="'newMessageChecked'; ((newMessage != 'no_new_message' &amp;&amp; isMessageShown) ? 'showNewMessage' : null);	{}; 2; 0.05"/>
+		<bind name="catch" value="'showNewMessage'; {curMessage: newMessage, isMessageShown: false,								
+									isThisSpottingNotShowed: newMessage == 'IDS_AIRCARRIER_LOG_FEEDBACK_SPOTTED'		? false
+																											: isThisSpottingNotShowed}"/>
+		<bind name="soundOn" value="'showNewMessage'; 'popped'; 'aircarrier_log_feedback'"/>
+		<style>
+			<alpha value="0"/>
+			<marginLeft value="-50%"/>
+			<top value="200px"/>
+			<hitTest value="false"/>
+		</style>
+		<bind name="transition" value="isMessageShown; 0.15; {alpha:1}; {alpha:0}; {alpha:1}; 1; 0"/>
+		<block>
+			<bind name="appear" value="'showNewMessage'; 0.1; 0.08; {top: 10}; {top: 0}"/>
+			<block type="text">
+				<styleClass value="$TextDefaultBold21NM"/>
+				<bind name="style" value="'fontSize'; '20'"/>
+				<bind name="class" value="curMessage == 'IDS_AIRCARRIER_LOG_FEEDBACK_SPOTTED'	? '$IndicatorTextWarning'
+ 																		: '$IndicatorTextCritical'"/>
+				<bind name="text" value="toUpperCase(curMessage)"/>
+			</block>
+		</block>
+	</block>
+	<block className="AirplaneDeathWarning">
+		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'willBeDeadAt'; ['avatar.playerAvatar.evWillDieSoon']; avatar.playerAvatar.willBeDeadAt"/>
+		<bind name="watchDH" value="'timeToLive'; ['avatar.playerAvatar.evWillDieSoon']; avatar.playerAvatar.timeToLive"/>
+		<bind name="countdown" value="willBeDeadAt; 'timeLeft'; 'mm:ss'; ''; ''; 'rawTimeLeft'"/>
+		<block type="text">
+			<styleClass value="$TextDefaultBold17NM"/>
+			<style>
+				<textAlign value="center"/>
+				<width value="100%"/>
+				<marginBottom value="8px"/>
+				<leading value="-3"/>
+			</style>
+			<bind name="text" value="toUpperCase(tr('IDS_AIRPLANE_DEATH_WARNING_BACK_TO_BASE'))"/>
+		</block>
+		<block type="text">
+			<styleClass value="$TextDefaultNM"/>
+			<style>
+				<textAlign value="center"/>
+				<width value="100%"/>
+				<marginBottom value="8px"/>
+			</style>
+			<bind name="text" value="timeLeft"/>
+		</block>
+		<block>
+			<style>
+				<width value="180px"/>
+			</style>
+			<block className="indicator_progress_bar_lightgreen" type="native">
+				<style>
+					<width value="100%"/>
+				</style>
+				<bind name="value" value="0"/>
+				<bind name="maximum" value="1"/>
+			</block>
+			<block>
+				<bind name="watch" value="'progressBarWidth'; rawTimeLeft / 1000 / timeToLive * 100"/>
+				<style>
+					<height value="2px"/>
+					<marginTop value="1px"/>
+					<backgroundColor value="0xFF4CE8AA"/>
+					<position value="absolute"/>
+				</style>
+				<bind name="style" value="'width'; progressBarWidth + '%'"/>
+			</block>
 		</block>
 	</block>
 	<block className="PlayerContactItemWithRollover">
@@ -8776,67 +11160,6 @@
 			</style>
 		</block>
 	</block>
-	<block className="ParamsModifierItem">
-		<style>
-			<width value="100%"/>
-			<flow value="horizontal"/>
-			<marginBottom value="16px"/>
-		</style>
-		<bind name="style" value="'paddingTop'; (_shrinkHeight == true) ? '-8px' : '0'"/>
-		<block type="text">
-			<styleClass value="$TextDefaultNM"/>
-			<style>
-				<leading value="-3"/>
-				<alpha value="0.8"/>
-				<width value="100%"/>
-			</style>
-			<bind name="text" value="attributeIDS"/>
-		</block>
-		<block type="text">
-			<style>
-				<marginLeft value="12px"/>
-			</style>
-			<styleClass value="$TextDefaultNM"/>
-			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
-					 category == 'negative'	? '$FontColorCompareNegative'
-					 						: '$FontColorDefault'"/>
-			<bind name="text" value="measuredValue"/>
-		</block>
-		<block type="text">
-			<style>
-				<marginLeft value="4px"/>
-			</style>
-			<styleClass value="$TextDefaultNM"/>
-			<bind name="style" value="'alpha'; category == 'positive' ? 0.65 : 0.8"/>
-			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
-					 category == 'negative'	? '$FontColorCompareNegative'
-					 						: '$FontColorDefault'"/>
-			<bind name="text" value="measure"/>
-		</block>
-	</block>
-	<block className="ParamsModifierList">
-		<style>
-			<width value="100%"/>
-		</style>
-		<block>
-			<style>
-				<width value="100%"/>
-			</style>
-			<bind name="repeat" value="_attributesPositive; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
-		</block>
-		<block>
-			<style>
-				<width value="100%"/>
-			</style>
-			<bind name="repeat" value="_attributesNegative; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
-		</block>
-		<block>
-			<style>
-				<width value="100%"/>
-			</style>
-			<bind name="repeat" value="_attributesNeutral; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
-		</block>
-	</block>
 	<block className="PlayerDogTag">
 		<bind name="primaryEntityDH" value="'playerEntity'; CC.accountSimple; _playerDbId"/>
 		<bind name="watchDH" value="'dogTagList';['playerEntity.dogTagView.evComponentsChanged']; playerEntity.dogTagView.components"/>
@@ -8967,7 +11290,8 @@
 											achievementCount: 'DogTagProgressDefault',
 										 	damage: 'DogTagProgressDefault',
 										 	clearExp: 'DogTagProgressDefault',
-										 	winRate: 'DogTagProgressDefault'	}"/>
+										 	winRate: 'DogTagProgressDefault',
+										 	uniqueStars: 'DogTagProgressDefault'	}"/>
 	</block>
 	<block className="DogTagComponentTooltip">
 		<styleClass value="$DefaultTooltipBehaviour"/>
@@ -10088,6 +12412,7 @@
 		<bind name="feature" value="21; 'click'"/>
 		<bind name="soundSet" value="'lootbox_banner'"/>
 		<bind name="tooltip" value="'MouseInstructionTooltip'; { _mouseInstructions: [{_type: 'left', _instructionText: 'IDS_GO_TO_LOOTBOXES'}], _maxWidth: 250 }; 0"/>
+		<bind name="action" value="'click'; 'log'; { event: 'click:banner.Lootboxes' }"/>
 		<block>
 			<styleClass value="$Fullsize"/>
 			<block className="quest_thumb_title" type="native">
@@ -12240,24 +14565,30 @@
 	</block>
 	<block className="MainHUDPCContainer">
 		<styleClass value="$FullsizeAbsolute"/>
-		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
 		<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
-		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
 		<bind name="watchDH" value="'tacticalMap'; ['cameraEntity.camera.evTacticalStateChanged']; cameraEntity.camera.isTactical"/>
+		<bind name="firstEntityDH" value="'selfVehicleEntity'; CC.selfVehicle"/>
+		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
+		<bind name="watch" value="'isSubmarineHudVisible'; (avatar.avatar.ship.ref.ship.subtype == ShipTypes.Submarine) &amp;&amp; isAlive"/>
+		<bind name="watch" value="'isAircraftHudVisible'; (avatar.avatar.ship.ref.ship.subtype == ShipTypes.AircraftCarrier)"/>
 		<block>
 			<styleClass value="$Fullsize"/>
 			<bind name="mouseEnabled" value="false"/>
 			<bind name="mouseChildren" value="false"/>
 			<block>
 				<styleClass value="$FullsizeAbsolute"/>
-				<bind name="transition" value="!tacticalMap; 0.15; {alpha: 0, top: 50}; {alpha: 1, top: 0}; {alpha: 0, top: 50}; 2; tacticalMap ? 0 : 0.1"/>
+				<bind name="transition" value="!tacticalMap; 0.1; {alpha: 0}; {alpha: 1}; {alpha: 0}; 2"/>
 				<bind name="instance" value="'TeamStructure'; {}"/>
+				<bind name="instance" value="'CentralDangersIndicationContainer'; {}"/>
+				<bind name="instance" value="'BattleIndicatorsContainer'; {}"/>
 			</block>
 			<bind name="instance" value="'CombatLogPanel'; {}"/>
 			<bind name="instance" value="'DogTagInHUD'; {}"/>
 			<bind name="instance" value="'DogTagInHUDSpectator'; {}"/>
 			<bind name="instance" value="'FogHornIndicator'; {}"/>
-			<bind name="instance" value="'SubmarineHUD'; {}"/>
+			<bind name="instance" value="'SubmarineHUD'; isSubmarineHudVisible ? {} : null"/>
+			<bind name="instance" value="'AircraftHUD'; isAircraftHudVisible ? {} : null"/>
 		</block>
 		<bind name="instance" value="'ShipParamsTooltip'; {}"/>
 	</block>
