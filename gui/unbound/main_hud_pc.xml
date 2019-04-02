@@ -245,7 +245,7 @@
 		<bind name="watchDH" value="'isMuted'; 			['playerVoiceChatEntity.playerVoiceState.evIsMutedChanged']; playerVoiceChatEntity.playerVoiceState.isMuted"/>
 		<bind name="watchDH" value="'inviteCooldown'; 	['playerEntity.avatar.evInviteCooldownChanged']; playerEntity.avatar.inviteCooldown"/>
 		<bind name="watchDH" value="'division'; 			['playerEntity.avatar.evDivisionChanged']; playerEntity.avatar.division"/>
-		<bind name="watchDH" value="'isAlive'; 			['playerEntity.health.evKilled']; playerEntity.health.isAlive"/>
+		<bind name="watchDH" value="'isAlive'; 			['playerEntity.health.evIsAliveChanged']; playerEntity.health.isAlive"/>
 		<bind name="watchDH" value="'invitationsEnabled';['playerEntity.avatar.evInvitationsEnabledChanged']; playerEntity.avatar.invitationsEnabled"/>
 		<bind name="watchDH" value="'inviteCooldownEnabled'; 	['playerEntity.avatar.evInviteCooldownEnabledChanged']; playerEntity.avatar.inviteCooldownEnabled"/>
 		<bind name="watchDH" value="'isLeaver';			['playerEntity.avatar.evIsLeaverChanged']; playerEntity.avatar.isLeaver"/>
@@ -313,8 +313,7 @@
 			"/>
 			</style>
 			<styleClass value="$FontFamilyDefault"/>
-			<bind name="text" value="messageEntity.battleChatAndLogMessage.htmlText"/>
-			<bind name="substitute" value="''; 5; battleChatEntity.battleChatAndLog.substitutions"/>
+			<bind name="substitute" value="5; battleChatEntity.battleChatAndLog.substitutions; messageEntity.battleChatAndLogMessage.htmlText"/>
 		</block>
 	</block>
 	<block className="DogTagInHUD">
@@ -337,7 +336,7 @@
 		<bind name="collectionDH" value="CC.dogTagComponent; 'dogtagview'+'ROOT'"/>
 		<bind name="collectionDesign" value="'DES_'+'dogtagview'+'ROOT'; 'dogtagview'; {'filter':(dogTagList.indexOf(toLowerCase($entity.dogTagComponent.id)) &gt; -1), 'sort':['dogTagComponent.categoryId']}; []"/>
 		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
-		<bind name="watchDH" value="'playerIsAlive'; ['selfAvatarEntity.playerAvatar.evKilled']; selfAvatarEntity.playerAvatar.isAlive"/>
+		<bind name="watchDH" value="'playerIsAlive'; ['selfAvatarEntity.playerAvatar.evIsAliveChanged']; selfAvatarEntity.playerAvatar.isAlive"/>
 		<bind name="watchDH" value="'killerId'; ['selfAvatarEntity.health.evKillerIdChanged']; selfAvatarEntity.health.killerId"/>
 		<bind name="primaryEntityDH" value="'killerEntity'; CC.avatar; killerId"/>
 		<bind name="watchDH" value="'enemyName'; ['killerEntity.accountName.evChanged']; killerEntity.accountName.name"/>
@@ -347,10 +346,17 @@
 		</block>
 	</block>
 	<block className="BattleKillerDogTag">
-		<bind name="dispatch" value="'addedToStage'; 'hideDogTagEv'; {}; 2; 12"/>
-		<bind name="catch" value="'hideDogTagEv'; {dogTagVisible: false}"/>
+		<bind name="var" value="{dogTagVisible: true}"/>
 		<bind name="appear" value="'addedToStage'; 1; 0.5; {alpha: 0}; {alpha: 1}"/>
 		<bind name="appear" value="'hideDogTagEv'; 1; 0.5; {alpha: 1}; {alpha: 0}"/>
+		<bind name="appear" value="'hideDogTagEvFast'; 0.2; 0.5; {alpha: 1}; {alpha: 0}"/>
+		<bind name="dispatch" value="'addedToStage'; 'evDelayedHideDogTag'; {}; 0; 12"/>
+		<bind name="dispatch" value="'evDelayedHideDogTag'; dogTagVisible ? 'hideDogTagEv' : ''"/>
+		<bind name="catch" value="'hideDogTagEv'; {dogTagVisible: false}"/>
+		<bind name="catch" value="'hideDogTagEvFast'; {dogTagVisible: false}"/>
+		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'timeToRespawn'; ['selfAvatarEntity.playerAvatar.evTimeToRespawnChanged']; selfAvatarEntity.playerAvatar.timeToRespawn"/>
+		<bind name="dispatch" value="'timeToRespawn' + varChanged; timeToRespawn &amp;&amp; dogTagVisible ? 'hideDogTagEvFast' : ''"/>
 		<bind name="primaryEntityDH" value="'killerEntity'; CC.avatar; _killerId"/>
 		<bind name="watchDH" value="'playerDbId'; [] ; killerEntity.accountSimple.dbId "/>
 		<style>
@@ -429,7 +435,7 @@
 			<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
 			<bind name="watchDH" value="'selfAvatarId'; []; selfAvatarEntity.accountSimple.dbId"/>
 			<bind name="watchDH" value="'killerId'; ['selfAvatarEntity.health.evKillerIdChanged']; selfAvatarEntity.health.killerId"/>
-			<bind name="watchDH" value="'isDead'; ['selfAvatarEntity.playerAvatar.evKilled']; !selfAvatarEntity.playerAvatar.isAlive"/>
+			<bind name="watchDH" value="'isDead'; ['selfAvatarEntity.playerAvatar.evIsAliveChanged']; !selfAvatarEntity.playerAvatar.isAlive"/>
 			<bind name="watch" value="'isVisible'; isDead &amp;&amp; (killerId != 0)"/>
 			<bind name="fade" value="isVisible; 0.2; {alpha: 0}; {alpha: 1}; {alpha: 0}; 1; 0.2"/>
 			<bind name="repeat" value=" (currentDogTag.length &gt; 0) ? currentDogTag : selfAvatarEntity.dogTagView.components; 'DogTagViewImageItemAvatarSpectator';
@@ -712,8 +718,10 @@
 		<bind name="watch" value="'enableEars';	(earsConfigEnabled &amp;&amp;
 								(gameInfo.battleType != BattleTypes.INTRO_MISSION) &amp;&amp;
 								(gameInfo.battleType != BattleTypes.PVE_BATTLE))"/>
-		<bind name="watch" value="'isDynamicDivisionsEnabled'; (((gameInfo.battleType == BattleTypes.COOPERATIVE_BATTLE) || (gameInfo.battleType == BattleTypes.RANDOM_BATTLE)) &amp;&amp;
-												slimClientData.isFull)"/>
+		<bind name="watch" value="'isBattletypeWithDynamicDivisions';	(gameInfo.battleType == BattleTypes.COOPERATIVE_BATTLE)	||
+														(gameInfo.battleType == BattleTypes.RANDOM_BATTLE)		||
+														(gameInfo.battleType == BattleTypes.EVENT_BATTLE)"/>
+		<bind name="watch" value="'isDynamicDivisionsEnabled'; isBattletypeWithDynamicDivisions &amp;&amp; slimClientData.isFull"/>
 		<block>
 			<styleClass value="$Fullsize"/>
 			<bind name="instance" value="'EarsContent'; enableEars ? {_selfPlayer: selfPlayer, _isDynamicDivisionsEnabled: isDynamicDivisionsEnabled} : null"/>
@@ -754,7 +762,7 @@
 		<bind name="firstEntityDH" value="'mouseEntity'; CC.mouse"/>
 		<bind name="watchDH" value="'playerId'; 			[]; playerEntity.avatar.id"/>
 		<bind name="watchDH" value="'relation'; 			['playerEntity.relation.evChanged']; playerEntity.relation.value"/>
-		<bind name="watchDH" value="'isAlive'; 			['playerEntity.health.evKilled']; playerEntity.health.isAlive"/>
+		<bind name="watchDH" value="'isAlive'; 			['playerEntity.health.evIsAliveChanged']; playerEntity.health.isAlive"/>
 		<bind name="watchDH" value="'ttkStatus'; 		['playerEntity.avatar.evTTKStatusChanged']; playerEntity.avatar.ttkStatus"/>
 		<bind name="watchDH" value="'tkStatus'; 			['playerEntity.avatar.evTeamkillStatusChanged']; playerEntity.avatar.tkStatus"/>
 		<bind name="watchDH" value="'frags'; 			['playerEntity.avatar.evFragsChanged']; playerEntity.avatar.frags"/>
@@ -975,7 +983,7 @@
 		<bind name="firstEntityDH" value="'mouseEntity'; CC.mouse"/>
 		<bind name="watchDH" value="'playerId'; 			[]; playerEntity.avatar.id"/>
 		<bind name="watchDH" value="'relation'; 			['playerEntity.relation.evChanged']; playerEntity.relation.value"/>
-		<bind name="watchDH" value="'isAlive'; 			['playerEntity.health.evKilled']; playerEntity.health.isAlive"/>
+		<bind name="watchDH" value="'isAlive'; 			['playerEntity.health.evIsAliveChanged']; playerEntity.health.isAlive"/>
 		<bind name="watchDH" value="'ttkStatus'; 		['playerEntity.avatar.evTTKStatusChanged']; playerEntity.avatar.ttkStatus"/>
 		<bind name="watchDH" value="'frags'; 			['playerEntity.avatar.evFragsChanged']; playerEntity.avatar.frags"/>
 		<bind name="watchDH" value="'division'; 			['playerEntity.avatar.evDivisionChanged']; playerEntity.avatar.division"/>
@@ -1152,7 +1160,7 @@
 		<bind name="watch" value="'isCommandDown'; $args[0]"/>
 		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
 		<bind name="watch" value="'selfAvatarEntityId'; selfAvatarEntity.id"/>
-		<bind name="watchDH" value="'playerIsAlive'; ['selfAvatarEntity.health.evKilled']; selfAvatarEntity.health.isAlive"/>
+		<bind name="watchDH" value="'playerIsAlive'; ['selfAvatarEntity.health.evIsAliveChanged']; selfAvatarEntity.health.isAlive"/>
 		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
 		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
 		<block className="ShipParamsArray">
@@ -2009,6 +2017,8 @@
 			<align value="center|middle"/>
 			<hitTest value="false"/>
 		</style>
+		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
 		<bind name="watch" value="'farDist'; _farDist ? _farDist : 260"/>
 		<bind name="watch" value="'nearDist'; _nearDist ? _nearDist : 230"/>
 		<bind name="watch" value="'innerDist'; _innerDist ? _innerDist : 190"/>
@@ -2016,7 +2026,8 @@
 		<bind name="watchDH" value="'airDefenseFocusActive'; ['airDefenseFocusEntity.airDefenseFocus.evActiveChanged']; airDefenseFocusEntity.airDefenseFocus.active"/>
 		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
 		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
-		<bind name="watch" value="'dangersCollectionPath'; activeSquadron == -1 ? 'shipDangers' : 'aircraftDangers'"/>
+		<bind name="watch" value="'isOnShip'; activeSquadron == -1"/>
+		<bind name="watch" value="'dangersCollectionPath'; isOnShip ? 'shipDangers' : 'aircraftDangers'"/>
 		<block>
 			<style>
 				<width value="0"/>
@@ -2031,12 +2042,12 @@
 				<bind name="instance" value="'NearEnemyItemContainer'; cameraMode != 5 &amp;&amp; showNearestEnemy ? {_farDist: farDist, _nearDist: nearDist, _innerDist: innerDist} : null"/>
 			</block>
 			<block>
-				<bind name="visible" value="activeSquadron == -1"/>
+				<bind name="visible" value="isOnShip"/>
 				<styleClass value="$FullsizeAbsolute"/>
 				<bind name="instance" value="'RecievedDamageContainer'; {_farDist: farDist, _nearDist: nearDist, _innerDist: innerDist}"/>
 			</block>
 			<block>
-				<bind name="visible" value="!(airDefenseFocusActive)"/>
+				<bind name="visible" value="((isAlive &amp;&amp; isOnShip) || !(isOnShip)) &amp;&amp; !(airDefenseFocusActive)"/>
 				<styleClass value="$FullsizeAbsolute"/>
 				<bind name="instance" value="'DangerItemContainer'; {_dangersPath: dangersCollectionPath, _farDist: farDist, _nearDist: nearDist, _innerDist: innerDist}"/>
 			</block>
@@ -2045,7 +2056,7 @@
 	<block className="NearEnemyItemContainer">
 		<styleClass value="$FullsizeAbsolute"/>
 		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
-		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
 		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
 		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
 		<bind name="watch" value="'isOnPlane'; activeSquadron != -1"/>
@@ -2198,7 +2209,7 @@
 		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
 		<bind name="watch" value="'isOnPlane'; activeSquadron != -1"/>
 		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
-		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
 		<bind name="visible" value="isAlive || isOnPlane"/>
 		<styleClass value="$FullsizeAbsolute"/>
 		<style>
@@ -2424,8 +2435,8 @@
 	</block>
 	<block className="IconVisibilityRadar">
 		<style>
-			<width value="28px"/>
-			<height value="28px"/>
+			<width value="6px"/>
+			<height value="24px"/>
 			<backgroundImage value="symbol:icon_visibility_ship"/>
 		</style>
 	</block>
@@ -2659,7 +2670,7 @@
 		<bind name="watchDH" value="'flightState';	['currentSquadronEntity.ownSquadron.evStateChanged']; currentSquadronEntity.ownSquadron.state"/>
 		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
 		<bind name="watchDH" value="'timeToLive'; ['avatar.playerAvatar.evWillDieSoon']; avatar.playerAvatar.timeToLive"/>
-		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
 		<styleClass value="$FullsizeAbsolute"/>
 		<bind name="watch" value="'isOnSquadron'; activeSquadron != -1 &amp;&amp; squadronCameraMode == 'default'"/>
 		<bind name="watch" value="'isOnNoAvatarCamera'; squadronCameraMode != 'default'"/>
@@ -2698,7 +2709,7 @@
 					<leading value="-6"/>
 				</style>
 				<styleClass value="$TextDefaultBold21NM"/>
-				<bind name="substitute" value="'KEYS'; 8; null; tr('IDS_CLICK_TO_RETURN_TO_AIRCARRIER_INFO'); '_bg'"/>
+				<bind name="substitute" value="8; null; tr('IDS_CLICK_TO_RETURN_TO_AIRCARRIER_INFO'); '_bg'"/>
 			</block>
 		</block>
 		<block>
@@ -2717,6 +2728,124 @@
 			</style>
 			<bind name="fade" value="(isOnSquadron || isOnNoAvatarCamera) &amp;&amp; isAlive; 0.1; {alpha: 0, top: 5}; {alpha:1, top: 0}; {alpha: 0, top: 5}; 0; isOnSquadron ? 0.18 : 0.08"/>
 			<bind name="instance" value="'AirCraftStatusLog'; {}"/>
+		</block>
+	</block>
+	<block className="CapturingIndicator">
+		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
+		<bind name="collectionDH" value="CC.interactiveZone; 'insideDropZones'; 'playerInside.dropZones'"/>
+		<bind name="entityDH" value="'insideZone'; insideDropZones[0].id"/>
+		<block>
+			<bind name="name" value="'size'"/>
+			<bind name="instance" value="'DropZonesIndicators'; isAlive &amp;&amp; !!(insideZone) ? {_zoneId: insideZone.id} : null"/>
+		</block>
+	</block>
+	<block className="DropZonesIndicators">
+		<bind name="entityDH" value="'insideZone'; _zoneId"/>
+		<bind name="watchDH" value="'zoneIsActive'; ['insideZone.drop.evIsActiveChanged']; insideZone.drop.isActive"/>
+		<bind name="watchDH" value="'zoneIsContested'; ['insideZone.drop.evIsContestedChanged']; insideZone.drop.isContested"/>
+		<bind name="instance" value="'DropItemZoneLockIndicator'; zoneIsContested ? {} : null"/>
+		<bind name="instance" value="'DropItemZoneInactiveIndicator'; !(zoneIsActive) ? {_zoneId: insideZone.id} : null"/>
+	</block>
+	<block className="DropItemZoneLockIndicator">
+		<style>
+			<align value="center"/>
+			<flow value="horizontal"/>
+		</style>
+		<block>
+			<style>
+				<width value="27px"/>
+				<height value="27px"/>
+				<marginTop value="-7"/>
+				<marginRight value="8px"/>
+				<backgroundImage value="symbol:icon_personal_lock_enemy_ship"/>
+			</style>
+		</block>
+		<block type="text">
+			<styleClass value="$TextDefaultBold17NM"/>
+			<bind name="text" value="'IDS_SHIP_MODIFIER_CAPTURING_INDICATOR'"/>
+		</block>
+	</block>
+	<block className="DropItemZoneInactiveIndicator">
+		<bind name="entityDH" value="'insideZone'; _zoneId"/>
+		<bind name="watchDH" value="'timeoutTime'; ['insideZone.timeout.evTimeChanged']; insideZone.timeout.time"/>
+		<bind name="watchDH" value="'timeoutIsRunning'; ['insideZone.timeout.evRunningChanged']; insideZone.timeout.running"/>
+		<bind name="countdown" value="timeoutTime; 'countdownText'; 'mm:ss'"/>
+		<bind name="visible" value="timeoutIsRunning"/>
+		<style>
+			<align value="center"/>
+		</style>
+		<block type="text">
+			<styleClass value="$TextDefaultBold17NM"/>
+			<bind name="text" value="'IDS_SHIP_MODIFIER_CAPTURING_INACTIVE'"/>
+		</block>
+		<block type="text">
+			<style>
+				<marginTop value="8px"/>
+			</style>
+			<styleClass value="$TextDefaultNM"/>
+			<bind name="text" value="countdownText"/>
+		</block>
+	</block>
+	<block className="RespawnTimerWrapper">
+		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
+		<bind name="watchDH" value="'timeToRespawn'; ['avatar.playerAvatar.evTimeToRespawnChanged']; avatar.playerAvatar.timeToRespawn"/>
+		<styleClass value="$FullsizeAbsolute"/>
+		<block>
+			<styleClass value="$MiddleVHAbsolutely"/>
+			<bind name="instance" value="'RespawnTimer'; !(isAlive) &amp;&amp; !!(timeToRespawn) ? {} : null"/>
+		</block>
+	</block>
+	<block className="RespawnTimer">
+		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
+		<bind name="watchDH" value="'willBeAliveAt'; ['avatar.playerAvatar.evTimeToRespawnChanged']; avatar.playerAvatar.willBeAliveAt"/>
+		<bind name="watchDH" value="'timeToRespawn'; ['avatar.playerAvatar.evTimeToRespawnChanged']; avatar.playerAvatar.timeToRespawn"/>
+		<bind name="countdown" value="willBeAliveAt; 'timeLeft'; 'mm:ss'; ''; ''; 'rawTimeLeft'"/>
+		<bind name="dispatch" value="'addedToStage'; 'evDelayedShowCountdown'; {showCountdown: true}; 0; 1"/>
+		<bind name="catch" value="'evDelayedShowCountdown'"/>
+		<bind name="fade" value="showCountdown &amp;&amp; rawTimeLeft &amp;&amp; rawTimeLeft &gt; 0; 0.3; {alpha: 0}; {alpha: 1}"/>
+		<block type="text">
+			<styleClass value="$TextDefaultBold17NM"/>
+			<style>
+				<textAlign value="center"/>
+				<width value="100%"/>
+				<marginBottom value="8px"/>
+				<leading value="-3"/>
+			</style>
+			<bind name="text" value="toUpperCase(tr('IDS_TIME_TILL_RESPAWN'))"/>
+		</block>
+		<block type="text">
+			<styleClass value="$TextDefaultNM"/>
+			<style>
+				<textAlign value="center"/>
+				<width value="100%"/>
+				<marginBottom value="8px"/>
+			</style>
+			<bind name="text" value="timeLeft"/>
+		</block>
+		<block>
+			<style>
+				<width value="180px"/>
+			</style>
+			<block className="indicator_progress_bar_lightgreen" type="native">
+				<style>
+					<width value="100%"/>
+				</style>
+				<bind name="value" value="0"/>
+				<bind name="maximum" value="1"/>
+			</block>
+			<block>
+				<bind name="watch" value="'progressBarWidth'; math.round(100 - (rawTimeLeft / 1000 / timeToRespawn * 100))"/>
+				<bind name="watch" value="'progressBarWidthClamped'; progressBarWidth &gt; 100 ? 100 : progressBarWidth"/>
+				<style>
+					<height value="2px"/>
+					<marginTop value="1px"/>
+					<backgroundColor value="0xFF4CE8AA"/>
+					<position value="absolute"/>
+				</style>
+				<bind name="style" value="'width'; progressBarWidthClamped + '%'"/>
+			</block>
 		</block>
 	</block>
 	<css name="$TextNano">
@@ -3343,6 +3472,12 @@
 			<alpha value="0.5"/>
 		</style>
 	</block>
+	<css name="$ContentIndents">
+		<marginBottom value="12"/>
+		<marginTop value="12"/>
+		<marginLeft value="12"/>
+		<marginRight value="12"/>
+	</css>
 	<css name="$DefaultTooltipBehaviour">
 		<userData value="{
 		appearDelay: 0.05,
@@ -3987,7 +4122,7 @@
 	<block className="AccountCompletionRewardTooltip">
 		<styleClass value="$DefaultTooltipBehaviour"/>
 		<style>
-			<width value="340px"/>
+			<width value="336px"/>
 		</style>
 		<block className="DeclareBlurLayer">
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
@@ -4028,26 +4163,16 @@
 			<styleClass value="$FullsizeAbsolute"/>
 		</block>
 		<block>
-			<styleClass value="$InfoBlockIndentNoWidth"/>
 			<style>
 				<width value="100%"/>
+				<margin value="16px|16px|12px|12px"/>
 			</style>
 			<block type="text">
-				<styleClass value="$TextHeaderBold"/>
 				<style>
-					<leading value="-3"/>
 					<width value="100%"/>
 				</style>
+				<styleClass value="$TextDefault17NM"/>
 				<bind name="text" value="tooltipText"/>
-			</block>
-			<block type="text">
-				<styleClass value="$TextHeaderBigDefault"/>
-				<style>
-					<marginTop value="3px"/>
-					<leading value="-3"/>
-					<width value="100%"/>
-				</style>
-				<bind name="text" value="tooltipSubText"/>
 			</block>
 		</block>
 		<block className="HorizontalDivider">
@@ -4061,18 +4186,44 @@
 			</block>
 		</block>
 		<block>
-			<styleClass value="$InfoBlockIndentNoWidth"/>
 			<style>
 				<width value="100%"/>
+				<margin value="16px|16px|12px|12px"/>
 			</style>
 			<block type="text">
-				<styleClass value="$TextHeaderBigDefault"/>
+				<styleClass value="$TextDefault17NM"/>
 				<style>
 					<leading value="-3"/>
 					<width value="100%"/>
+					<marginBottom value="8px"/>
 				</style>
-				<bind name="text" value="'Награда за регистрацию аккаунта:'"/>
+				<bind name="text" value="'IDS_ACCOUNT_COMPLETION_TOOLTIP_SUBHEADER'"/>
 			</block>
+			<bind name="firstEntityDH" value="'completionRewardsEntity'; CC.completionRewards"/>
+			<bind name="watchDH" value="'rewards';[]; completionRewardsEntity.completionRewards.rewards"/>
+			<block>
+				<style>
+					<width value="100%"/>
+				</style>
+				<bind name="repeat" value="rewards; 'RewardContainerTooltipItemAdapter'"/>
+			</block>
+		</block>
+		<block className="HorizontalDivider">
+			<styleClass value="$PxHorizontalCorrection"/>
+			<style>
+				<width value="100%"/>
+				<height value="3px"/>
+			</style>
+			<block className="divider_h" type="native">
+				<styleClass value="$Fullsize"/>
+			</block>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+				<margin value="16px|16px|8px|8px"/>
+			</style>
+			<bind name="instance" value="'MouseInstruction'; { _type: 'left', _instructionText: 'IDS_FINISH_ACCOUNT_COMPLETION_TOOLTIP', _maxWidth: 300 }"/>
 		</block>
 	</block>
 	<block className="VoiceChatOutgoingIcon">
@@ -4382,6 +4533,16 @@
 		<selectable value="false"/>
 		<textColor value="0xFFFFFF"/>
 	</css>
+	<css name="$TextDefault27NM">
+		<fontFamily value="$WWSDefaultFont"/>
+		<mouseEnabled value="false"/>
+		<mouseChildren value="false"/>
+		<fontSize value="27"/>
+		<marginText value="-3px|-3px|-10px|-8px"/>
+		<dropShadowFilter value="1 90 0x08222a 0.5 2.0 2.0 1.0 2"/>
+		<selectable value="false"/>
+		<textColor value="0xFFFFFF"/>
+	</css>
 	<css name="$TextDefaultBold30NM">
 		<fontFamily value="$WWSDefaultFontBold"/>
 		<mouseEnabled value="false"/>
@@ -4464,8 +4625,10 @@
 		<bind name="timeFormat" value="(_player.inviteCooldown - serverTime); 'mm:ss'; 'cooldownTimeText'"/>
 		<bind name="watch" value="'isEnemyPlayer'; (_player.relation == 2)"/>
 		<bind name="watch" value="'isFreePlacesInDivision'; ((selfPlayerDivisionData[0].staff.length + selfPlayerDivisionData[0].inPortParticipantsCount) &lt; 3)"/>
-		<bind name="watch" value="'isDynamicDivisionsEnabled'; (((_battleType == BattleTypes.COOPERATIVE_BATTLE) || (_battleType == BattleTypes.RANDOM_BATTLE)) &amp;&amp;
-												slimClientData.isFull)"/>
+		<bind name="watch" value="'isBattletypeWithDynamicDivisions';	(gameInfo.battleType == BattleTypes.COOPERATIVE_BATTLE)	||
+														(gameInfo.battleType == BattleTypes.RANDOM_BATTLE)		||
+														(gameInfo.battleType == BattleTypes.EVENT_BATTLE)"/>
+		<bind name="watch" value="'isDynamicDivisionsEnabled'; isBattletypeWithDynamicDivisions &amp;&amp; slimClientData.isFull"/>
 		<bind name="watch" value="'invitationDisableReason'; (_player.isLeaver)						? 'IDS_INVITATION_DISABLE_REASON_PLAYER_IS_OUT_OF_BATTLE':
 											(_player.division != 0)					? 'IDS_INVITATION_DISABLE_REASON_ALREADY_IN_DIVISION' :
 											!(_selfPlayer.isAlive)					? 'IDS_DIVISION_MANAGEMENT_LOCKED_FOR_DESTROYED' :
@@ -5183,6 +5346,20 @@
 			<bind name="text" value="_text"/>
 		</block>
 	</block>
+	<block className="InstructionParagraphNM">
+		<style>
+			<width value="100%"/>
+		</style>
+		<block type="text">
+			<bind name="class" value="_class ? _class : '$TextDefaultNM'"/>
+			<style>
+				<width value="100%"/>
+				<alpha value="0.7"/>
+			</style>
+			<bind name="style" value="'maxWidth'; _maxWidth ? _maxWidth : 220"/>
+			<bind name="text" value="_text"/>
+		</block>
+	</block>
 	<block className="InstructionMultiParagraph">
 		<style>
 			<flow value="horizontal"/>
@@ -5755,25 +5932,23 @@
 			<bind name="style" value="'leading'; _leading ? _leading : 0"/>
 			<bind name="style" value="'textAlign'; _textAlign ? _textAlign : 'left'"/>
 			<bind name="style" value="'maxWidth'; _maxWidth ? _maxWidth : 300"/>
-			<bind name="text" value="(_toUpperCase ? toUpperCase(tr(_paragraphText)) : _paragraphText)"/>
-			<bind name="substitute" value="	_substitute.mapName ? _substitute.mapName : '';
-							_substitute.imageOffset ? _substitute.imageOffset : 0;
-							_substitute.map ? _substitute.map : {}"/>
+			<bind name="substitute" value="_substitute.imageOffset ? _substitute.imageOffset : 0;
+						  _substitute.map ? _substitute.map : {};
+						  (_toUpperCase ? toUpperCase(tr(_paragraphText)) : _paragraphText)"/>
 		</block>
 	</block>
 	<block className="RepeatParagraphItemNM">
 		<bind name="style" value="'marginBottom'; _marginBottom ? _marginBottom : '16px'"/>
 		<bind name="class" value="_middleAligned ? '$MiddleAligned' : ''"/>
+		<bind name="watch" value="'textItem'; _isTextInValue ? $value : _paragraphText"/>
 		<block type="text">
 			<styleClass value="$TextDefaultNM"/>
 			<bind name="class" value="_class"/>
 			<bind name="style" value="'leading'; _leading ? _leading : 0"/>
 			<bind name="style" value="'textAlign'; _textAlign ? _textAlign : 'left'"/>
 			<bind name="style" value="'maxWidth'; _maxWidth ? _maxWidth : 300"/>
-			<bind name="text" value="(_toUpperCase ? toUpperCase(tr(_paragraphText)) : _paragraphText)"/>
-			<bind name="substitute" value="	_substitute.mapName ? _substitute.mapName : '';
-							_substitute.imageOffset ? _substitute.imageOffset : 0;
-							_substitute.map ? _substitute.map : {}"/>
+			<bind name="substitute" value="_substitute.imageOffset ? _substitute.imageOffset : 0;
+							_substitute.map ? _substitute.map : {}; (_toUpperCase ? toUpperCase(tr(textItem)) : textItem)"/>
 		</block>
 	</block>
 	<block className="GUIContrast">
@@ -6129,15 +6304,19 @@
 		<bind name="watch" value="'playerName'; 	isColoredClanTag 	?	_playerName :
 								haveClanTag			?	('[' + _clanTag + ']' + _playerName)
 													: _playerName"/>
-		<bind name="watch" value="'fontColor'; 	_isSelf 	? 	_ttkStatus 			? '$FontColorTTK' :
-												_ctkStatus			? '$FontColorCompareNegative' :
-												_tkStatus 			? '$FontColorTeamkiller'
-																	: '$FontColorGolden':
-								!_isDead 	?  	_ttkStatus 			? '$FontColorTTK' :
-												_isInSameDivision 	? '$FontColorGolden' :
-												_tkStatus 			? '$FontColorTeamkiller'												
-																	: '$FontColorWhite'
-											: '$FontColorAlmostBlack'"/>
+		<bind name="watch" value="'fontColor'; 	_isAccountButton	?	_ctkStatus			? '$FontColorCompareNegative' :
+														_tkStatus 			? '$FontColorTeamkiller' :
+														_isPremiumAccount	? '$FontColorGold'
+																			: '$FontColorBlueish':
+								_isSelf 			? 	_ttkStatus 			? '$FontColorTTK' :
+														_ctkStatus			? '$FontColorCompareNegative' :
+														_tkStatus 			? '$FontColorTeamkiller'
+																			: '$FontColorGolden':
+								!_isDead 			?  	_ttkStatus 			? '$FontColorTTK' :
+														_isInSameDivision 	? '$FontColorGolden' :
+														_tkStatus 			? '$FontColorTeamkiller'												
+																			: '$FontColorWhite'
+													: '$FontColorAlmostBlack'"/>
 		<style>
 			<hitTest value="false"/>
 			<flow value="horizontal"/>
@@ -6418,7 +6597,7 @@
 			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
 					 category == 'negative'	? '$FontColorCompareNegative'
 					 						: '$FontColorDefault'"/>
-			<bind name="substitute" value="''; 5; {
+			<bind name="substitute" value="5; {
 								 '[battleship]' : 'battleship_small_own',
 								  '[aircarrier]' : 'carrier_small_own',
 								   '[cruiser]' : 'cruiser_small_own',
@@ -7238,9 +7417,11 @@
 		<bind name="watchDH" value="'maxHP_points';		['ownSquadronesEntity.squadron.evMaxHPChanged'];		ownSquadronesEntity.squadron.maxHP"/>
 		<bind name="watchDH" value="'planeNameIDS';		[]; ownSquadronesEntity.plane.planeNameIDS"/>
 		<bind name="watchDH" value="'levelRome';			[]; ownSquadronesEntity.plane.levelRome"/>
+		<bind name="watchDH" value="'attackerSize';		[]; ownSquadronesEntity.ownSquadron.attackerSize"/>
 		<bind name="var" value="{ planeIconNames: ['plane_scout_own', 'plane_bomber_own', 'plane_torpedo_own', 'plane_fighter_own_bg'] }"/>
 		<bind name="var" value="{ planeIconTopOffset: ['-6px', '-5px', '-6px', '-4px'] }"/>
-		<bind name="watch" value="'healthPointWidth'; math.round(314/maxPlanes)}"/>
+		<bind name="watch" value="'healthPointWidth'; math.round(314/maxPlanes)"/>
+		<bind name="watch" value="'notchesNum'; math.round(maxPlanes/attackerSize)"/>
 		<bind name="fade" value="currentHP_points &gt; 0; 0.1; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: -10}; 1; 0.05"/>
 		<styleClass value="$MiddleAlignedAbsolutely"/>
 		<style>
@@ -7255,6 +7436,12 @@
 			<style>
 				<flow value="horizontal"/>
 			</style>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+			</style>
+			<bind name="repeat" value="notchesNum; 'AirplanesHealthBarNotch'; {_healthPointWidth: healthPointWidth, _attackerSize: attackerSize}"/>
 		</block>
 		<block>
 			<style>
@@ -7326,6 +7513,18 @@
 		<block className="hud_bar_bg_sliced" type="native">
 			<bind name="style" value="'width'; _healthPointWidth + 'px'"/>
 		</block>
+	</block>
+	<block className="AirplanesHealthBarNotch">
+		<bind name="visible" value="$index != 0"/>
+		<style>
+			<position value="absolute"/>
+			<backgroundColor value="0xffffffff"/>
+			<width value="4px"/>
+			<height value="3px"/>
+			<top value="-2px"/>
+		</style>
+		<bind name="style" value="'left'; (_healthPointWidth * _attackerSize) * $index - 2 + 'px'"/>
+		<bind name="style" value="'backgroundImage'; 'url:../aircraft/notch.png'"/>
 	</block>
 	<block className="HUDHealthLabel">
 		<style>
@@ -7407,7 +7606,7 @@
 		<bind name="collectionDH" value="CC.ownSquadron; 'ownSquadrons'"/>
 		<bind name="collectionDesign" value="DES_ownSquadrons; 'selectedOwnSquadron'; {'filter': $entity.selection.value == true}; ['selection.evChanged']"/>
 		<style>
-			<top value="-74px"/>
+			<top value="-77px"/>
 		</style>
 		<block>
 			<style>
@@ -7460,19 +7659,19 @@
 		<block>
 			<style>
 				<position value="absolute"/>
-				<top value="-7px"/>
-			</style>
-			<bind name="instance" value="'PlaneReloadProgress'; {squadronEntityId: $dataRef.ref.id, _width: 32}"/>
-		</block>
-		<block>
-			<style>
-				<position value="absolute"/>
 				<width value="30px"/>
 				<height value="30px"/>
 				<left value="1px"/>
 			</style>
 			<bind name="style" value="'alpha'; (curPlanesInHangar &gt; 0 ? 1 : 0.5)"/>
 			<bind name="style" value="'backgroundImage'; planeIconPath"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<top value="-6px"/>
+			</style>
+			<bind name="instance" value="'PlaneReloadProgress'; {squadronEntityId: $dataRef.ref.id, _width: 30}"/>
 		</block>
 	</block>
 	<block className="PlanePullItemHint">
@@ -7616,7 +7815,7 @@
 																										{alpha: 0, top: 5};
 				_activeSquadron != -1 ? 0.15 : 0"/>
 		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
-		<bind name="watchDH" value="'isAlive'; ['selfAvatarEntity.health.evKilled']; selfAvatarEntity.health.isAlive"/>
+		<bind name="watchDH" value="'isAlive'; ['selfAvatarEntity.health.evIsAliveChanged']; selfAvatarEntity.health.isAlive"/>
 		<block>
 			<bind name="instance" value="'SquadronControlWeapon';		{_activeSquadron: _activeSquadron}"/>
 			<style>
@@ -7695,7 +7894,7 @@
 			<bind name="visible" value="!!commandId"/>
 			<style>
 				<position value="absolute"/>
-				<bottom value="-23px"/>
+				<bottom value="-27px"/>
 				<left value="36px"/>
 				<height value="21px"/>
 			</style>
@@ -7751,13 +7950,14 @@
 		<block>
 			<style>
 				<position value="absolute"/>
-				<bottom value="-23px"/>
+				<bottom value="-27px"/>
 				<left value="36px"/>
 			</style>
 			<block className="HotkeyAnimation" type="native">
 				<style>
 					<height value="21px"/>
 				</style>
+				<innerBind elementName="item" name="gotoAndStop!" value="'toggle'"/>
 				<bind name="commandId" value="commandId"/>
 				<bind name="active" value="!(isLocked || atWork || showReload || numPlanes == 0)"/>
 			</block>
@@ -7779,14 +7979,6 @@
 		<bind name="primaryEntityDH" value="'cmdEntity'; CC.commandMappingCommandName; 'CMD_SQUADRON_' + $index"/>
 		<bind name="watchDH" value="'commandId'; ['cmdEntity.commandMappingCommand.evChanged']; cmdEntity.commandMappingCommand.id"/>
 		<block>
-			<style>
-				<position value="absolute"/>
-				<top value="-6px"/>
-				<left value="5px"/>
-			</style>
-			<bind name="instance" value="'PlaneReloadProgress'; {squadronEntityId: $dataRef.ref.id, _width: 62}"/>
-		</block>
-		<block>
 			<bind name="instance" value="'SlotItem'; {	_itemImageUrl: itemImageUrl,
 										_isSelected: isSelected,
 										_charges: curSquadPlanes,
@@ -7796,7 +7988,15 @@
 		<block>
 			<style>
 				<position value="absolute"/>
-				<bottom value="-23px"/>
+				<top value="-6px"/>
+				<left value="5px"/>
+			</style>
+			<bind name="instance" value="'PlaneReloadProgress'; {squadronEntityId: $dataRef.ref.id, _width: 60, _ammoType: ammoType}"/>
+		</block>
+		<block>
+			<style>
+				<position value="absolute"/>
+				<bottom value="-27px"/>
 				<left value="36px"/>
 			</style>
 			<block className="HotkeyAnimation" type="native">
@@ -7807,19 +8007,6 @@
 				<bind name="active" value="!(isLocked || atWork || showReload || curSquadPlanes == 0)"/>
 			</block>
 		</block>
-		<block type="text">
-			<style>
-				<position value="absolute"/>
-				<textAlign value="right"/>
-				<top value="5px"/>
-				<right value="6px"/>
-				<hitTest value="false"/>
-			</style>
-			<styleClass value="$TextDefaultBoldNM"/>
-			<bind name="style" value="'alpha';	((curPlanesInHangar &gt;= maxSquadPlanes) || (curPlanesInHangar == 0)) ? 1 : 0.65"/>
-			<bind name="class" value="curPlanesInHangar != 0 ? '$FontColorWhite' : '$TextColorHUDCriticalPC'"/>
-			<bind name="text" value="curSquadPlanes"/>
-		</block>
 	</block>
 	<block className="PlaneReloadProgress">
 		<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
@@ -7828,11 +8015,49 @@
 		<bind name="watchDH" value="'curPlanesInHangar';     ['squadronEntity.hangar.evChanged'];		squadronEntity.hangar.planeCount"/>
 		<bind name="watchDH" value="'maxPlanesInHangar';     ['squadronEntity.hangar.evChanged'];		squadronEntity.hangar.maxPlaneCount"/>
 		<bind name="watchDH" value="'restoreEndTimestamp';   ['squadronEntity.hangar.evChanged'];        squadronEntity.hangar.restoreTime"/>
-		<bind name="watchDH" value="'restoreDuration';	[]; squadronEntity.hangar.timeToRestore"/>
-		<bind name="watchDH" value="'maxSquadPlanes';	['squadronEntity.health.evValueChanged'];	squadronEntity.health.max"/>
-		<bind name="watchDH" value="'curSquadPlanes';	['squadronEntity.health.evValueChanged'];	squadronEntity.health.value"/>
+		<bind name="watchDH" value="'restoreDuration';		[]; 										squadronEntity.hangar.timeToRestore"/>
+		<bind name="watchDH" value="'maxSquadPlanes';		['squadronEntity.health.evValueChanged'];	squadronEntity.health.max"/>
+		<bind name="watchDH" value="'curSquadPlanes';		['squadronEntity.health.evValueChanged'];	squadronEntity.health.value"/>
+		<bind name="watchDH" value="'attackerSize';			[]; 										squadronEntity.ownSquadron.attackerSize"/>
+		<bind name="watch" value="'numAttackers'; maxSquadPlanes/attackerSize"/>
+		<bind name="watch" value="'squadPlanesReady'; 	curPlanesInHangar &lt; maxSquadPlanes ? curPlanesInHangar : maxSquadPlanes"/>
+		<bind name="watch" value="'planesInNotFullAttacker'; squadPlanesReady % attackerSize"/>
+		<bind name="watch" value="'fullAttakers'; math.floor(squadPlanesReady / attackerSize)"/>
+		<bind name="watch" value="'attackerStatusBarSize'; math.round(_width / numAttackers)"/>
+		<bind name="watch" value="'hangarStatusBarSize'; (curPlanesInHangar / maxPlanesInHangar) * (_width - 2)"/>
+		<style>
+			<marginLeft value="1px"/>
+		</style>
 		<block>
-			<bind name="visible" value="!(altVision &amp;&amp; restoreAnimation)"/>
+			<bind name="visible" value="!(altVision)"/>
+			<styleClass value="$MiddleAlignedAbsolutely"/>
+			<style>
+				<top value="-11px"/>
+			</style>
+			<block type="text">
+				<style>
+					<alpha value="0.8"/>
+					<marginRight value="3px"/>
+				</style>
+				<styleClass value="$TextDefault13NM"/>
+				<bind name="class" value="curPlanesInHangar &gt;= maxSquadPlanes	? '$TextDefaultBold13NM'
+																: '$TextDefault13NM'"/>
+				<bind name="text" value="squadPlanesReady"/>
+			</block>
+			<block type="text">
+				<style>
+					<marginTop value="1px"/>
+					<alpha value="0.8"/>
+				</style>
+				<styleClass value="$TextDefault12NM"/>
+				<bind name="text" value="'/' + maxSquadPlanes"/>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+		<block>
+			<bind name="visible" value="(altVision)"/>
 			<styleClass value="$MiddleAlignedAbsolutely"/>
 			<style>
 				<top value="-11px"/>
@@ -7859,21 +8084,6 @@
 				<flow value="horizontal"/>
 			</style>
 		</block>
-		<block>
-			<bind name="visible" value="(altVision &amp;&amp; restoreAnimation)"/>
-			<styleClass value="$MiddleAlignedAbsolutely"/>
-			<style>
-				<top value="-11px"/>
-			</style>
-			<block type="text">
-				<style>
-					<alpha value="0.8"/>
-					<marginRight value="1px"/>
-				</style>
-				<styleClass value="$TextDefaultBold13NM"/>
-				<bind name="textCountdown" value="true; restoreEndTimestamp; 'mm:ss'"/>
-			</block>
-		</block>
 		<block className="hud_bar_bg_sliced" type="native">
 			<style>
 				<height value="4px"/>
@@ -7881,18 +8091,72 @@
 			<bind name="style" value="'width'; _width + 'px'"/>
 		</block>
 		<block>
+			<bind name="visible" value="(altVision &amp;&amp; restoreAnimation)"/>
+			<style>
+				<position value="absolute"/>
+				<backgroundColor value="0xcc000000"/>
+				<top value="6px"/>
+			</style>
+			<bind name="style" value="'width'; _width + 'px'"/>
+			<bind name="style" value="'height'; _width + 'px'"/>
+			<block>
+				<styleClass value="$MiddleAlignedAbsolutely"/>
+				<styleClass value="$MiddleVAlignedAbsolutely"/>
+				<block type="text">
+					<style>
+						<alpha value="0.8"/>
+						<marginRight value="1px"/>
+					</style>
+					<bind name="class" value="_width == 60 ? '$TextDefault27NM' : '$TextDefaultBold13NM'"/>
+					<bind name="textCountdown" value="true; restoreEndTimestamp"/>
+				</block>
+			</block>
+		</block>
+		<block>
+			<bind name="visible" value="!(altVision)"/>
+			<style>
+				<position value="absolute"/>
+			</style>
+			<bind name="repeat" value="numAttackers; 'AttackerStatusBar'; {_healthPointWidth: attackerStatusBarSize, _curPlanesInHangar: curPlanesInHangar, _attackerSize: attackerSize, _planesInNotFullAttacker: planesInNotFullAttacker, _fullAttakers: fullAttakers}"/>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+		<block>
+			<bind name="visible" value="(altVision)"/>
 			<style>
 				<position value="absolute"/>
 				<height value="2px"/>
 				<marginLeft value="1px"/>
 				<marginTop value="1px"/>
 			</style>
-			<bind name="style" value="'backgroundColor'; _color ? _color : '0xFF4CE8AA'"/>
-			<bind name="style" value="'width'; (_width - 2) + 'px'"/>
-			<bind name="timestampTween" value="true; restoreDuration; restoreEndTimestamp; {scaleX:0}; {scaleX:1}; 'onRestoreStart'; 'onRestoreEnd'"/>
+			<bind name="style" value="'backgroundColor'; _color ? _color : '0xFFD7D7D7'"/>
+			<bind name="style" value="'width'; hangarStatusBarSize + 'px'"/>
+			<bind name="timestampTween" value="true; restoreDuration; restoreEndTimestamp; {}; {}; 'onRestoreStart'; 'onRestoreEnd'"/>
 		</block>
 		<bind name="catch" value="'onRestoreStart'; {restoreAnimation: true}"/>
 		<bind name="catch" value="'onRestoreEnd'; {restoreAnimation: false}"/>
+	</block>
+	<block className="AttackerStatusBar">
+		<bind name="dataRefDH" value="'selectedOwnPlaneEntity'; '$dataRef.ref'"/>
+		<bind name="watch" value="'airplaneColorStatus';	($index &lt; _fullAttakers) ? '$ColorStatePlaneFullHP' : '$ColorStatePlaneHalfHP'"/>
+		<bind name="style" value="'width'; (_healthPointWidth - 2) + 'px'"/>
+		<style>
+			<height value="2px"/>
+			<marginLeft value="1px"/>
+			<marginRight value="1px"/>
+			<marginTop value="1px"/>
+		</style>
+		<block>
+			<style>
+				<height value="2px"/>
+			</style>
+			<bind name="class" value="airplaneColorStatus"/>
+			<bind name="style" value="'width'; $index == _fullAttakers 	? (100 / _attackerSize * _planesInNotFullAttacker) + '%' :
+							  $index &gt; _fullAttakers	? '0%':
+							  $index &lt; _fullAttakers	? '100%'
+							  							: '0%'"/>
+		</block>
 	</block>
 	<block className="SquadronControlItemReturn">
 		<bind name="primaryEntityDH" value="'currentSquadronEntity'; CC.ownSquadron; _activeSquadron"/>
@@ -7901,7 +8165,7 @@
 		<bind name="primaryEntityDH" value="'cmdEntity'; CC.commandMappingCommandName; 'CMD_LAND'"/>
 		<bind name="watchDH" value="'commandId'; ['cmdEntity.commandMappingCommand.evChanged']; cmdEntity.commandMappingCommand.id"/>
 		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
-		<bind name="watchDH" value="'isDead'; ['selfAvatarEntity.health.evKilled']; !selfAvatarEntity.health.isAlive"/>
+		<bind name="watchDH" value="'isDead'; ['selfAvatarEntity.health.evIsAliveChanged']; !selfAvatarEntity.health.isAlive"/>
 		<bind name="battleHint" value="['SIMPLE', 'IDS_BATTLE_HINT_SQUADRON_CONTROL_RETURN']"/>
 		<bind name="watch" value="'itemImageUrl'; '../aircraft/plane_return.png'"/>
 		<bind name="watch" value="'isLocked'; (attackState != 0) || isDead || (flightState == 4)"/>
@@ -7912,7 +8176,7 @@
 		<block>
 			<style>
 				<position value="absolute"/>
-				<bottom value="-23px"/>
+				<bottom value="-27px"/>
 				<left value="36px"/>
 			</style>
 			<block className="HotkeyAnimation" type="native">
@@ -8002,7 +8266,7 @@
 				<leading value="-6"/>
 			</style>
 			<styleClass value="$TextDefaultBold21NM"/>
-			<bind name="substitute" value="'KEYS'; 8; null; logMessageSubst; '_bg'"/>
+			<bind name="substitute" value="8; null; logMessageSubst; '_bg'"/>
 		</block>
 	</block>
 	<block className="SlotReloadFXTimestamp">
@@ -8063,20 +8327,10 @@
 			</block>
 		</block>
 		<block type="text">
-			<styleClass value="$TextDefault21NM"/>
+			<styleClass value="$TextDefault27NM"/>
 			<bind name="class" value="_atWork ? '$TextColorHUDPositivePC' : '$TextColorHUDWarningPC'"/>
 			<bind name="fade" value="reloadState &amp;&amp; (reloadState &lt; 3); 0.1; {alpha: 0, top: 5}; {alpha: 1, top: 0}; {alpha: 0, top: 5}; 2"/>
 			<bind name="textCountdown" value="reloadEntity.countDown; endTime"/>
-		</block>
-		<block>
-			<bind name="fade" value="_atWork; 0.1; {alpha: 0}; {alpha:1}"/>
-			<style>
-				<position value="absolute"/>
-				<width value="60px"/>
-				<height value="2px"/>
-				<bottom value="0px"/>
-				<backgroundColor value="0xFF4CE8AA"/>
-			</style>
 		</block>
 	</block>
 	<block className="SlotReloadFX">
@@ -8136,20 +8390,10 @@
 			</block>
 		</block>
 		<block type="text">
-			<styleClass value="$TextDefault21NM"/>
+			<styleClass value="$TextDefault27NM"/>
 			<bind name="class" value="_atWork ? '$TextColorHUDPositivePC' : '$TextColorHUDWarningPC'"/>
 			<bind name="fade" value="showReload; 0.1; {alpha: 0, top: 5}; {alpha: 1, top: 0}; {alpha: 0, top: 5}; 2"/>
 			<bind name="text" value="countdownFormat(timeRemain)"/>
-		</block>
-		<block>
-			<bind name="fade" value="_atWork; 0.1; {alpha: 0}; {alpha:1}"/>
-			<style>
-				<position value="absolute"/>
-				<width value="60px"/>
-				<height value="2px"/>
-				<bottom value="0px"/>
-				<backgroundColor value="0xFF4CE8AA"/>
-			</style>
 		</block>
 	</block>
 	<block className="AirCraftStatusLog">
@@ -8626,7 +8870,6 @@
 		<bind name="watchDH" value="'clubsMembership'; 	['entityAccount.clubman.evClubsMembershipChanged']; entityAccount.clubman.clubsMembership"/>
 		<bind name="watchDH" value="'accountOnline'; 	['entityAccount.accountStatus.evOnlineChanged']; entityAccount.accountStatus.online"/>
 		<bind name="watchDH" value="'inBattle'; 			['entityAccount.accountStatus.evInBattleChanged']; entityAccount.accountStatus.inBattle"/>
-		<bind name="watchDH" value="'accountLevel'; 		['entityAccount.accountLevel.evLevelChanged']; entityAccount.accountLevel.level"/>
 		<bind name="watchDH" value="'rank'; 				['entityAccount.accountRank.evRankChanged']; entityAccount.accountRank.rank"/>
 		<bind name="watchDH" value="'clanId'; 			['entityAccount.clanman.evClanIdChanged']; entityAccount.clanman.clanId"/>
 		<bind name="watchDH" value="'isSelf'; 			[]; entityAccount.accountSimple.isSelfPlayer"/>
@@ -8715,29 +8958,11 @@
 				</style>
 			</block>
 			<block>
-				<bind name="visible" value="(!(_isShort || isInDivision || (accountLevel &lt;= 0)))"/>
-				<block>
-					<style>
-						<marginTop value="2px"/>
-					</style>
-					<bind name="visible" value="rank != 0"/>
-					<bind name="instance" value="'IconRankSmall'; {_rankId: rank}"/>
-				</block>
-				<block>
-					<bind name="visible" value="rank == 0"/>
-					<block type="text">
-						<bind name="name" value="'playerContactLevel_' + nickName"/>
-						<styleClass value="$TextSmallWhite"/>
-						<style>
-							<marginLeft value="4px"/>
-							<marginTop value="6px"/>
-						</style>
-						<bind name="text" value="accountLevel"/>
-					</block>
-				</block>
+				<bind name="visible" value="rank != 0 &amp;&amp; !(_isShort || isInDivision)"/>
 				<style>
-					<flow value="horizontal"/>
+					<marginTop value="2px"/>
 				</style>
+				<bind name="instance" value="'IconRankSmall'; {_rankId: rank}"/>
 			</block>
 			<block type="text">
 				<bind name="name" value="'playerContactName_' + nickName"/>
@@ -11195,19 +11420,19 @@
 		<bind name="collectionDesign" value="'DES_'+'dogtagview'+'ROOT'; 'dogtagview'; {'filter': dogTagList.length &amp;&amp; ((dogTagList.indexOf(toLowerCase($entity.dogTagComponent.id)) &gt; -1)), 'sort':['dogTagComponent.categoryId']}; []"/>
 		<bind name="watch" value="'size';	_size == 'big' 				? 512 : 
 							_size == 'medium' 			? 190 : 
-							_size == 'profile' 			? 120 :
-							_size == 'small' 			? 80 
+							_size == 'small' 			? 80 :
+							_size == 'profile' 			? 60
 														: 80"/>
 		<bind name="style" value="'width'; size + 'px'"/>
 		<bind name="style" value="'height'; size + 'px'"/>
 		<bind name="repeat" value="dogtagview; 'PlayerDogTagItem'; {_path: _size == 'small' 		? 'url:../dogTags/small/'  :
-														  _size == 'profile' 	? 'url:../dogTags/medium/' :
+														  _size == 'profile' 	? 'url:../dogTags/small/' :
 														  _size == 'medium' 	? 'url:../dogTags/medium/' :
 														  _size == 'big' 		? 'url:../dogTags/big/'
 														  						: 'url:../dogTags/big/'
 														  						, _playerDbId : _playerDbId,
 													_clanTagPaths: _size == 'small' 	? '../fonts/small/'  :
-																   _size == 'profile' 	? '../fonts/medium/' :
+																   _size == 'profile' 	? '../fonts/small/' :
 																   _size == 'medium' 	? '../fonts/medium/' :
 																   _size == 'big' 		? '../fonts/big/'
 																				: '../fonts/big/'
@@ -11639,7 +11864,8 @@
 			</style>
 			<bind name="gotoAndStop!" value="	($value == 'PVP')			? 'RandomBattle' :
 								($value == 'COOPERATIVE')	? 'CooperativeBattle':
-								($value == 'RANKED') 		&amp;&amp; (rankedBattlesSeason.isJuniorSeason == true) ? 'RankedBattle_junior' : 'RankedBattle':
+								($value == 'RANKED') 		? (rankedBattlesSeason.isJuniorSeason == true) 	? 'RankedBattle_junior'
+																											: 'RankedBattle':
 								($value == 'PVE')			? 'PVEBattle':
 								($value == 'PVE_PREMADE')	? 'PVEBattle_hard':
 								($value == 'CLAN')			? 'ClanBattle'
@@ -11670,58 +11896,85 @@
 		<bind name="watchDH" value="'clanTag'; 	['clanEntity.clan.evTagChanged']; _clanTag ? _clanTag : clanEntity.clan.tag"/>
 		<bind name="primaryEntityDH" value="'clanExtendedEntity'; CC.clanExtended; clanId"/>
 		<bind name="watchDH" value="'clanTagColor'; 	['clanExtendedEntity.clanExtended.evColorChanged']; _clanTagColor ? _clanTagColor : clanExtendedEntity.clanExtended.color"/>
+		<bind name="watch" value="'isWithRank'; !_noRank &amp;&amp; !_isBot &amp;&amp; rank != 0 &amp;&amp; rank != null"/>
 		<style>
 			<width value="100%f"/>
-			<marginTop value="14px"/>
+			<marginTop value="16"/>
 		</style>
 		<block>
 			<style>
 				<width value="100%f"/>
-				<backgroundColor value="0x01000000"/>
 			</style>
-			<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_TOOLTIP_PLAYER_STEREOTYPE_NAME'}"/>
-			<bind name="instance" value="'PlayerNameAndClanTag'; {
-								_isSelf: 			isSelf,
-								_tkStatus: 			_tkStatus || _abuseStatus == AbuseStatus.SUSPECT, 
-								_ctkStatus:			_ctkStatus || _abuseStatus == AbuseStatus.CONFIRMED, 
-								_ttkStatus:			_ttkStatus, 
-								_isInSameDivision:  _player.isInSameDivision,
-								_fontSize:			19,
-								_playerName:		pureName,
-								_clanTag:			clanTag,
-								_clanTagColor:		clanTagColor,
-								_isDead:			false,
-								_noClanTagColor:	_noClanTagColor}"/>
+			<block>
+				<bind name="style" value="'hitTest'; _isPlayerNameDisable ? false : true"/>
+				<style>
+					<width value="100%f"/>
+					<backgroundColor value="0x01000000"/>
+				</style>
+				<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_TOOLTIP_PLAYER_STEREOTYPE_NAME'}"/>
+				<bind name="instance" value="'PlayerNameAndClanTag'; {
+									_isSelf: 			isSelf,
+									_isAccountButton:	_isAccountButton,
+									_tkStatus: 			_tkStatus || _abuseStatus == AbuseStatus.SUSPECT, 
+									_ctkStatus:			_ctkStatus || _abuseStatus == AbuseStatus.CONFIRMED, 
+									_ttkStatus:			_ttkStatus,
+									_isPremiumAccount:	_isPremiumAccount, 
+									_isInSameDivision:  _player.isInSameDivision,
+									_fontSize:			19,
+									_playerName:		pureName,
+									_clanTag:			clanTag,
+									_clanTagColor:		clanTagColor,
+									_isDead:			false,
+									_noClanTagColor:	_noClanTagColor}"/>
+			</block>
+			<block>
+				<bind name="visible" value="_isWithKarma == true"/>
+				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'dockDefaultValues'"/>
+				<bind name="watch" value="'fontColor'; 	_ctkStatus || _abuseStatus == AbuseStatus.CONFIRMED			? '$FontColorCompareNegative' :
+										_tkStatus || _abuseStatus == AbuseStatus.SUSPECT 			? '$FontColorTeamkiller' :
+										_isPremiumAccount											? '$FontColorGold'
+																									: '$FontColorBlueish'"/>
+				<bind name="tooltip" value="'SubTextTooltip'; {tooltipText: 'IDS_YOUR_KARMA', tooltipSubText: 'IDS_TOOLTIP_KARMA'}"/>
+				<style>
+					<marginTop value="-14px"/>
+					<marginLeft value="-4px"/>
+					<backgroundColor value="0x01000000"/>
+				</style>
+				<block type="text">
+					<styleClass value="$TextDefault13NM"/>
+					<style>
+						<margin value="8"/>
+					</style>
+					<bind name="class" value="fontColor"/>
+					<bind name="text" value="format(dockDefaultValues.karma, -1)"/>
+					<bind name="name" value="'karma_account_progress_item'"/>
+				</block>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
 		</block>
 		<block>
+			<bind name="visible" value="isWithRank"/>
 			<style>
-				<width value="100%f"/>
+				<marginTop value="8"/>
 			</style>
-			<bind name="visible" value="!_isBot &amp;&amp; !_noLevel"/>
-			<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_TOOLTIP_PLAYER_STEREOTYPE_LEVEL'}"/>
-			<block type="text">
-				<styleClass value="$TextDefaultNM"/>
-				<style>
-					<marginTop value="7px"/>
-					<marginLeft value="3px"/>
-				</style>
-				<bind name="text" value="subst('IDS_PLAYER_STEREOTYPE_LEVEL',[], {accountLevel: accountLevel})"/>
+			<block>
+				<bind name="instance" value="'IconRankSmall'; {_rankId: rank, _hideRankNumber: true}"/>
 			</block>
-		</block>
-		<bind name="instance" value="'PlayerProgressBar';	rank == 0 &amp;&amp; isSelf &amp;&amp;
-											accountLevel != _maxLevelEnabled &amp;&amp;
-											_currentProgress != null ? {_accountLevel: accountLevel, _currentProgress: _currentProgress,
-																		_levelProgress: _levelProgress} : null"/>
-		<block type="text">
-			<bind name="visible" value="!_noRank &amp;&amp; !_isBot &amp;&amp; rank != 0 &amp;&amp; rank != null"/>
+			<block type="text">
+				<style>
+					<marginLeft value="2"/>
+					<marginTop value="8"/>
+					<maxWidth value="130"/>
+					<multiline value="false"/>
+				</style>
+				<styleClass value="$TextDefaultNM"/>
+				<bind name="text" value="subst('IDS_RANK_X',[], {rank: rank})"/>
+			</block>
 			<style>
-				<marginTop value="8px"/>
-				<marginLeft value="3px"/>
-				<maxWidth value="160"/>
-				<multiline value="false"/>
+				<flow value="horizontal"/>
 			</style>
-			<styleClass value="$TextDefaultNM"/>
-			<bind name="text" value="subst('IDS_RANK_X',[], {rank: rank})"/>
 		</block>
 	</block>
 	<block className="PlayerProgressBar">
@@ -11925,8 +12178,8 @@
 				<width value="100%"/>
 			</style>
 			<block type="text">
-				<styleClass value="$MiddleAligned"/>
 				<styleClass value="$TextLargeHeaderBold"/>
+				<bind name="class" value="_isAlignLeft ? '$None' : '$MiddleAligned'"/>
 				<bind name="text" value="toUpperCase(tr(_header))"/>
 			</block>
 			<block>
@@ -12420,151 +12673,6 @@
 			</block>
 		</block>
 	</block>
-	<block className="LootboxesBanner">
-		<params>
-			<param name="name" value="LootboxesBanner"/>
-		</params>
-		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
-		<bind name="firstEntityDH" value="'lootboxEntity'; CC.lootboxConfigComponent"/>
-		<bind name="watchDH" value="'maxBought';				['lootboxEntity.lootboxConfigComponent.evUpdate'];	lootboxEntity.lootboxConfigComponent.maxBought"/>
-		<bind name="watchDH" value="'lootboxExp';			['lootboxEntity.lootboxStorageComponent.evUpdate'];	lootboxEntity.lootboxStorageComponent.lootExp"/>
-		<bind name="watchDH" value="'boughtToday';			['lootboxEntity.lootboxStorageComponent.evUpdate'];	lootboxEntity.lootboxStorageComponent.boughtToday"/>
-		<bind name="watchDH" value="'lootboxesInStorage';	['lootboxEntity.lootboxStorageComponent.evUpdate'];	lootboxEntity.lootboxStorageComponent.inStorage"/>
-		<bind name="watch" value="'allBoxesBought'; (maxBought == boughtToday)"/>
-		<bind name="watch" value="'canBuyLootbox'; (lootboxExp &gt;= lootboxEntity.lootboxConfigComponent.prices[boughtToday])"/>
-		<bind name="appear" value="'addedToStage'; 0.15; 0.3; {alpha: 0, top: 5}; {alpha: 1, top: 0}"/>
-		<style>
-			<width value="223px"/>
-			<height value="36px"/>
-		</style>
-		<bind name="style" value="'height'; allBoxesBought ? '36px' : '72px'"/>
-		<bind name="action" value="'click'; 'moveToBarge'; {}"/>
-		<bind name="feature" value="21; 'click'"/>
-		<bind name="soundSet" value="'lootbox_banner'"/>
-		<bind name="tooltip" value="'MouseInstructionTooltip'; { _mouseInstructions: [{_type: 'left', _instructionText: 'IDS_GO_TO_LOOTBOXES'}], _maxWidth: 250 }; 0"/>
-		<bind name="action" value="'click'; 'log'; { event: 'click:banner.Lootboxes' }"/>
-		<block>
-			<styleClass value="$Fullsize"/>
-			<block className="quest_thumb_title" type="native">
-				<styleClass value="$FullsizeAbsolute"/>
-				<bind name="transition" value="rollOver &amp;&amp; !(mouseDown); 0.15; {alpha: 0.75}; {alpha: 1.0}"/>
-			</block>
-			<block>
-				<bind name="visible" value="!(allBoxesBought)"/>
-				<styleClass value="$Fullsize"/>
-				<bind name="instance" value="'LootboxesBannerProgress'; {}"/>
-			</block>
-			<block>
-				<bind name="visible" value="allBoxesBought"/>
-				<styleClass value="$Fullsize"/>
-				<bind name="instance" value="'LootboxesBannerTimer'; {}"/>
-			</block>
-			<block>
-				<style>
-					<marginRight value="3px"/>
-					<width value="71px"/>
-				</style>
-				<styleClass value="$MiddleVAligned"/>
-				<block>
-					<bind name="visible" value="canBuyLootbox == true"/>
-					<styleClass value="$MiddleVAligned"/>
-					<styleClass value="$MiddleAlignedAbsolutely"/>
-					<block className="icon_lootbox_glow_animation" type="native">
-						<style>
-							<position value="absolute"/>
-						</style>
-					</block>
-				</block>
-				<block className="icon_lootbox" type="native">
-					<bind name="transition" value="rollOver &amp;&amp; !(mouseDown); 0.15; {alpha: 0.95}; {alpha: 1}"/>
-					<bind name="gotoAndStop!" value="'normal'"/>
-				</block>
-				<block type="text">
-					<bind name="visible" value="(lootboxesInStorage &gt; 0)"/>
-					<bind name="style" value="'bottom'; allBoxesBought ? '-6px' : '-9px'"/>
-					<style>
-						<right value="0px"/>
-						<position value="absolute"/>
-					</style>
-					<styleClass value="$TextLargeHeaderBold"/>
-					<bind name="class" value="'$FontSizeHeader3'"/>
-					<bind name="text" value="'x'+lootboxesInStorage"/>
-				</block>
-			</block>
-			<style>
-				<flow value="horizontal"/>
-			</style>
-		</block>
-	</block>
-	<block className="LootboxesBannerProgress">
-		<bind name="firstEntityDH" value="'lootboxEntity'; CC.lootboxConfigComponent"/>
-		<bind name="watchDH" value="'lootboxExp'; ['lootboxEntity.lootboxStorageComponent.evUpdate']; lootboxEntity.lootboxStorageComponent.lootExp"/>
-		<bind name="watchDH" value="'boughtToday'; ['lootboxEntity.lootboxStorageComponent.evUpdate']; lootboxEntity.lootboxStorageComponent.boughtToday"/>
-		<bind name="watchDH" value="'lootboxesInStorage'; ['lootboxEntity.lootboxStorageComponent.evUpdate']; lootboxEntity.lootboxStorageComponent.inStorage"/>
-		<bind name="watch" value="'curLootboxPrice'; lootboxEntity.lootboxConfigComponent.prices[boughtToday]"/>
-		<bind name="watch" value="'expToCurLootbox'; (lootboxExp &gt;= curLootboxPrice)	? 0
-																	: (curLootboxPrice - lootboxExp)"/>
-		<bind name="watch" value="'nextLootboxProgress'; ((expToCurLootbox &gt; 0) ? ( lootboxExp / curLootboxPrice) : 1)"/>
-		<styleClass value="$Fullsize"/>
-		<style>
-			<marginLeft value="9px"/>
-		</style>
-		<block>
-			<style>
-				<marginTop value="3px"/>
-			</style>
-			<block type="text">
-				<styleClass value="$TextLargeHeaderBold"/>
-				<bind name="text" value="format(lootboxExp, -1)"/>
-			</block>
-			<block className="icon_exp" type="native">
-				<style>
-					<marginLeft value="-3px"/>
-				</style>
-				<styleClass value="$MiddleVAligned"/>
-			</block>
-			<style>
-				<flow value="horizontal"/>
-			</style>
-		</block>
-		<block>
-			<style>
-				<position value="absolute"/>
-				<top value="32px"/>
-			</style>
-			<bind name="instance" value="'LootboxProgressBar'; {_width: 132, _height: 9, _curValue: (nextLootboxProgress*10)}"/>
-		</block>
-		<block type="text">
-			<style>
-				<marginTop value="12px"/>
-			</style>
-			<styleClass value="$TextDefaultBold"/>
-			<bind name="class" value="'$FontColorBlueish'"/>
-			<bind name="class" value="'$FontSizeSmall'"/>
-			<bind name="text" value="(expToCurLootbox &gt; 0 ? (toUpperCase(tr('IDS_MORE')) + ' ' + expToCurLootbox)
-										 : toUpperCase(tr('IDS_YOU_SHOULD_PURCHASE_LOOTBOX')))"/>
-		</block>
-	</block>
-	<block className="LootboxesBannerTimer">
-		<bind name="firstEntityDH" value="'lootboxEntity'; CC.lootboxConfigComponent"/>
-		<bind name="watchDH" value="'dropTimeStamp';	['lootboxEntity.lootboxStorageComponent.evUpdate'];	lootboxEntity.lootboxStorageComponent.dropAt"/>
-		<bind name="countdown" value="dropTimeStamp; 'countdownText'; 'hh:mm:ss'"/>
-		<styleClass value="$MiddleVAligned"/>
-		<styleClass value="$MiddleAligned"/>
-		<block type="text">
-			<styleClass value="$TextHeaderWhiteBold"/>
-			<bind name="class" value="'$FontColorUnready'"/>
-			<bind name="pureText" value="'-' + countdownText"/>
-		</block>
-	</block>
-	<block className="LootboxProgressBar">
-		<bind name="style" value="'width'; _width+'px'"/>
-		<bind name="style" value="'height'; _height+'px'"/>
-		<block className="indicator_progress_bar_yellow" type="native">
-			<styleClass value="$Fullsize"/>
-			<bind name="value" value="_curValue"/>
-		</block>
-	</block>
 	<css name="$TextHeaderLargeBold">
 		<mouseChildren value="false"/>
 		<mouseEnabled value="false"/>
@@ -12719,14 +12827,15 @@
 	</block>
 	<block className="PlayerSummary">
 		<bind name="var" value="{curSeasonIndex: 0}"/>
+		<bind name="catch" value="'curItemIndexChanged'; {curSeasonIndex: 0}"/>
 		<bind name="catch" value="'curSeasonIndexChanged'"/>
-		<bind name="catch" value="'currentSeasonIdChanged'"/>
 		<bind name="collectionDH" value="CC.rankedSeasonHistory; 'statDataEntities'; 'statToShow'"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 		<bind name="entityDH" value="'statDataEntity'; statDataEntities[0].id"/>
 		<bind name="watchDH" value="'statData'; ['statDataEntity.dataComponent.evDataChanged']; statDataEntity.dataComponent.data"/>
 		<bind name="watchDH" value="'shipsList'; ['statDataEntity.dataComponent.evDataChanged']; statDataEntity.dataComponent.data.shipsList"/>
 		<styleClass value="$Fullsize"/>
+		<bind name="changeDispatch" value="_curItemIndex; 'curItemIndexChanged'; {}; 2"/>
 		<bind name="watch" value="'battleType';	_curItemIndex == 0	? BattleTypes.COOPERATIVE_BATTLE :
 								_curItemIndex == 1	? BattleTypes.RANDOM_BATTLE :
 								_curItemIndex == 2	? BattleTypes.RANKED_BATTLE :
@@ -12792,9 +12901,11 @@
 						<height value="30px"/>
 					</style>
 					<styleClass value="$MiddleAligned"/>
-					<bind name="instance" value="'RankedSeasonDropdown'; (battleType == BattleTypes.RANKED_BATTLE) ? {statData: statData, _curSeasonIndex: curSeasonIndex, currentSeasonId: currentSeasonId}: null"/>
+					<bind name="instance" value="'RankedSeasonDropdown'; (battleType == BattleTypes.RANKED_BATTLE) ? {statData: statData, _curSeasonIndex: curSeasonIndex}: null"/>
 				</block>
 				<block>
+					<bind name="watch" value="'currentSeasonId'; statData.seasonList[curSeasonIndex].id"/>
+					<bind name="watch" value="'isJuniorRankedBattle'; (battleType == BattleTypes.RANKED_BATTLE) &amp;&amp; (statData.seasonList[curSeasonIndex].id &gt; 100)"/>
 					<styleClass value="$MiddleAligned"/>
 					<block>
 						<style>
@@ -12803,7 +12914,7 @@
 						<block className="icon_battletypes_big" type="native">
 							<bind name="transition" value="statData.vehicleId != 0; 0.15; {alpha: 1}; {alpha: 0.7}"/>
 							<styleClass value="$MiddleAligned"/>
-							<bind name="gotoAndStop!" value="(currentSeasonId &gt; 100) ? 'RankedBattle_junior' : battleType"/>
+							<bind name="gotoAndStop!" value="isJuniorRankedBattle ? 'RankedBattle_junior' : battleType"/>
 						</block>
 						<block className="battle_type_overlay_big" type="native">
 							<bind name="visible" value="statData.vehicleId != 0"/>
@@ -12942,7 +13053,6 @@
 		<bind name="catch" value="'ItemChooserInnerEvent.historySeasonChanged'"/>
 		<bind name="action" value="'_curItemIndex' + varChanged; 'rankedSeasonChanged'; {seasonId: statData.seasonList[_curItemIndex].id}"/>
 		<bind name="dispatch" value="'_curItemIndex' + varChanged; 'curSeasonIndexChanged'; {curSeasonIndex: _curItemIndex}; false"/>
-		<bind name="dispatch" value="'_curItemIndex' + varChanged; 'currentSeasonIdChanged'; {currentSeasonId: statData.seasonList[_curItemIndex].id}"/>
 		<bind name="appear" value="'addedToStage'; 0.15; 0; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 		<block>
 			<bind name="instance" value="'ItemChooser'; {	_items: statData.seasonList, curIndex: _curItemIndex,
@@ -14604,7 +14714,7 @@
 		<bind name="watchDH" value="'tacticalMap'; ['cameraEntity.camera.evTacticalStateChanged']; cameraEntity.camera.isTactical"/>
 		<bind name="firstEntityDH" value="'selfVehicleEntity'; CC.selfVehicle"/>
 		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
-		<bind name="watchDH" value="'isAlive'; ['avatar.health.evKilled']; avatar.health.isAlive"/>
+		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
 		<bind name="watch" value="'isSubmarineHudVisible'; (avatar.avatar.ship.ref.ship.subtype == ShipTypes.Submarine) &amp;&amp; isAlive"/>
 		<bind name="watch" value="'isAircraftHudVisible'; (avatar.avatar.ship.ref.ship.subtype == ShipTypes.AircraftCarrier)"/>
 		<block>
@@ -14622,6 +14732,7 @@
 			<bind name="instance" value="'DogTagInHUD'; {}"/>
 			<bind name="instance" value="'DogTagInHUDSpectator'; {}"/>
 			<bind name="instance" value="'FogHornIndicator'; {}"/>
+			<bind name="instance" value="'RespawnTimerWrapper'; {}"/>
 			<bind name="instance" value="'SubmarineHUD'; isSubmarineHudVisible ? {} : null"/>
 			<bind name="instance" value="'AircraftHUD'; isAircraftHudVisible ? {} : null"/>
 		</block>
