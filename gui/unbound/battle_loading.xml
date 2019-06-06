@@ -4154,6 +4154,43 @@
 			</block>
 		</block>
 	</block>
+	<block className="AchievementRenderer">
+		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'achievements'; (_id ? _id : $value); 'achievement'"/>
+		<style>
+			<flow value="horizontal"/>
+			<width value="100%"/>
+		</style>
+		<block>
+			<bind name="instance" value="'AchievementIcon'; {_id: (_id ? _id : $value)}"/>
+		</block>
+		<block>
+			<styleClass value="$InfoBlockHorizontalIndent"/>
+			<style>
+				<marginLeft value="10px"/>
+				<marginTop value="-1px"/>
+			</style>
+			<block type="text">
+				<styleClass value="$TextHeaderWhiteBold"/>
+				<style>
+					<width value="100%"/>
+					<maxWidth value="222"/>
+					<textAlign value="left"/>
+				</style>
+				<bind name="class" value="'$FontColorWhite'"/>
+				<bind name="text" value="achievement.nameIDS"/>
+			</block>
+			<block type="text">
+				<styleClass value="$TextHeaderBigDefaultTech"/>
+				<style>
+					<marginTop value="-3px"/>
+					<maxWidth value="220"/>
+					<textAlign value="left"/>
+				</style>
+				<bind name="class" value="'$FontColorWhite'"/>
+				<bind name="text" value="achievement.subtypeIDS"/>
+			</block>
+		</block>
+	</block>
 	<block className="NationFlagsBig">
 		<style>
 			<backgroundStretchY value="true"/>
@@ -14800,66 +14837,15 @@
 				</style>
 				<bind name="action" value="'click'; (isLazyLogin &amp;&amp; (shipInfo.level &gt; realmConstants.lazyAccountMaxShipTier)) ? 'forceCreateAccount' : null"/>
 				<bind name="instance" value="'ButtonCostSpecial'; !!defaultButtonCostSmallData ? defaultButtonCostSmallData : null"/>
-				<bind name="var" value="{reasonOnStage: true, dhNotificationEnabled: false}"/>
-				<bind name="catch" value="'addedToStage'; {reasonOnStage: true}"/>
-				<bind name="catch" value="'removedFromStage';  {reasonOnStage: false}"/>
-				<bind name="var" value="{coachScreenActive: false}"/>
-				<bind name="collectionDH" value="CC.coach; 'coachCollection'"/>
-				<bind name="entityDH" value="'coachEntity'; coachCollection[0].id"/>
-				<bind name="watchDH" value="'coachScreenActive'; ['coachEntity.coach.evShow']; coachEntity.coach.show"/>
-				<bind name="catch" value="'evHideCoachScreen'; {coachScreenActive: false}"/>
-				<bind name="firstEntityDH" value="'dockStateEntity'; CC.dockState"/>
-				<bind name="watchDH" value="'dockStateName'; ['dockStateEntity.dockState.evUpdate']; dockStateEntity.dockState.stateName"/>
-				<bind name="primaryEntityDH" value="'nationTipEntity'; CC.contextGuidingTip; _isExplored ? 'ModulesToBuyBtn' : 'ModulesToExploreBtn'"/>
-				<bind name="watch" value="'notificationEnabled'; dhNotificationEnabled &amp;&amp; reasonOnStage &amp;&amp; true &amp;&amp; dockStateName == 'dock' &amp;&amp; !coachScreenActive"/>
-				<bind name="changeDispatch" value="notificationEnabled; notificationEnabled ? 'ContextGuidingTipOpen' : 'ContextGuidingTipClose'; {}; 2"/>
-				<bind name="watchDH" value="'dhNotificationEnabled'; ['nationTipEntity.contextGuidingTip.evActiveChanged'] ; nationTipEntity.contextGuidingTip.active == true ? true : false "/>
-				<bind name="popupNoCache" value="'ContextGuidingTip';
-								{
-									_notification_id:		_isExplored ? 'ModulesToBuyBtn' : 'ModulesToExploreBtn',
-									_notification_header:	nationTipEntity.contextGuidingTip.header,
-									_notification_desc:		nationTipEntity.contextGuidingTip.desc,
-									_direction:				'bottom' == 'top'	?	'down' :
-															'bottom' == 'bottom'	?	'up' :
-															'bottom' == 'left'	?	'right'
-																						:	'left'
-								};
+				<bind name="instance" value="'ContextGuidingTipHub'; {
+												_tooltipID: _isExplored ? 'ModulesToBuyBtn' : 'ModulesToExploreBtn', 
+												_tipPositioning: 'bottom', 
+												_extraCondition: true, 
+												_offset: 5, 
+												_screenOffset : 0, 
+												_hideOnReasonClick :false
 
-								1;
-								{
-									type: 'lesta.unbound.bindings.popup.UbNativeReasonPopupSpacingComponent',
-									params:
-									{
-										directionsPriority:['bottom', 'empty'],
-										reasonOffsetTop:	5,
-										reasonOffsetBottom: 5,
-										reasonOffsetRight:	5,
-										reasonOffsetLeft:	5,
-
-										screenOffsetTop:	'bottom' == 'bottom'	? 0 : 0,
-										screenOffsetBottom: 'bottom' == 'top'	? 0 : 0,
-										screenOffsetRight:	'bottom' == 'left'	? 0 : 0,
-										screenOffsetLeft:	'bottom' == 'right'	? 0 : 0
-									}
-								};
-								{
-									reason:
-									{
-										removedFromStage: 		{ 	action:'hide', 								
-																	params: { duration:0.0, startProps: { alpha:1, x:0, y:0 }, finishProps: { alpha:0, x:0, y: -5 }}
-																},
-										click:					{ 	action: false ? 'hide' : 'none', 
-																	params: { duration:0.1, startProps: { alpha:1, x:0, y:0 }, finishProps: { alpha:0, x:0, y: -5 }}
-																}
-									},
-
-									reasonScope:
-									{
-										ContextGuidingTipOpen: 		{ action:'show', params: { duration:0.3, startProps: { alpha:0, x:0, y:10 }, finishProps: { alpha:1, x:0, y: 0 }, delay:0.3}},
-										ContextGuidingTipClose: 	{ action:'hide', params: { duration:0.0, startProps: { alpha:1, x:0, y:0 }, finishProps: { alpha:0, x:0, y: -5 }}}
-									}
-								}
-	"/>
+							}"/>
 			</block>
 			<block>
 				<bind name="visible" value="!defaultButtonCostSmallData"/>
@@ -16553,7 +16539,8 @@
 										gpName == 'PCOW015_1April_IceCrumbs'	? 0 :
 										gpName == 'PCOW019_Fog_Logic'			? 3 :
 										gpName == 'PCOW020_Snow_Logic'			? 3 :
-										gpName == 'PCOW021_Downpour'			? 3
+										gpName == 'PCOW021_Downpour'			? 3 :
+										gpName == 'PCOW023_Rain_Greece'			? 3
 																				: 0"/>
 		<block type="text">
 			<style>
@@ -22052,14 +22039,12 @@
 		</block>
 	</block>
 	<block className="InfopanelButton">
+		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
 		<bind name="request" value="'buttonClick'; _request ? _request : null; _requestParams ? _requestParams : {}"/>
 		<bind name="action" value="'buttonClick'; _action ? _action : null; _actionParams ? _actionParams : {}"/>
-		<bind name="dispatch" value="'mouseOver'; 'overInfopanelButton'; {infopanelButtonOverAlpha: 1}"/>
-		<bind name="dispatch" value="'mouseOut'; 'upInfopanelButton'; 	{infopanelButtonOverAlpha: 0.6}"/>
-		<bind name="dispatch" value="'mouseDown'; 'downInfopanelButton'; {infopanelButtonOverAlpha: 0.3}"/>
-		<bind name="catch" value="'upInfopanelButton'}"/>
-		<bind name="catch" value="'overInfopanelButton'"/>
-		<bind name="catch" value="'downInfopanelButton'"/>
+		<bind name="watch" value="'infopanelButtonOverAlpha';	(mouseDown)		? 0.3 :
+												(rollOver)		? 1
+																: 0.6"/>
 		<bind name="tooltip" value="'SimpleTooltip'; _tooltipIDS ? { tooltipText: _tooltipIDS } : null"/>
 		<bind name="style" value="'alpha'; infopanelButtonOverAlpha"/>
 		<bind name="name" value="_name"/>

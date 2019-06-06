@@ -1320,10 +1320,19 @@
 		]"/>
 		</block>
 		<block className="PlaneParamsArray">
-			<bind name="firstEntityDH" value="'ownSquadronesEntity'; CC.ownSquadron; 'selected'"/>
+			<bind name="firstEntityDH" value="'aircarrierEntity'; CC.aircarrier"/>
+			<bind name="watchDH" value="'activeSquadronId'; ['aircarrierEntity.aircarrier.evStateChanged']; aircarrierEntity.aircarrier.activeSquadron"/>
+			<bind name="primaryEntityDH" value="'ownSquadronesEntity'; CC.ownSquadron; activeSquadronId"/>
 			<bind name="watchDH" value="'planeType'; []; ownSquadronesEntity.plane.planeType"/>
-			<bind name="var" value="{ planeIconNames: ['plane_scout_own', 'plane_bomber_own', 'plane_torpedo_own', 'plane_fighter_own_bg'] }"/>
-			<bind name="watch" value="'planeIconName'; planeIconNames[planeType]"/>
+			<bind name="watchDH" value="'ammoType';	[]; ownSquadronesEntity.plane.ammoType"/>
+			<bind name="var" value="{ planeIconNames: [	'plane_fighter_own_bg',
+									'plane_bomber_own',
+									'plane_bomber_own_AP',
+									'plane_torpedo_own',
+									'plane_torpedo_own_deepwater'] }"/>
+			<bind name="var" value="{ planeIconWidthArray: ['19px', '9px', '9px', '15px', '19px'] }"/>
+			<bind name="watch" value="'planeIconName'; planeIconNames[ammoType]"/>
+			<bind name="watch" value="'planeIconWidth'; planeIconWidthArray[ammoType]"/>
 			<bind name="watch" value="'planeTypeStr'; 	planeType == 1	? 'Dive' :
 									planeType == 2	? 'Bomber'
 													: 'Fighter'"/>
@@ -1350,7 +1359,7 @@
 			<bind name="watchDH" value="'torpedoMaxDist'; ['torpedoMaxDistEntity.parameter.evChanged']; (format(torpedoMaxDistEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
 			<bind name="watchDH" value="'torpedoMaxDist'+'_vis'; ['torpedoMaxDistEntity.parameter.evChanged']; torpedoMaxDistEntity.parameter.currentValue"/>
 			<bind name="watch" value="'planeParams';
-		[	{ title: toUpperCase('IDS_SHIP_PARAM_PLANE_NAME_' + planeTypeStr), value: maxPlanesNum, iconPath: 'symbol:' + planeIconName },
+		[	{ title: toUpperCase('IDS_SHIP_PARAM_PLANE_NAME_' + planeTypeStr), value: maxPlanesNum, iconPath: 'symbol:' + planeIconName, iconWidth: planeIconWidth, iconHeight: '21px'},
 
 			{ title: 'IDS_SHIP_TOOLTIP_VISIBILITY', value: no_value,
 				paramsArr: 	[ 	{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_SHIP', value: visibilityDistByShip, isInvisible: (visibilityDistByShip_vis == 0) },
@@ -1474,7 +1483,7 @@
 		<bind name="watchDH" value="'maxLevel'; []; modifierEntity.shipModifier.maxLevel"/>
 		<bind name="watchDH" value="'attributes'; ['modifierEntity.attributes.evChanged']; modifierEntity.attributes"/>
 		<bind name="watch" value="'modifierHeader';
-		{ 	title: tr(toUpperCase('IDS_SHIP_MODIFIER_PARAM_HEADER_' + name)), iconPath: 'symbol:icon_ship_modifier_' + name + '_small',
+		{ 	title: tr(toUpperCase('IDS_SHIP_MODIFIER_PARAM_HEADER_' + name)), iconPath: 'symbol:icon_ship_modifier_' + name + '_small', iconWidth: '20px', iconHeight: '20px',
 			value: maxLevel != 0 ? subst('IDS_SHIP_MODIFIER_PARAM_LEVEL', [], {level: level, maxLevel: maxLevel}) : no_value, isNegative: modifierEntity.shipModifier.isNegative
 		}
 	"/>
@@ -1711,10 +1720,19 @@
 		]"/>
 	</block>
 	<block className="PlaneParamsArray">
-		<bind name="firstEntityDH" value="'ownSquadronesEntity'; CC.ownSquadron; 'selected'"/>
+		<bind name="firstEntityDH" value="'aircarrierEntity'; CC.aircarrier"/>
+		<bind name="watchDH" value="'activeSquadronId'; ['aircarrierEntity.aircarrier.evStateChanged']; aircarrierEntity.aircarrier.activeSquadron"/>
+		<bind name="primaryEntityDH" value="'ownSquadronesEntity'; CC.ownSquadron; activeSquadronId"/>
 		<bind name="watchDH" value="'planeType'; []; ownSquadronesEntity.plane.planeType"/>
-		<bind name="var" value="{ planeIconNames: ['plane_scout_own', 'plane_bomber_own', 'plane_torpedo_own', 'plane_fighter_own_bg'] }"/>
-		<bind name="watch" value="'planeIconName'; planeIconNames[planeType]"/>
+		<bind name="watchDH" value="'ammoType';	[]; ownSquadronesEntity.plane.ammoType"/>
+		<bind name="var" value="{ planeIconNames: [	'plane_fighter_own_bg',
+									'plane_bomber_own',
+									'plane_bomber_own_AP',
+									'plane_torpedo_own',
+									'plane_torpedo_own_deepwater'] }"/>
+		<bind name="var" value="{ planeIconWidthArray: ['19px', '9px', '9px', '15px', '19px'] }"/>
+		<bind name="watch" value="'planeIconName'; planeIconNames[ammoType]"/>
+		<bind name="watch" value="'planeIconWidth'; planeIconWidthArray[ammoType]"/>
 		<bind name="watch" value="'planeTypeStr'; 	planeType == 1	? 'Dive' :
 									planeType == 2	? 'Bomber'
 													: 'Fighter'"/>
@@ -1741,7 +1759,7 @@
 		<bind name="watchDH" value="'torpedoMaxDist'; ['torpedoMaxDistEntity.parameter.evChanged']; (format(torpedoMaxDistEntity.parameter.currentValue, 1, true) + tr('IDS_KILOMETER_SPACE'))"/>
 		<bind name="watchDH" value="'torpedoMaxDist'+'_vis'; ['torpedoMaxDistEntity.parameter.evChanged']; torpedoMaxDistEntity.parameter.currentValue"/>
 		<bind name="watch" value="'planeParams';
-		[	{ title: toUpperCase('IDS_SHIP_PARAM_PLANE_NAME_' + planeTypeStr), value: maxPlanesNum, iconPath: 'symbol:' + planeIconName },
+		[	{ title: toUpperCase('IDS_SHIP_PARAM_PLANE_NAME_' + planeTypeStr), value: maxPlanesNum, iconPath: 'symbol:' + planeIconName, iconWidth: planeIconWidth, iconHeight: '21px'},
 
 			{ title: 'IDS_SHIP_TOOLTIP_VISIBILITY', value: no_value,
 				paramsArr: 	[ 	{ title: 'IDS_SHIP_PARAM_VISIBILITY_DIST_BY_SHIP', value: visibilityDistByShip, isInvisible: (visibilityDistByShip_vis == 0) },
@@ -1807,12 +1825,8 @@
 			</block>
 			<block>
 				<bind name="visible" value="!!(iconPath)"/>
-				<styleClass value="$MiddleVAlignedAbsolutely"/>
-				<style>
-					<width value="20px"/>
-					<height value="20px"/>
-					<backgroundSize value="cover"/>
-				</style>
+				<bind name="style" value="'width'; iconWidth ? iconWidth : '21px'"/>
+				<bind name="style" value="'height'; iconHeight ? iconHeight : '21px'"/>
 				<bind name="style" value="'backgroundImage'; iconPath"/>
 			</block>
 			<block type="text">
@@ -1820,7 +1834,7 @@
 					<width value="100%"/>
 					<leading value="-3"/>
 				</style>
-				<bind name="style" value="'marginLeft'; !!(iconPath) ? 24 : 0"/>
+				<bind name="style" value="'marginLeft'; !!(iconPath) ? '8px' : 0"/>
 				<styleClass value="$TextDefaultBold17NM"/>
 				<bind name="text" value="title"/>
 			</block>
@@ -2664,8 +2678,11 @@
 		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
 		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity.aircarrier.activeSquadron"/>
 		<bind name="watchDH" value="'squadronCameraMode'; ['ownCarrierEntity.aircarrier.evSquadronCameraModeChanged']; ownCarrierEntity.aircarrier.squadronCameraMode"/>
+		<bind name="watchDH" value="'canLaunchSquadrons'; ['ownCarrierEntity.aircarrier.evCanLaunchSquadronsChanged']; ownCarrierEntity.aircarrier.canLaunchSquadrons"/>
 		<bind name="firstEntityDH" value="'airDefenseFocusEntity'; CC.airDefenseFocus"/>
 		<bind name="watchDH" value="'airDefenseFocusActive'; ['airDefenseFocusEntity.airDefenseFocus.evActiveChanged']; airDefenseFocusEntity.airDefenseFocus.active"/>
+		<bind name="firstEntityDH" value="'battleStateEntity'; CC.battleState"/>
+		<bind name="watchDH" value="'battleState'; ['battleStateEntity.battleState.evBattleStateChanged']; battleStateEntity.battleState.battleState"/>
 		<bind name="primaryEntityDH" value="'currentSquadronEntity'; CC.ownSquadron; activeSquadron"/>
 		<bind name="watchDH" value="'flightState';	['currentSquadronEntity.ownSquadron.evStateChanged']; currentSquadronEntity.ownSquadron.state"/>
 		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
@@ -2677,8 +2694,8 @@
 		<bind name="watch" value="'isOnNoAvatarCamera'; squadronCameraMode != 'default'"/>
 		<bind name="watch" value="'isTimerToDieVisible'; (isOnSquadron &amp;&amp; timeToLive != 0)"/>
 		<bind name="watch" value="'isDeathCamera'; !(isOnSquadron || isAlive)"/>
-		<bind name="collectionDH" value="CC.ownSquadron; 'ownSquadrons'"/>
-		<bind name="collectionDesign" value="DES_ownSquadrons; 'selectedOwnSquadron'; {'filter': $entity.selection.value == true}; ['selection.evChanged']"/>
+		<bind name="firstEntityDH" value="'aircarrierEntity'; CC.aircarrier"/>
+		<bind name="watchDH" value="'selectedSquadronId'; ['aircarrierEntity.aircarrier.evSelectedSquadronChanged']; aircarrierEntity.aircarrier.selectedSquadron"/>
 		<bind name="fade" value="!tacticalMap &amp;&amp; !airDefenseFocusActive; 0.08; {alpha: 0}; {alpha: 1}; {alpha: 0}; 0"/>
 		<block>
 			<bind name="fade" value="isOnNoAvatarCamera &amp;&amp; isAlive &amp;&amp; !lastAttackStartedState; 0.08; {alpha: 0, top: 5}; {alpha:1, top: 0}; {alpha: 0, top: 5}; 0; 0.08"/>
@@ -2709,8 +2726,8 @@
 					<marginLeft value="-50%"/>
 					<position value="absolute"/>
 				</style>
-				<bind name="visible" value="(activeSquadron == -1)"/>
-				<bind name="instance" value="'AircraftCarrierPanelInstruction'; {_selectedSquadronEntityId: selectedOwnSquadron[0].id}"/>
+				<bind name="visible" value="(activeSquadron == -1 &amp;&amp; battleState==0 &amp;&amp; canLaunchSquadrons)"/>
+				<bind name="instance" value="'AircraftCarrierPanelInstruction'; {_selectedSquadronEntityId: selectedSquadronId}"/>
 			</block>
 		</block>
 		<block>
@@ -2723,7 +2740,7 @@
 		</block>
 	</block>
 	<block className="AircraftCarrierPanelInstruction">
-		<bind name="entityDH" value="'selectedSquadronEntity'; _selectedSquadronEntityId"/>
+		<bind name="primaryEntityDH" value="'selectedSquadronEntity'; CC.ownSquadron; _selectedSquadronEntityId"/>
 		<bind name="watchDH" value="'numPlanes';		['selectedSquadronEntity.health.evValueChanged']; selectedSquadronEntity.health.value"/>
 		<bind name="watchDH" value="'flightState'; ['selectedSquadronEntity.ownSquadron.evStateChanged']; selectedSquadronEntity.ownSquadron.state"/>
 		<bind name="watchDH" value="'ammoType';		[]; selectedSquadronEntity.plane.ammoType"/>
@@ -6525,6 +6542,43 @@
 			</block>
 			<block>
 				<bind name="mc" value="'slider_default'; ['valueChange']; ['value']; {maximum:_maximum, minimum:_minimum, step:_step, value:_value}"/>
+			</block>
+		</block>
+	</block>
+	<block className="AchievementRenderer">
+		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'achievements'; (_id ? _id : $value); 'achievement'"/>
+		<style>
+			<flow value="horizontal"/>
+			<width value="100%"/>
+		</style>
+		<block>
+			<bind name="instance" value="'AchievementIcon'; {_id: (_id ? _id : $value)}"/>
+		</block>
+		<block>
+			<styleClass value="$InfoBlockHorizontalIndent"/>
+			<style>
+				<marginLeft value="10px"/>
+				<marginTop value="-1px"/>
+			</style>
+			<block type="text">
+				<styleClass value="$TextHeaderWhiteBold"/>
+				<style>
+					<width value="100%"/>
+					<maxWidth value="222"/>
+					<textAlign value="left"/>
+				</style>
+				<bind name="class" value="'$FontColorWhite'"/>
+				<bind name="text" value="achievement.nameIDS"/>
+			</block>
+			<block type="text">
+				<styleClass value="$TextHeaderBigDefaultTech"/>
+				<style>
+					<marginTop value="-3px"/>
+					<maxWidth value="220"/>
+					<textAlign value="left"/>
+				</style>
+				<bind name="class" value="'$FontColorWhite'"/>
+				<bind name="text" value="achievement.subtypeIDS"/>
 			</block>
 		</block>
 	</block>
@@ -12008,14 +12062,12 @@
 		</block>
 	</block>
 	<block className="InfopanelButton">
+		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
 		<bind name="request" value="'buttonClick'; _request ? _request : null; _requestParams ? _requestParams : {}"/>
 		<bind name="action" value="'buttonClick'; _action ? _action : null; _actionParams ? _actionParams : {}"/>
-		<bind name="dispatch" value="'mouseOver'; 'overInfopanelButton'; {infopanelButtonOverAlpha: 1}"/>
-		<bind name="dispatch" value="'mouseOut'; 'upInfopanelButton'; 	{infopanelButtonOverAlpha: 0.6}"/>
-		<bind name="dispatch" value="'mouseDown'; 'downInfopanelButton'; {infopanelButtonOverAlpha: 0.3}"/>
-		<bind name="catch" value="'upInfopanelButton'}"/>
-		<bind name="catch" value="'overInfopanelButton'"/>
-		<bind name="catch" value="'downInfopanelButton'"/>
+		<bind name="watch" value="'infopanelButtonOverAlpha';	(mouseDown)		? 0.3 :
+												(rollOver)		? 1
+																: 0.6"/>
 		<bind name="tooltip" value="'SimpleTooltip'; _tooltipIDS ? { tooltipText: _tooltipIDS } : null"/>
 		<bind name="style" value="'alpha'; infopanelButtonOverAlpha"/>
 		<bind name="name" value="_name"/>
