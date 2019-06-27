@@ -2471,6 +2471,89 @@
 		</style>
 		<bind name="instance" value="'AchievementIconWithTitle'; { id: details.achievementId, amount: amount }"/>
 	</block>
+	<css name="$TabButtonFontUp">
+		<fontFamily value="$WWSDefaultFontBold"/>
+		<mouseEnabled value="false"/>
+		<mouseChildren value="false"/>
+		<fontSize value="15"/>
+		<marginText value="-3px|-3px|-6px|-5px"/>
+		<dropShadowFilter value="0 90 0x000000 1 2 2 1"/>
+		<selectable value="false"/>
+		<textColor value="0xFFFFFF"/>
+	</css>
+	<block className="MainTabButton">
+		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
+		<bind name="watch" value="'tabBarSoundSet'; 'main_tab_' + _actionParams.inset"/>
+		<bind name="tooltip" value="'MouseInstructionTooltip'; _tooltipData ? { _isInBattle: _tooltipData.isInBattle,
+																_multiParagraphArray: _tooltipData.paragraphText ? [{ _paragraphText: _tooltipData.paragraphText }] : null,
+																_mouseInstructions: _tooltipData.mouseInstructions,
+																_maxWidth: 250,
+																_marginBottom: _tooltipData.marginBottom,
+																_leading: _tooltipData.leading,
+																_checkedLines: _tooltipData.checkedLines }
+															: null"/>
+		<style>
+			<height value="29px"/>
+		</style>
+		<bind name="style" value="'width'; _width ? _width : '143px'"/>
+		<block className="tab_bar_item_no_label" type="native">
+			<bind name="name" value="_name"/>
+			<bind name="soundSet" value="tabBarSoundSet"/>
+			<styleClass value="$FullsizeAbsolute"/>
+			<bind name="selected" value="_selected"/>
+			<bind name="enabled" value="_enabled"/>
+			<bind name="action" value="'buttonClick'; 	_action 	? _action : null; 	_actionParams 	? _actionParams : {}"/>
+			<bind name="request" value="'buttonClick'; 	_request 	? _request : null; 	_requestParams 	? _requestParams : {}"/>
+			<bind name="dispatch" value="'buttonClick'; 	_dispatch 	? _dispatch : null; _dispatchParams ? _dispatchParams : null"/>
+		</block>
+		<block>
+			<styleClass value="$MiddleAligned"/>
+			<style>
+				<hitTest value="false"/>
+			</style>
+			<block type="text">
+				<styleClass value="$TabButtonFontUp"/>
+				<style>
+					<textAlign value="center"/>
+					<multiline value="false"/>
+					<marginTop value="9px"/>
+				</style>
+				<bind name="class" value="(mouseDown || (_enabled == false))	? '$FontColorTabButtonDown' :
+												rollOver	? '$FontColorWhite' :
+												_selected	? '$FontColorDefaultButtonUp'
+															: '$FontColorTabButtonUp'"/>
+				<bind name="style" value="'alpha'; (_enabled == false) || mouseDown || rollOver || _selected ? 1 : 0.8"/>
+				<bind name="text" value="toUpperCase(tr(_label))"/>
+			</block>
+			<block>
+				<bind name="fade" value="((_newContentCounter &gt; 0) &amp;&amp; (_isNewMarker != true)); 0.15; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: -10}; 2"/>
+				<style>
+					<position value="absolute"/>
+					<right value="-2px"/>
+					<top value="1px"/>
+				</style>
+				<block>
+					<style>
+						<position value="absolute"/>
+						<left value="0px"/>
+					</style>
+					<bind name="instance" value="'MarkerNewCounter'; { _newContentCounter: _newContentCounter }"/>
+				</block>
+			</block>
+			<block>
+				<bind name="fade" value="_isNewMarker; 0.15; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: -10}; 2"/>
+				<style>
+					<position value="absolute"/>
+					<right value="-38px"/>
+					<top value="1px"/>
+				</style>
+				<bind name="instance" value="'MarkerNewAttention'; { }"/>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
+	</block>
 	<block className="MainTabSmallInstance">
 		<block className="tab_bar_item_small" type="native">
 			<bind name="name" value="'MainTabSmallInstance_' + _name"/>
@@ -2485,21 +2568,60 @@
 		</block>
 		<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: _tooltipIDS}"/>
 	</block>
-	<block className="MainTabNew">
-		<block className="tab_bar_item" type="native">
-			<bind name="name" value="_name"/>
+	<block className="NavigationProfileButton">
+		<style>
+			<width value="188px"/>
+		</style>
+		<block className="button_navigation_small_no_label" type="native">
+			<params>
+				<param name="toggle" value="false"/>
+			</params>
 			<style>
-				<height value="29px"/>
+				<width value="100%"/>
+				<marginBottom value="1px"/>
 			</style>
-			<bind name="style" value="'width'; _width"/>
-			<bind name="selected" value="_selected"/>
-			<bind name="action" value="'click'; _action ? _action : null; _actionParams ? _actionParams : {}"/>
-			<bind name="request" value="'buttonClick'; _request ? _request : null; _requestParams ? _requestParams : {}"/>
-			<bind name="dispatch" value="'buttonClick'; _dispatch ? _dispatch : null; _dispatchParams ? _dispatchParams : null"/>
-			<bind name="label" value="toUpperCase(tr(_label))"/>
-			<bind name="soundSet" value="'main_tab_' + _index"/>
+			<bind name="selected" value="_actionParams.page == _activePage"/>
+			<bind name="enabled" value="_actionParams.page != _activePage"/>
+			<bind name="action" value="'buttonClick'; _action ? _action : null; _actionParams ? _actionParams : {}"/>
 		</block>
-		<bind name="tooltip" value="'MouseInstructionTooltip'; {_multiParagraphArray:  [{_paragraphText: _tooltipIDS}], _maxWidth: 250, _isInBattle: _isInBattle}"/>
+		<block>
+			<style>
+				<width value="100%"/>
+				<position value="absolute"/>
+				<hitTest value="false"/>
+			</style>
+			<block type="text">
+				<styleClass value="$TextDefaultBoldNM"/>
+				<style>
+					<multiline value="false"/>
+					<marginLeft value="14px"/>
+					<marginTop value="13px"/>
+				</style>
+				<bind name="class" value=" (_actionParams.page == _activePage) ? '$FontColorAlmostBlack' : ''"/>
+				<bind name="class" value=" (_actionParams.page == _activePage) ? '$FontGlowFilterBrightStrong' : '$FontDropShadowFilter1'"/>
+				<bind name="text" value="toUpperCase(tr(_label))"/>
+			</block>
+			<block>
+				<style>
+					<marginLeft value="2px"/>
+					<marginTop value="4px"/>
+				</style>
+				<block>
+					<bind name="fade" value="_isNewMarker; 0.15; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: -10}; 2"/>
+					<bind name="instance" value="'MarkerNewAttention'; { }"/>
+				</block>
+				<block>
+					<bind name="fade" value="((_newContentCounter &gt; 0) &amp;&amp; (_isNewMarker != true)); 0.15; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: -10}; 2"/>
+					<style>
+						<position value="absolute"/>
+					</style>
+					<bind name="instance" value="'MarkerNewCounter'; { _newContentCounter: _newContentCounter }"/>
+				</block>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
+		</block>
 	</block>
 	<css name="$QuestBar">
 		<backgroundColor value="0xFF009999"/>
@@ -6475,6 +6597,10 @@
 		<fontFamily value="$WWSDefaultFontBold"/>
 		<dropShadowFilter value="1 90 0x08222a 0.5 2.0 2.0 1.0 2"/>
 	</css>
+	<css name="$FontFamilyDefaultBoldTabs">
+		<fontFamily value="$WWSDefaultFontBold"/>
+		<dropShadowFilter value="0 90 0x000000 1 2 2 1"/>
+	</css>
 	<css name="$Bold">
 		<fontFamily value="$WWSDefaultFontBold"/>
 	</css>
@@ -6541,6 +6667,12 @@
 	<css name="$FontColorDefaultButtonUp">
 		<textColor value="0xc7e2e2"/>
 	</css>
+	<css name="$FontColorTabButtonDown">
+		<textColor value="0x999999"/>
+	</css>
+	<css name="$FontColorTabButtonSelectedUp">
+		<textColor value="0xAABFBF"/>
+	</css>
 	<css name="$FontColorComparePositive">
 		<textColor value="0x4CE8AA"/>
 	</css>
@@ -6590,7 +6722,7 @@
 		<fontSize value="60"/>
 	</css>
 	<css name="$LetterSpacingSmall">
-		<letterSpacing value="0.8"/>
+		<letterSpacing value="0"/>
 	</css>
 	<css name="$InvertedTextEffect">
 		<dropShadowFilter value="0 90 0xffffff 1.0 3.0 3.0 0.3"/>
@@ -6614,6 +6746,9 @@
 	<css name="$FontDropShadowWhite">
 		<dropShadowFilter value="0 90 0xffffff 1.0 3.0 3.0 0.3"/>
 	</css>
+	<css name="$BlockDropShadowTabText">
+		<dropShadowFilter value="0 90 0x000000 1 2 2 1"/>
+	</css>
 	<css name="$ComplaintMenuListItemBattleMargins">
 		<marginLeft value="2px"/>
 		<marginRight value="2px"/>
@@ -6623,6 +6758,8 @@
 		<marginRight value="1px"/>
 	</css>
 	<block className="UIListPlayerContextMenu">
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'dynamicDivisionsData'; 'id'; _selfPlayer.divisionId; 'selfPlayerDivisionData'"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInvitedToDivision'; _player.name; 'playerInvitationData'"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'VoiceChatState'"/>
@@ -6646,9 +6783,9 @@
 		<bind name="timeFormat" value="(_player.inviteCooldown - serverTime); 'mm:ss'; 'cooldownTimeText'"/>
 		<bind name="watch" value="'isEnemyPlayer'; (_player.relation == 2)"/>
 		<bind name="watch" value="'isFreePlacesInDivision'; ((selfPlayerDivisionData[0].staff.length + selfPlayerDivisionData[0].inPortParticipantsCount) &lt; 3)"/>
-		<bind name="watch" value="'isBattletypeWithDynamicDivisions';	(gameInfo.battleType == BattleTypes.COOPERATIVE_BATTLE)	||
-														(gameInfo.battleType == BattleTypes.RANDOM_BATTLE)		||
-														(gameInfo.battleType == BattleTypes.EVENT_BATTLE)"/>
+		<bind name="watch" value="'isBattletypeWithDynamicDivisions';	(battleType == BattleTypes.COOPERATIVE_BATTLE)	||
+														(battleType == BattleTypes.RANDOM_BATTLE)		||
+														(battleType == BattleTypes.EVENT_BATTLE)"/>
 		<bind name="watch" value="'isDynamicDivisionsEnabled'; isBattletypeWithDynamicDivisions &amp;&amp; slimClientData.isFull"/>
 		<bind name="watch" value="'invitationDisableReason'; (_player.isLeaver)						? 'IDS_INVITATION_DISABLE_REASON_PLAYER_IS_OUT_OF_BATTLE':
 											(_player.division != 0)					? 'IDS_INVITATION_DISABLE_REASON_ALREADY_IN_DIVISION' :
@@ -8352,22 +8489,25 @@
 		<bind name="entityDH" value="'userPrefsEntity'; userPrefsCollection[0].id"/>
 		<bind name="watchDH" value="'userPrefs'; ['userPrefsEntity.userPrefs.evUserPrefsChanged']; userPrefsEntity.userPrefs.userPrefs"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'battleModeInfo'; 'updateBattleTime,battleModeInfo,updateBattleModeInfo'"/>
-		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'gameInfo'; 'initGameInfo,GameInfoUpdateFragsCount,GameVersion'"/>
 		<bind name="controller" value="lesta.dialogs.battle_window_controllers.uss_controllers.ControllerBattleStats"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'slimClientData'"/>
-		<bind name="action" value="'addedToStage'; 'setUserPref' ; gameInfo.battleType == BattleTypes.EVENT_BATTLE ? {value: 0, name: 'battleLoadingTabIndex'} : null"/>
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
+		<bind name="watch" value="'gameModeId';	battleDataEntity.battleInfo.gameModeId"/>
+		<bind name="watch" value="'gameMode';	battleDataEntity.battleInfo.gameMode"/>
+		<bind name="action" value="'addedToStage'; 'setUserPref' ; battleType == BattleTypes.EVENT_BATTLE ? {value: 0, name: 'battleLoadingTabIndex'} : null"/>
 		<bind name="watch" value="'battleLoadingTabIndex';	(userPrefs.battleLoadingTabIndex == null)	? 2 : userPrefs.battleLoadingTabIndex"/>
-		<bind name="watch" value="'validTabIndex'; 	gameInfo.battleType == BattleTypes.INTRO_MISSION			? 0 :
+		<bind name="watch" value="'validTabIndex'; 	battleType == BattleTypes.INTRO_MISSION						? 0 :
 									!isDynamicDivisionsEnabled &amp;&amp; battleLoadingTabIndex == 3	? 2
 																								: battleLoadingTabIndex"/>
-		<bind name="watch" value="'isBattletypeWithDynamicDivisions';	(gameInfo.battleType == BattleTypes.COOPERATIVE_BATTLE)	||
-														(gameInfo.battleType == BattleTypes.RANDOM_BATTLE)		||
-														(gameInfo.battleType == BattleTypes.EVENT_BATTLE)"/>
+		<bind name="watch" value="'isBattletypeWithDynamicDivisions';	(battleType == BattleTypes.COOPERATIVE_BATTLE)	||
+														(battleType == BattleTypes.RANDOM_BATTLE)		||
+														(battleType == BattleTypes.EVENT_BATTLE)"/>
 		<bind name="watch" value="'isDynamicDivisionsEnabled'; isBattletypeWithDynamicDivisions &amp;&amp; slimClientData.isFull"/>
-		<bind name="watch" value="'isVoiceChatEnabled';	(gameInfo.battleType == BattleTypes.CLAN_BATTLE) ||
-										((selfPlayer.divisionId != 0) &amp;&amp; ((gameInfo.battleType == BattleTypes.RANDOM_BATTLE) ||
-																		  (gameInfo.battleType == BattleTypes.COOPERATIVE_BATTLE) ||
-																		  (gameInfo.battleType == BattleTypes.PVE_BATTLE)))"/>
+		<bind name="watch" value="'isVoiceChatEnabled';	(battleType == BattleTypes.CLAN_BATTLE) ||
+										((selfPlayer.divisionId != 0) &amp;&amp; ((battleType == BattleTypes.RANDOM_BATTLE) ||
+																		  (battleType == BattleTypes.COOPERATIVE_BATTLE) ||
+																		  (battleType == BattleTypes.PVE_BATTLE)))"/>
 		<block className="lesta.utils.resourceLoading.BitmapDataResourceDisplay" type="native">
 			<styleClass value="$FullsizeAbsolute"/>
 			<bind name="display!" value="battleModeInfo.bitmapId"/>
@@ -8414,7 +8554,7 @@
 				<bind name="instance" value="'ClanSeasonWinnersClanTag'; (clanBattleSeasonCollection.length &gt; 0) &amp;&amp; winnerClanId ? {_mapName: battleModeInfo.mapName} : null"/>
 			</block>
 			<block>
-				<bind name="visible" value="(gameInfo.gameModeId != GameMode.TUTORIAL)"/>
+				<bind name="visible" value="(gameModeId != GameMode.TUTORIAL)"/>
 				<styleClass value="$MiddleAlignedAbsolutely"/>
 				<style>
 					<top value="40px"/>
@@ -8429,13 +8569,13 @@
 					</style>
 				</block>
 				<block>
-					<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTab_0', 
+					<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTab_0', 
 												_width: '160px', 
 												_selected: validTabIndex == 0, 
 												_action: 'setUserPref', _actionParams: {value: 0, name: 'battleLoadingTabIndex'}, 
 												_label: 'IDS_TEAM_TASKS', 
 												_index: 0, 
-												_tooltipIDS: 'IDS_TOOLTIP_TAB_TASKS', _isInBattle: false}"/>
+												_paragraphText: 'IDS_TOOLTIP_TAB_TASKS', _isInBattle: false}"/>
 				</block>
 				<block>
 					<block className="divider_v" type="native">
@@ -8444,13 +8584,13 @@
 							<top value="2px"/>
 						</style>
 					</block>
-					<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTab_1', 
+					<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTab_1', 
 												_width: '160px', 
 												_selected: validTabIndex == 1,
 												_action: 'setUserPref', _actionParams: {value: 1, name: 'battleLoadingTabIndex'}, 
 												_label: 'IDS_TEAM_STRUCTURE', 
 												_index: 1, 
-												_tooltipIDS: 'IDS_TOOLTIP_TAB_TEAM_STRUCTURE', _isInBattle: false}"/>
+												_paragraphText: 'IDS_TOOLTIP_TAB_TEAM_STRUCTURE', _isInBattle: false}"/>
 					<style>
 						<flow value="horizontal"/>
 					</style>
@@ -8462,13 +8602,13 @@
 							<top value="2px"/>
 						</style>
 					</block>
-					<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTab_2', 
+					<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTab_2', 
 												_width: '160px', 
 												_selected: validTabIndex == 2,
 												_action: 'setUserPref', _actionParams: {value: 2, name: 'battleLoadingTabIndex'}, 
 												_label: 'IDS_BATTLE_TIPS', 
 												_index: 2, 
-												_tooltipIDS: 'IDS_TOOLTIP_BATTLE_TIPS', _isInBattle: false}"/>
+												_paragraphText: 'IDS_TOOLTIP_BATTLE_TIPS', _isInBattle: false}"/>
 					<style>
 						<flow value="horizontal"/>
 					</style>
@@ -8481,13 +8621,13 @@
 							<top value="2px"/>
 						</style>
 					</block>
-					<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTab_3', 
+					<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTab_3', 
 												_width: '160px', 
 												_selected: validTabIndex == 3, 
 												_action: 'setUserPref', _actionParams: {value: 3, name: 'battleLoadingTabIndex'}, 
 												_label: 'IDS_DIVISIONS', 
 												_index: 3, 
-												_tooltipIDS: 'IDS_TOOLTIP_TAB_DIVISIONS', _isInBattle: false}"/>
+												_paragraphText: 'IDS_TOOLTIP_TAB_DIVISIONS', _isInBattle: false}"/>
 					<style>
 						<flow value="horizontal"/>
 					</style>
@@ -8509,7 +8649,7 @@
 						</style>
 						<bind name="style" value="'width'; (validTabIndex == 0) ? '97sw': '810px'"/>
 						<bind name="child" value="validTabIndex;
-									{	_isBattleLoading: true, gameInfo: gameInfo, battleModeInfo: battleModeInfo,
+									{	_isBattleLoading: true, battleModeInfo: battleModeInfo,
 										selfPlayer: selfPlayer, enemies: enemies, allies: allies, divisions: divisions,
 										_isDynamicDivisionsEnabled: isDynamicDivisionsEnabled };
 									'Tasks'; 'TeamBattlePage'; 'BattleTipsContent'; 'DynamicDivisions'"/>
@@ -8523,7 +8663,7 @@
 						<marginRight value="-50%"/>
 						<position value="absolute"/>
 					</style>
-					<bind name="child" value="validTabIndex; {	_selfPlayer: selfPlayer, _battleType: gameInfo.battleType,
+					<bind name="child" value="validTabIndex; {	_selfPlayer: selfPlayer, _battleType: battleType,
 												_isDynamicDivisionsEnabled: isDynamicDivisionsEnabled, _isVoiceChatEnabled: isVoiceChatEnabled };
 											'EmptyItem'; 'TeamBattleLoadingRightPanel'; 'EmptyItem'; 'DynamicDivisionsRightPanel'"/>
 				</block>
@@ -8539,6 +8679,8 @@
 					<width value="100%"/>
 				</style>
 				<block>
+					<bind name="firstEntityDH" value="'clanCurrentSeasonEntity'; CC.clanBattleSeason; 'current'"/>
+					<bind name="watchDH" value="'isBrawl'; ['clanCurrentSeasonEntity.clanBattleSeason.evChanged']; clanCurrentSeasonEntity.clanBattleSeason.isBrawl"/>
 					<styleClass value="$MiddleAligned"/>
 					<style>
 						<width value="72px"/>
@@ -8548,11 +8690,12 @@
 						<style>
 							<position value="absolute"/>
 						</style>
-						<bind name="gotoAndStop!" value="(gameInfo.battleType == BattleTypes.RANKED_BATTLE) &amp;&amp; (rankedBattlesSeason.isJuniorSeason == true) 	? 'RankedBattle_junior':
-										(gameInfo.gameModeId == GameMode.TUTORIAL)															? 'TutorialBattle' :
-										(gameInfo.gameModeId == GameMode.PVE) &amp;&amp; (operationType == 'event')					? 'PVEBattle_event' :
-										(gameInfo.gameModeId == GameMode.PVE)																? pveIconLabel
-																																			: gameInfo.battleType"/>
+						<bind name="gotoAndStop!" value="(battleType == BattleTypes.RANKED_BATTLE) &amp;&amp; (rankedBattlesSeason.isJuniorSeason == true) 	? 'RankedBattle_junior':
+										(battleType == BattleTypes.CLAN_BATTLE) &amp;&amp; (isBrawl)									 	? 'ClanBrawl':
+										(gameModeId == GameMode.TUTORIAL)															? 'TutorialBattle' :
+										(gameModeId == GameMode.PVE) &amp;&amp; (operationType == 'event')					? 'PVEBattle_event' :
+										(gameModeId == GameMode.PVE)																? pveIconLabel
+																																			: battleType"/>
 					</block>
 				</block>
 				<block>
@@ -8570,7 +8713,7 @@
 						<bind name="class" value="'$FontSizeLargeHeader'"/>
 						<styleClass value="$MiddleAligned"/>
 						<styleClass value="$TextAccentBold"/>
-						<bind name="text" value="(gameInfo.gameModeId == GameMode.PVE	? tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_NAME') : toUpperCase(tr(battleModeInfo.mapName)))"/>
+						<bind name="text" value="(gameModeId == GameMode.PVE	? tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_NAME') : toUpperCase(tr(battleModeInfo.mapName)))"/>
 					</block>
 					<block type="text">
 						<bind name="name" value="'battleType'"/>
@@ -8580,11 +8723,10 @@
 							<marginTop value="-6px"/>
 							<alpha value="0.85"/>
 						</style>
-						<bind name="text" value="gameInfo.gameModeId == GameMode.PVE	?  tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' + 	(isChosenOperationOfTheWeek == true		? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
-																												(!(operationIsHard)						? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE') 
-																																						: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
-																	:	gameInfo.battleType == BattleTypes.EVENT_BATTLE	? 'IDS_EVENTBATTLE'
-																														: (toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE')))"/>
+						<bind name="text" value="gameModeId == GameMode.PVE	? tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' + (isChosenOperationOfTheWeek == true		? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
+																											(!(operationIsHard)						? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE') 
+																																					: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
+																	: (toUpperCase(tr('IDS_')) + gameMode + toUpperCase(tr('_TITLE')))"/>
 					</block>
 				</block>
 				<block>
@@ -8837,6 +8979,9 @@
 		</block>
 	</block>
 	<block className="Tasks">
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType'; battleDataEntity.battleInfo.battleType"/>
+		<bind name="watch" value="'gameModeId'; battleDataEntity.battleInfo.gameModeId"/>
 		<style>
 			<width value="100%"/>
 		</style>
@@ -8870,13 +9015,12 @@
 				<width value="860px"/>
 				<position value="absolute"/>
 			</style>
-			<bind name="child" value="(gameInfo.gameModeId != null ? (gameInfo.gameModeId == GameMode.PVE	? 1
-																							: 2)
-												 : 0); {	_battleModeInfo: battleModeInfo,
-															_gameInfo: gameInfo,
-															_selfPlayer: selfPlayer };	'EmptyItem';
-																						'BattleLoadingPVETasks';
-																						'BattleLoadingStandartTasks'"/>
+			<bind name="child" value="(gameModeId != null ? (gameModeId == GameMode.PVE	? 1
+																		: 2)
+										 : 0); {	_battleModeInfo: battleModeInfo,
+													_selfPlayer: selfPlayer };	'EmptyItem';
+																				'BattleLoadingPVETasks';
+																				'BattleLoadingStandartTasks'"/>
 		</block>
 		<block>
 			<style>
@@ -8890,6 +9034,11 @@
 		</block>
 	</block>
 	<block className="BattleLoadingStandartTasks">
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
+		<bind name="watch" value="'gameModeId';	battleDataEntity.battleInfo.gameModeId"/>
+		<bind name="watch" value="'gameMode';	battleDataEntity.battleInfo.gameMode"/>
+		<bind name="watch" value="'gameModeDescription';	battleDataEntity.battleInfo.gameModeDescription"/>
 		<style>
 			<width value="100%"/>
 		</style>
@@ -8900,7 +9049,7 @@
 				<width value="100%"/>
 				<marginBottom value="12px"/>
 			</style>
-			<bind name="text" value="_gameInfo.gameModeId == GameMode.TUTORIAL ? tr('IDS_YOUR_GOAL') : tr('IDS_TEAM_GOALS')"/>
+			<bind name="text" value="gameModeId == GameMode.TUTORIAL ? tr('IDS_YOUR_GOAL') : tr('IDS_TEAM_GOALS')"/>
 		</block>
 		<block type="text">
 			<bind name="appear" value="'startShow'; 0.15; 0.47; {alpha: 0, top: 10}; {alpha: 0.85, top: 0}"/>
@@ -8911,7 +9060,7 @@
 				<alpha value="0.85"/>
 			</style>
 			<styleClass value="$TextDefault19NM"/>
-			<bind name="text" value="_gameInfo.gameModeDescription"/>
+			<bind name="text" value="gameModeDescription"/>
 		</block>
 		<block>
 			<bind name="appear" value="'startShow'; 0.15; 0.54; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
@@ -8934,20 +9083,20 @@
 					<style>
 						<marginTop value="9px"/>
 					</style>
-					<bind name="instance" value="'PointsCharge'; {_battleModeInfo: _battleModeInfo, _gameInfo: _gameInfo}"/>
+					<bind name="instance" value="'PointsCharge'; {_battleModeInfo: _battleModeInfo}"/>
 				</block>
 			</block>
 		</block>
-		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
-		<bind name="watch" value="'bulletsCount';	_gameInfo.gameModeId == GameMode.ANTI_STANDARD		? 2 :
-									_gameInfo.gameModeId == GameMode.ATTACK_DEFENSE		? 5
-																						: null "/>
+		<bind name="watch" value="'bulletsCount';	gameModeId == GameMode.ANTI_STANDARD		? 2:
+									gameModeId == GameMode.ATTACK_DEFENSE		? 5:
+									gameModeId == GameMode.TEAM_BATTLE_ROYALE	? 5
+																				: null "/>
 		<block>
 			<style>
 				<width value="100%"/>
 			</style>
 			<bind name="visible" value="bulletsCount"/>
-			<bind name="instance" value="'GameModeRulesDescription'; bulletsCount ? {_bulletsCount: bulletsCount, _gameMode: _gameInfo.gameMode} : null"/>
+			<bind name="instance" value="'GameModeRulesDescription'; bulletsCount ? {_bulletsCount: bulletsCount, _gameMode: gameMode} : null"/>
 		</block>
 		<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
 		<block>
@@ -8967,7 +9116,7 @@
 			<bind name="substitute" value="6; null; tr('IDS_POWERUPS_CHECK_PARAMS_TIP'); '_bg'"/>
 		</block>
 		<block>
-			<bind name="visible" value="_gameInfo.gameModeId == GameMode.FORTS"/>
+			<bind name="visible" value="gameModeId == GameMode.FORTS"/>
 			<bind name="appear" value="'startShow'; 0.15; 0.6; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 			<style>
 				<marginTop value="14px"/>
@@ -9016,6 +9165,9 @@
 		</block>
 	</block>
 	<block className="TeamBattlePage">
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
+		<bind name="watch" value="'gameModeId';	battleDataEntity.battleInfo.gameModeId"/>
 		<bind name="appear" value="_isBattleStats ? null : 'addedToStage'; 0.15; 0.15; {alpha: 0, top: 5}; {alpha: 1, top: 0}"/>
 		<style>
 			<width value="100%"/>
@@ -9045,7 +9197,6 @@
 			<block>
 				<styleClass value="$MiddleAligned"/>
 				<bind name="name" value="_isBattleStats ? 'TeamBattleStatsID' : 'TeamBattleLoading'"/>
-				<bind name="style" value="'marginTop'; gameInfo.alliedClub.clubName ? '50px' : '0px'"/>
 				<block>
 					<styleClass value="$FullsizeAbsolute"/>
 					<bind name="instance" value="'BlurMap'; _isBattleLoading ? {} : null"/>
@@ -9054,7 +9205,7 @@
 					<bind name="controller" value="lesta.controls.ui_list.UIListController"/>
 					<block>
 						<bind name="instance" value="'UIlistTeamStructureHeaderLeft'; { 	_width: '422px', _isBattleStats: _isBattleStats, _allyPlayerEntityId: allies[0].id, 
-															_battleType: gameInfo.battleType }"/>
+															_battleType: battleType }"/>
 					</block>
 					<block>
 						<style>
@@ -9066,7 +9217,7 @@
 					</block>
 				</block>
 				<block>
-					<bind name="visible" value="gameInfo.gameModeId != GameMode.PVE"/>
+					<bind name="visible" value="gameModeId != GameMode.PVE"/>
 					<block className="VerticalDivider">
 						<style>
 							<height value="100%"/>
@@ -9080,7 +9231,7 @@
 						<bind name="controller" value="lesta.controls.ui_list.UIListController"/>
 						<block>
 							<bind name="instance" value="'UIlistTeamStructureHeaderRight'; { _width: '422px', _isBattleStats: _isBattleStats, _enemyPlayerEntityId: enemies[0].id, 
-															_battleType: gameInfo.battleType }"/>
+															_battleType: battleType }"/>
 						</block>
 						<block>
 							<bind name="appear" value="'startShow'; 0.15; 0.75; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
@@ -9249,7 +9400,7 @@
 		<bind name="controller" value="lesta.controls.ui_list.UIListController"/>
 		<block>
 			<bind name="instance" value="'UIlistTeamStructureHeaderRight'; { _width: '422px', _isBattleStats: _isBattleStats, _enemyPlayerEntityId: enemies[0].id, 
-															_battleType: gameInfo.battleType }"/>
+															_battleType: battleType }"/>
 		</block>
 		<block>
 			<bind name="appear" value="'startShow'; 0.15; 0.75; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
@@ -9261,7 +9412,7 @@
 		<bind name="controller" value="lesta.controls.ui_list.UIListController"/>
 		<block>
 			<bind name="instance" value="'UIlistTeamStructureHeaderLeft'; { 	_width: '422px', _isBattleStats: _isBattleStats, _allyPlayerEntityId: allies[0].id, 
-															_battleType: gameInfo.battleType }"/>
+															_battleType: battleType }"/>
 		</block>
 		<block>
 			<style>
@@ -9275,7 +9426,8 @@
 	<block className="SimpleUIListTeamStructureLeft">
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'slimClientData'"/>
 		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
-		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'gameInfo'"/>
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInvitedToDivision'; 'playersInvitationsDataCollection'"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInvitedToDivision'; 'name'; name; 'playerInvitationDataCollection'"/>
 		<bind name="watch" value="'playerInvitationData'; playerInvitationDataCollection[0]"/>
@@ -9327,8 +9479,8 @@
 				</block>
 				<bind name="tooltip" value="'BattlePlayerTooltip'; {	_isInBattle: _isBattleStats, _isBot: isBot,
 													_player: player, _selfPlayer: _selfPlayer,
-													_battleType: gameInfo.battleType}"/>
-				<bind name="menu" value="'UIListPlayerContextMenu'; (!(isSelf) &amp;&amp; !(isBot))	?	{	_player: player, _selfPlayer: _selfPlayer, _battleType: gameInfo.battleType,
+													_battleType: battleType}"/>
+				<bind name="menu" value="'UIListPlayerContextMenu'; (!(isSelf) &amp;&amp; !(isBot))	?	{	_player: player, _selfPlayer: _selfPlayer, _battleType: battleType,
 																					_complaintsAvailable: true, _isBattleLoading: _isBattleLoading, _isBattleStats: _isBattleStats}
 																			: null; null; 'contextMenuVisible'"/>
 			</block>
@@ -9343,7 +9495,7 @@
 						<hitTest value="false"/>
 					</style>
 					<bind name="instance" value="'UIListVoiceTextChatIcons'; {	_playerId: id, _selfPlayerDivisionId: _selfPlayer.divisionId,
-																_isInSameDivision: isInSameDivision, _battleType: gameInfo.battleType,
+																_isInSameDivision: isInSameDivision, _battleType: battleType,
 																_isSpeaking: isSpeaking, _isVoiceChatMuted: isMuted, _isInVoiceChat: isInVoiceChat}"/>
 				</block>
 				<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'dynamicDivisionsData'; 'id'; _selfPlayer.divisionId; 'selfPlayerDivisionData'"/>
@@ -9542,9 +9694,10 @@
 	</block>
 	<block className="SimpleUIListTeamStructureRight">
 		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
-		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'gameInfo'"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'players in battle'; 'name'; name; 'playerInCollection'"/>
 		<bind name="watch" value="'player'; playerInCollection[0]"/>
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
 		<bind name="primaryEntityDH" value="'playerEntity'; CC.avatar; id"/>
 		<bind name="primaryEntityDH" value="'clanEntity'; CC.clan; clanId"/>
 		<bind name="primaryEntityDH" value="'clanExtendedEntity'; CC.clanExtended; clanId"/>
@@ -9574,8 +9727,8 @@
 			</block>
 			<bind name="tooltip" value="'BattlePlayerTooltip'; {	_isInBattle: _isBattleStats, _isBot: isBot,
 												_player: player, _selfPlayer: _selfPlayer,
-												_battleType: gameInfo.battleType}"/>
-			<bind name="menu" value="'UIListPlayerContextMenu';	!(isBot)	? {	_player: player, _selfPlayer: _selfPlayer, _battleType: gameInfo.battleType,
+												_battleType: battleType}"/>
+			<bind name="menu" value="'UIListPlayerContextMenu';	!(isBot)	? {	_player: player, _selfPlayer: _selfPlayer, _battleType: battleType,
 																_complaintsAvailable: true, _isBattleLoading: _isBattleLoading, _isBattleStats: _isBattleStats}
 															: null; null; 'contextMenuVisible'"/>
 		</block>
@@ -10133,7 +10286,11 @@
 		<bind name="watchDH" value="'allyClanTag'; 	['allyClanEntity.clan.evTagChanged']; _allyClanTag	? _allyClanTag	: allyClanEntity.clan.tag"/>
 		<bind name="watchDH" value="'allyRealm'; 	[];	_allyRealm	 ? _allyRealm	: allyPlayerEntity.accountRealm.realm"/>
 		<bind name="watchDH" value="'allySquadId'; 	[];	_allySquadId ? _allySquadId	: allyPlayerEntity.accountClanSquad.id"/>
-		<bind name="watch" value="'allySquadIds'; (allySquadId == 1) ? 'IDS_CLAN_SQUAD_1' : 'IDS_CLAN_SQUAD_2'"/>
+		<bind name="firstEntityDH" value="'clanCurrentSeasonEntity'; CC.clanBattleSeason; 'current'"/>
+		<bind name="watchDH" value="'isBrawl'; ['clanCurrentSeasonEntity.clanBattleSeason.evChanged']; clanCurrentSeasonEntity.clanBattleSeason.isBrawl"/>
+		<bind name="watch" value="'allySquadIds'; isBrawl 			? '' :
+								 (allySquadId == 1) ? 'IDS_CLAN_SQUAD_1'
+								 					: 'IDS_CLAN_SQUAD_2'"/>
 		<bind name="appear" value="'startShow'; 0.15; 0.6; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 		<bind name="style" value="'width'; _width"/>
 		<block className="cell_background" type="native">
@@ -10213,7 +10370,11 @@
 		<bind name="watchDH" value="'enemyClanTag'; 	['enemyClanEntity.clan.evTagChanged']; 	_enemyClanTag 	? _enemyClanTag	: enemyClanEntity.clan.tag"/>
 		<bind name="watchDH" value="'enemyRealm'; 	[];	_enemyRealm 	? _enemyRealm	: enemyPlayerEntity.accountRealm.realm"/>
 		<bind name="watchDH" value="'enemySquadId'; 	[];	_enemySquadId 	? _enemySquadId	: enemyPlayerEntity.accountClanSquad.id"/>
-		<bind name="watch" value="'enemySquadIds'; (enemySquadId == 1) ? 'IDS_CLAN_SQUAD_1': 'IDS_CLAN_SQUAD_2'"/>
+		<bind name="firstEntityDH" value="'clanCurrentSeasonEntity'; CC.clanBattleSeason; 'current'"/>
+		<bind name="watchDH" value="'isBrawl'; ['clanCurrentSeasonEntity.clanBattleSeason.evChanged']; clanCurrentSeasonEntity.clanBattleSeason.isBrawl"/>
+		<bind name="watch" value="'enemySquadIds'; 	isBrawl 			? '' :
+									(enemySquadId == 1) ? 'IDS_CLAN_SQUAD_1'
+														: 'IDS_CLAN_SQUAD_2'"/>
 		<bind name="appear" value="'startShow'; 0.15; 0.6; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 		<bind name="style" value="'width'; _width"/>
 		<block className="cell_background" type="native">
@@ -11994,7 +12155,7 @@
 		appearDuration: 0.1,
 		appearOffset: 5.0,
 		disappearDelay: 0.0,
-		disappearDuration: 0.1,
+		disappearDuration: 0.0,
 		disappearOffset: -10.0,
 		tinyOffset: 0,
 		rightOffset: -10,
@@ -17281,12 +17442,11 @@
 		<bind name="watchDH" value="'accountLevel'; ['entityAccount.accountLevel.evLevelChanged']; entityAccount.accountLevel.level"/>
 		<bind name="watchDH" value="'groupIdsOfAccount'; ['entityAccount.elementInGroups.evGroupsChanged']; entityAccount.elementInGroups.groupIds"/>
 		<bind name="watchDH" value="'isIgnored';['entityAccount.contact.evIsIgnoredChanged']; !!entityAccount.contact.isIgnored"/>
-		<bind name="watchDH" value="'dogTagList';['entityAccount.dogTagView.evComponentsChanged']; entityAccount.dogTagView.components"/>
-		<bind name="collectionDH" value="CC.dogTagComponent; 'dogtagview'+'ROOT'"/>
-		<bind name="collectionDesign" value="'DES_'+'dogtagview'+'ROOT'; 'dogtagview'; {'filter':(dogTagList.indexOf(toLowerCase($entity.dogTagComponent.id)) &gt; -1), 'sort':['dogTagComponent.categoryId']}; []"/>
 		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInDivision'; 'pureName'; entityAccount.accountName.name; 'playerInDivision'"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInvitedToDivision'; 'name'; entityAccount.accountName.name; 'playerInvitedToDivision'"/>
+		<bind name="watchDH" value="'referralType'; 		['entityAccount.referral.evTypeUpdated']; entityAccount.referral.type"/>
+		<bind name="watch" value="'isRefSysParticipant'; referralType != null"/>
 		<params>
 			<param name="name" value="'playerContactName_' + entityAccount.accountName.name"/>
 		</params>
@@ -17315,13 +17475,6 @@
 																						isInYourParty					? 'IDS_INVITE_TO_PARTY_ACTION_DENY_REASON_ALREADY_IN_PARTY'
 																														: 'no_reason'
 																					: 'no_reason'"/>
-		<bind name="collectionDH" value="CC.club; 'clubs'"/>
-		<bind name="watch" value="'isSelfPlayerWardog';  (divisionData.creatorInfo.clubId != null )	? (	(clubs[0].club.id == divisionData.creatorInfo.clubId)	? false :
-																						(clubs[1].club.id == divisionData.creatorInfo.clubId)	? false :
-																						(clubs[2].club.id == divisionData.creatorInfo.clubId)	? false
-																																				: true)
-																					: false"/>
-		<bind name="watch" value="'isWardog'; (isInYourParty &amp;&amp; !(isClubMember) &amp;&amp; !(isSelfPlayerWardog)) || (isSelf &amp;&amp; isSelfPlayerWardog)"/>
 		<style>
 			<width value="100%"/>
 			<height value="30px"/>
@@ -17345,9 +17498,14 @@
 			<styleClass value="$PxHorizontalCorrection"/>
 			<styleClass value="$FullsizeAbsolute"/>
 			<bind name="menu" value="'ContactContextMenu';	!(isSelf)	? {	_entityAccountId: _entityAccountId, _currentGroupId: _currentGroupId, _actionDenyReason: actionDenyReason,
-															_playerContext: _playerContext, _inviteType: InviteType.COMMON, _isWardog: isWardog }
+															_playerContext: _playerContext, _inviteType: InviteType.COMMON}
 														: null; null; 'contactContextMenuVisible'"/>
-			<bind name="tooltip" value="'ContactInfoTooltip'; !(isSuspended) ? {_entityAccountId: _entityAccountId, _playerContext: _playerContext, _actionDenyReason: actionDenyReason, _isWardog: isWardog, _dogTagView: dogtagview} : null"/>
+			<bind name="tooltip" value="'ContactInfoTooltip'; !(isSuspended) ?	{	_entityAccountId: _entityAccountId,
+																	_playerContext: _playerContext,
+																	_actionDenyReason: actionDenyReason,
+																	_dogTagView: dogtagview
+																}
+															:	null"/>
 			<bind name="clickSplit"/>
 			<bind name="watch" value="'isActionEnabled'; (	!(isSelf) &amp;&amp; 
 											(actionDenyReason == 'no_reason') &amp;&amp; 
@@ -17390,27 +17548,34 @@
 									(_playerContext.type == 'channelParticipants')	? {dbId: entityAccount.accountSimple.dbId}
 																					: {}"/>
 			<block>
+				<bind name="visible" value="isRefSysParticipant"/>
+				<style>
+					<position value="absolute"/>
+					<top value="2px"/>
+					<left value="-1px"/>
+					<hitTest value="false"/>
+				</style>
+				<bind name="instance" value="'IconReferralSystem'; isRefSysParticipant ? { _referralType: referralType} : null"/>
+			</block>
+			<block>
 				<bind name="transition" value="(mouseDown &amp;&amp; !isSelf); 0.03; {alpha: 1}; {alpha: 0.7}"/>
 				<styleClass value="$Fullsize"/>
-				<bind name="style" value="'marginLeft'; _isShort ? '2px'
-												: _isClubMembersList	? '6px'
-																		: '16px'"/>
+				<bind name="style" value="'marginLeft';	_isShort	? '17px'
+													: '19px'"/>
 				<block>
 					<styleClass value="$Fullsize"/>
-					<bind name="instance" value="'PlayerContactItem'; {_entityAccountId: _entityAccountId, _playerContext: _playerContext, _isShort: _isShort, _isWardog: isWardog, _nickNameWidth: _nickNameWidth}"/>
+					<bind name="instance" value="'PlayerContactItem'; {_entityAccountId: _entityAccountId, _playerContext: _playerContext, _isShort: _isShort, _nickNameWidth: _nickNameWidth }"/>
 				</block>
 				<block>
 					<styleClass value="$AlignRight"/>
 					<block>
-						<bind name="visible" value="	!(isSelf) &amp;&amp;
-									(_playerContext.type != 'invitedToClubPlayers')"/>
+						<bind name="visible" value="!(isSelf)"/>
 						<style>
 							<marginTop value="4px"/>
 						</style>
-						<bind name="style" value="'marginRight'; (_isShort || isLeaderMarkerVisible) ? '6px' : '10px'"/>
+						<bind name="style" value="'marginRight'; _isShort ? '6px' : '10px'"/>
 						<bind name="transition" value="rollOver; 0.3; {alpha: 0}; {alpha: 1.0}; {alpha: 0}; 1; 0.07"/>
-						<bind name="watch" value="'isAddToContactsBtnVisible';	(_playerContext.type != 'clubMembersList') &amp;&amp;
-																(groupIdsOfAccount==null) &amp;&amp;
+						<bind name="watch" value="'isAddToContactsBtnVisible';	(groupIdsOfAccount==null) &amp;&amp;
 																!(isIgnored) &amp;&amp;
 																!(isSuspended)"/>
 						<block>
@@ -17429,9 +17594,6 @@
 							<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_ADD_TO_CONTACTS'}"/>
 							<bind name="action" value="'click'; 'addContact'; {dbId: entityAccount.accountSimple.dbId}"/>
 						</block>
-						<style>
-							<marginRight value="4px"/>
-						</style>
 						<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInDivision'; 'playersInDivision'"/>
 						<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInvitedToDivision'; 'playersInvitedToDivision'"/>
 						<bind name="watch" value="'isInTrainingRoom'; trainingRoomEntity != null"/>
@@ -17475,54 +17637,30 @@
 							<flow value="horizontal"/>
 						</style>
 					</block>
+					<bind name="watch" value="'isRevokeInvitationBtnVisible'; 	(_playerContext.type == 'invitedToClubPlayers') &amp;&amp;
+																(_playerContext.invatorDbId == selfPlayerDbId) &amp;&amp;
+																rollOver"/>
 					<block>
-						<bind name="watch" value="'isLeaderMarkerVisible';	((_playerContext.type == 'clubMembersList')
-															|| (_playerContext.type == 'contactsClubMembers')
-															|| (_playerContext.type == 'inviteToPartyFromClubMembersList')
-															|| (_playerContext.type == 'channelParticipants' &amp;&amp; _playerContext.channelTypeIdent == 'club')) &amp;&amp;
-															(entityAccount.accountSimple.dbId == _playerContext.clubLeaderDbId)"/>
+						<bind name="visible" value="isRevokeInvitationBtnVisible"/>
+						<bind name="dispatch" value="'buttonClick'; _playerContext.type == 'invitedToClubPlayers' ? 'evPlayerInvitationToClubRevoked' : null; {showBusyIndicator: true} "/>
 						<block>
-							<bind name="visible" value="isLeaderMarkerVisible"/>
+							<bind name="visible" value="!showBusyIndicator"/>
 							<style>
-								<marginLeft value="-1px"/>
-								<marginRight value="5px"/>
-								<marginTop value="7px"/>
+								<marginTop value="3px"/>
+								<marginRight value="7px"/>
 							</style>
-							<block className="icon_club_leader" type="native"/>
-							<bind name="tooltip" value="'MouseInstructionTooltip'; {	_multiParagraphArray: isSelf 	?	[{_paragraphText: 'IDS_YOU_ARE_CLUB_LEADER'},
-																										{_paragraphText: 'IDS_CLUB_LEADER_DESCRIPTION_0'},
-																										{_paragraphText: 'IDS_CLUB_LEADER_DESCRIPTION_1'},
-																										{_paragraphText: 'IDS_CLUB_LEADER_DESCRIPTION_2'}]
-																									: 	[{_paragraphText: 'IDS_CLUB_LEADER_HINT'},
-																										{_paragraphText: 'IDS_CLUB_LEADER_DESCRIPTION_0'},
-																										{_paragraphText: 'IDS_CLUB_LEADER_DESCRIPTION_1'}],
-																			_marginBottom: '4px'}"/>
+							<block className="button_cross" type="native">
+								<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_RECALL_INVITATION'}"/>
+								<bind name="action" value="'buttonClick'; 'cancelClubInvitation'; {clubId: _playerContext.clubId, userId: entityAccount.accountSimple.dbId}"/>
+							</block>
 						</block>
-						<bind name="watch" value="'isRevokeInvitationBtnVisible'; 	(_playerContext.type == 'invitedToClubPlayers') &amp;&amp;
-																	(_playerContext.invatorDbId == selfPlayerDbId) &amp;&amp;
-																	rollOver"/>
 						<block>
-							<bind name="visible" value="isRevokeInvitationBtnVisible"/>
-							<bind name="dispatch" value="'buttonClick'; _playerContext.type == 'invitedToClubPlayers' ? 'evPlayerInvitationToClubRevoked' : null; {showBusyIndicator: true} "/>
-							<block>
-								<bind name="visible" value="!showBusyIndicator"/>
-								<style>
-									<marginTop value="3px"/>
-									<marginRight value="7px"/>
-								</style>
-								<block className="button_cross" type="native">
-									<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_RECALL_INVITATION'}"/>
-									<bind name="action" value="'buttonClick'; 'cancelClubInvitation'; {clubId: _playerContext.clubId, userId: entityAccount.accountSimple.dbId}"/>
-								</block>
-							</block>
-							<block>
-								<bind name="fade" value="showBusyIndicator; 0.15; {alpha: 0}; {alpha: 1}"/>
-								<style>
-									<marginTop value="4px"/>
-									<marginRight value="4px"/>
-								</style>
-								<bind name="instance" value="'BusyIndicator'; showBusyIndicator ? { _showBusyIndicator: showBusyIndicator } : null"/>
-							</block>
+							<bind name="fade" value="showBusyIndicator; 0.15; {alpha: 0}; {alpha: 1}"/>
+							<style>
+								<marginTop value="4px"/>
+								<marginRight value="4px"/>
+							</style>
+							<bind name="instance" value="'BusyIndicator'; showBusyIndicator ? { _showBusyIndicator: showBusyIndicator } : null"/>
 						</block>
 					</block>
 					<style>
@@ -17675,18 +17813,13 @@
 				<hitTest value="false"/>
 			</style>
 			<block>
-				<bind name="visible" value="(!(accountOnline) || (inBattle &amp;&amp; !(isInFormationBattle)) || wantedInDivision || (_playerContext.type == 'invitedToClubPlayers'))"/>
+				<bind name="visible" value="accountOnline &amp;&amp; ((inBattle &amp;&amp; !(isInFormationBattle)) || wantedInDivision)"/>
 				<style>
 					<marginLeft value="3px"/>
 					<marginTop value="5px"/>
 				</style>
-				<bind name="var" value="{isClubMemberLongOffline: false}"/>
-				<bind name="instance" value="'CalcLongOffline'; (!(accountOnline) &amp;&amp; (_playerContext.type == 'clubMembersList') &amp;&amp; (entityAccount.accountSimple.dbId != _playerContext.clubLeaderDbId)) ? {_entityAccountId: _entityAccountId} : ''"/>
-				<bind name="catch" value="'isClubMemberLongOfflineChanged'"/>
-				<bind name="changeDispatch" value="accountOnline; 'isClubMemberLongOfflineChanged'; {isClubMemberLongOffline: false}"/>
 				<block className="icon_player_status" type="native">
-					<bind name="gotoAndStop!" value="isClubMemberLongOffline							? 'long_offline' :
-									(_playerContext.type == 'invitedToClubPlayers')	? 'invited' :
+					<bind name="gotoAndStop!" value="(_playerContext.type == 'invitedToClubPlayers')	? 'invited' :
 									wantedInDivision								? 'wanted_in_division' :
 									inBattle										? 'in_battle'
 																					: 'not_ready'"/>
@@ -17695,7 +17828,7 @@
 			<block>
 				<bind name="visible" value="isInDivision || (isInvitedToDivision &amp;&amp; !(isSelf)) ? true : false"/>
 				<style>
-					<marginLeft value="10px"/>
+					<marginLeft value="4px"/>
 				</style>
 				<block>
 					<style>
@@ -17710,8 +17843,8 @@
 					<style>
 						<marginTop value="4px"/>
 					</style>
-					<bind name="instance" value="'FormationPlayerIcon';	{_isEmptySlot: isInvitedToDivision, isCommander: isCommander, isReady: isReady, isInBattle: isInFormationBattle,
-																			_formationType: divisionEntranceData.divisionType, _isWardog: _isWardog} "/>
+					<bind name="instance" value="'FormationPlayerIcon';	{	_isEmptySlot: isInvitedToDivision, isCommander: isCommander, isReady: isReady, isInBattle: isInFormationBattle,
+															_formationType: divisionEntranceData.divisionType, _isWardog: _isWardog} "/>
 				</block>
 				<style>
 					<flow value="horizontal"/>
@@ -17727,13 +17860,13 @@
 			<block type="text">
 				<bind name="name" value="'playerContactName_' + nickName"/>
 				<bind name="watch" value="'_tfWidth' ; 	_nickNameWidth	? _nickNameWidth :
-										_isShort		? 132
+										_isShort		? 148
 														: 235"/>
 				<bind name="style" value="'width';	_notTrancated	? 'auto' :
-									(!(accountOnline) || inBattle || wantedInDivision)	? isInDivision	? _tfWidth - 37 + 'px'
-																										: _tfWidth - 20 + 'px'
-																						: isInDivision	? _tfWidth - 20 + 'px'
-																										: _tfWidth + 'px'"/>
+									((rank != 0) || inBattle || wantedInDivision)	? isInDivision	? _tfWidth - 37 + 'px'
+																									: _tfWidth - 20 + 'px'
+																					: isInDivision	? _tfWidth - 20 + 'px'
+																									: _tfWidth + 'px'"/>
 				<style>
 					<marginTop value="2px"/>
 					<marginLeft value="2px"/>
@@ -17751,15 +17884,6 @@
 			</style>
 		</block>
 	</block>
-	<block className="CalcLongOffline">
-		<bind name="entityDH" value="'entityAccount'; _entityAccountId"/>
-		<bind name="watchDH" value="'lastGameDate'; ['entityAccount.accountStatus.evOnlineChanged']; entityAccount.account.lastGameData"/>
-		<bind name="collectionDH" value="CC.clubsCommon; 'clubsCommonCollection'"/>
-		<bind name="entityDH" value="'clubsCommonEntity'; clubsCommonCollection[0].id"/>
-		<bind name="serverTime" value="'serverTime'"/>
-		<bind name="watch" value="'_isClubMemberLongOffline'; ((serverTime - lastGameDate) &gt; clubsCommonEntity.clubsCommon.maxOfflineTime)"/>
-		<bind name="changeDispatch" value="_isClubMemberLongOffline; 'isClubMemberLongOfflineChanged'; {isClubMemberLongOffline: _isClubMemberLongOffline}"/>
-	</block>
 	<block className="ContactInfoTooltip">
 		<bind name="entityDH" value="'entityAccount'; _entityAccountId"/>
 		<bind name="watchDH" value="'inBattle'; ['entityAccount.accountStatus.evInBattleChanged']; entityAccount.accountStatus.inBattle"/>
@@ -17767,6 +17891,8 @@
 		<bind name="watchDH" value="'accountLevel'; ['entityAccount.accountLevel.evLevelChanged']; entityAccount.accountLevel.level"/>
 		<bind name="watchDH" value="'rank'; ['entityAccount.accountRank.evRankChanged']; entityAccount.accountRank.rank"/>
 		<bind name="watchDH" value="'isSuspended'; ['entityAccount.accountSimple.evSuspendedChanged']; entityAccount.accountSimple.suspended"/>
+		<bind name="watchDH" value="'referralType'; 		['entityAccount.referral.evTypeUpdated']; entityAccount.referral.type"/>
+		<bind name="watch" value="'isRefSysParticipant'; referralType != null"/>
 		<bind name="watchDH" value="'pureName'; ['entityAccount.accountName.evChanged']; entityAccount.accountName.name"/>
 		<bind name="watchDH" value="'nickName'; ['entityAccount.accountName.evChanged']; entityAccount.accountName.nickName"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'divisionEntranceData'"/>
@@ -17840,6 +17966,30 @@
 				<width value="100%"/>
 			</style>
 			<bind name="instance" value="'ContactInfoTooltipAccountHeader'; {_entityAccountId: _entityAccountId, _isBot: isBot}"/>
+		</block>
+		<block>
+			<bind name="visible" value="isRefSysParticipant"/>
+			<style>
+				<width value="100%"/>
+			</style>
+			<block className="HorizontalDivider">
+				<styleClass value="$PxHorizontalCorrection"/>
+				<style>
+					<width value="100%"/>
+					<height value="3px"/>
+				</style>
+				<block className="divider_h" type="native">
+					<styleClass value="$Fullsize"/>
+				</block>
+			</block>
+			<block>
+				<style>
+					<marginLeft value="8px"/>
+					<marginTop value="8px"/>
+					<marginBottom value="8px"/>
+				</style>
+				<bind name="instance" value="'ContactInfoTooltipReferralStatus'; isRefSysParticipant ? { _referralType: referralType, _maxWidth: 280 } : null"/>
+			</block>
 		</block>
 		<block>
 			<bind name="visible" value="(!(accountOnline) || (inBattle &amp;&amp; !(isInFormationBattle))) &amp;&amp; !(isBot)"/>
@@ -18206,6 +18356,30 @@
 			<style>
 				<flow value="horizontal"/>
 			</style>
+		</block>
+	</block>
+	<block className="ContactInfoTooltipReferralStatus">
+		<style>
+			<flow value="horizontal"/>
+		</style>
+		<block>
+			<style>
+				<width value="19px"/>
+				<height value="19px"/>
+			</style>
+			<bind name="style" value="'backgroundImage'; _referralType == SC.Common.REFERRAL_TYPE.VETERAN	? '/url:../service_kit/icons/icon_status_hint_veteran.png'
+																							: '/url:../service_kit/icons/icon_status_hint_referal.png'"/>
+		</block>
+		<block type="text">
+			<styleClass value="$TextDefaultNM"/>
+			<style>
+				<marginLeft value="5px"/>
+				<marginTop value="3px"/>
+			</style>
+			<bind name="style" value="'maxWidth'; _maxWidth ? _maxWidth : 180"/>
+			<bind name="style" value="'leading'; _leading ? _leading : 0"/>
+			<bind name="text" value="(_referralType == SC.Common.REFERRAL_TYPE.VETERAN	? 'IDS_REFERRAL_PLAYER_TYPE_VETERAN_DESCRIPTION'
+																		: 'IDS_REFERRAL_PLAYER_TYPE_REFERRAL_DESCRIPTION')"/>
 		</block>
 	</block>
 	<block className="ContactInfoTooltipVoiceChatStatus">
@@ -19268,6 +19442,14 @@
 			</block>
 		</block>
 	</block>
+	<block className="IconReferralSystem">
+		<style>
+			<width value="27px"/>
+			<height value="27px"/>
+		</style>
+		<bind name="style" value="'backgroundImage'; _referralType == SC.Common.REFERRAL_TYPE.VETERAN 	? '/url:../service_kit/icons/icon_status_list_veteran.png'
+																						: '/url:../service_kit/icons/icon_status_list_referal.png'"/>
+	</block>
 	<block className="NationFlagsBig">
 		<style>
 			<backgroundStretchY value="true"/>
@@ -19394,8 +19576,15 @@
 						<style>
 							<width value="100%"/>
 						</style>
-						<bind name="instance" value="'PriceInLine'; !(upgradableShipInfo.isExplored)	? { priceInfo: shipExplorePrice.prices[0], _label: 'IDS_RESEARCH_COST',
-																						_medium: true, _showDiscountTag: true}
+						<bind name="instance" value="'PriceInLine'; !(upgradableShipInfo.isExplored)	? { priceInfo: shipInfo.group == 'upgradeableExclusive' ? { finalPrice: shipExplorePrice.prices[0].finalPrice,
+																																				basePrice: shipExplorePrice.prices[0].basePrice,
+																																				till: shipExplorePrice.prices[0].till,
+																																				discountEventName: shipExplorePrice.prices[0].discountEventName,
+																																				currency: 'freexp' } 
+																																			: shipExplorePrice.prices[0],
+																						_label: 'IDS_RESEARCH_COST',
+																						_medium: true,
+																						_showDiscountTag: true }
 																					: null"/>
 					</block>
 					<block>
@@ -19591,7 +19780,7 @@
 			<params>
 				<param name="name" value="upgrade_tree_Ship_info_ub2"/>
 			</params>
-			<bind name="build!" value="$ubPlayerProxy"/>
+			<bind name="build!" value="$ubPlayerProxy; {__shipId: shipId, __needService: _needService, __isLocked: _isLocked}"/>
 			<bind name="externalArgs" value="{_shipId: shipId, _needService: _needService, _isLocked: _isLocked}"/>
 		</block>
 	</block>
@@ -19687,7 +19876,14 @@
 					<style>
 						<width value="100%"/>
 					</style>
-					<bind name="instance" value="'PriceInLine'; !(upgradableShipInfo.isExplored)	? { priceInfo: shipExplorePrice.prices[0], _label: 'IDS_RESEARCH_COST', _showDiscountTag: true}
+					<bind name="instance" value="'PriceInLine'; !(upgradableShipInfo.isExplored)	?   { priceInfo: shipInfo.group == 'upgradeableExclusive' 	? 	{ finalPrice: shipExplorePrice.prices[0].finalPrice,
+																																				  basePrice: shipExplorePrice.prices[0].basePrice,
+																																				  till: shipExplorePrice.prices[0].till,
+																																				  discountEventName: shipExplorePrice.prices[0].discountEventName,
+																																				  currency: 'freexp' }
+																																			: 	shipExplorePrice.prices[0],
+																					  _label: 'IDS_RESEARCH_COST',
+																					  _showDiscountTag: true }
 																				: null"/>
 				</block>
 				<block>
@@ -19994,7 +20190,8 @@
 		<height value="0px"/>
 	</css>
 	<block className="DynamicDivisions">
-		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'gameInfo'"/>
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'maxDivisions'; battleDataEntity.battleInfo.maxDivisions"/>
 		<bind name="appear" value="_isBattleStats ? null : 'addedToStage'; 0.15; 0.1; {alpha: 0, top: 10}; {alpha: 1, top: 0}"/>
 		<style>
 			<width value="100%"/>
@@ -20013,7 +20210,7 @@
 			<bind name="repeat" value="divisions; 'DivisionSlot'; {_divisions: divisions, _selfPlayer: selfPlayer, _isBattleStats: _isBattleStats}"/>
 		</block>
 		<block>
-			<bind name="visible" value="(divisions[gameInfo.maxDivisions-1].id &amp;&amp; (divisions[gameInfo.maxDivisions-1].id != -1))"/>
+			<bind name="visible" value="(divisions[maxDivisions-1].id &amp;&amp; (divisions[maxDivisions-1].id != -1))"/>
 			<styleClass value="$MiddleAligned"/>
 			<style>
 				<marginTop value="16px"/>
@@ -20407,7 +20604,8 @@
 		</block>
 	</block>
 	<block className="DynamicDivisionInvitedPlayerItem">
-		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'gameInfo'"/>
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'players in battle'; 'name'; name; 'playerInDivisionCollection'"/>
 		<bind name="watch" value="'player'; playerInDivisionCollection[0]"/>
 		<bind name="watch" value="'_isCurrentPlayer'; (_selfPlayer.id == player.id)"/>
@@ -20419,9 +20617,9 @@
 		</style>
 		<block className="dock_submenu_item_bg" type="native">
 			<bind name="transition" value="rollOver; 0.15; {alpha: 0}; {alpha: 1.0}"/>
-			<bind name="tooltip" value="'BattlePlayerTooltip'; {	_isInBattle: _isBattleStats, _battleType: gameInfo.battleType,
+			<bind name="tooltip" value="'BattlePlayerTooltip'; {	_isInBattle: _isBattleStats, _battleType: battleType,
 												_player: player, _selfPlayer: _selfPlayer}"/>
-			<bind name="menu" value="'UIListPlayerContextMenu'; {	_player: player, _selfPlayer: _selfPlayer, _battleType: gameInfo.battleType,
+			<bind name="menu" value="'UIListPlayerContextMenu'; {	_player: player, _selfPlayer: _selfPlayer, _battleType: battleType,
 													_complaintsAvailable: true, _isBattleLoading: !(_isBattleStats), _isBattleStats: _isBattleStats}
 												; null; 'contextMenuVisible'"/>
 			<styleClass value="$FullsizeAbsolute"/>
@@ -20461,7 +20659,8 @@
 	</block>
 	<block className="DynamicDivisionPlayerItem">
 		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
-		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'gameInfo'"/>
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'players in battle'; 'id'; $value; 'playerInDivisionCollection'"/>
 		<bind name="watch" value="'player'; playerInDivisionCollection[0]"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'ships'; 'id'; player.shipId; 'shipsCollection'"/>
@@ -20478,7 +20677,7 @@
 			<bind name="visible" value="_isCurrentPlayer"/>
 			<bind name="tooltip" value="'BattlePlayerTooltip'; _isCurrentPlayer	? {	_isInBattle: _isBattleStats,
 																	_player: player, _selfPlayer: _selfPlayer,
-																	_battleType: gameInfo.battleType}
+																	_battleType: battleType}
 																: null"/>
 		</block>
 		<block className="dock_submenu_item_bg" type="native">
@@ -20488,9 +20687,9 @@
 			<bind name="transition" value="rollOver &amp;&amp; !(_isCurrentPlayer); 0.15; {alpha: 0}; {alpha: 1.0}"/>
 			<bind name="tooltip" value="'BattlePlayerTooltip'; !(_isCurrentPlayer) 	? {	_isInBattle: _isBattleStats,
 																		_player: player, _selfPlayer: _selfPlayer,
-																		_battleType: gameInfo.battleType}
+																		_battleType: battleType}
 																	: null"/>
-			<bind name="menu" value="'UIListPlayerContextMenu'; {	_player: player, _selfPlayer: _selfPlayer, _battleType: gameInfo.battleType,
+			<bind name="menu" value="'UIListPlayerContextMenu'; {	_player: player, _selfPlayer: _selfPlayer, _battleType: battleType,
 													_complaintsAvailable: true, _isBattleLoading: !(_isBattleStats), _isBattleStats: _isBattleStats}
 												; null; 'contextMenuVisible'"/>
 			<bind name="selected" value="contextMenuVisible"/>
@@ -20523,7 +20722,7 @@
 					<hitTest value="false"/>
 				</style>
 				<bind name="instance" value="'UIListVoiceTextChatIcons'; {_playerId: player.id, _isInSameDivision: _isPlayersDivision, _selfPlayerDivisionId: _selfPlayer.divisionId,
-														 _isSpeaking: player.isSpeaking, _battleType: gameInfo.battleType,
+														 _isSpeaking: player.isSpeaking, _battleType: battleType,
 														 _isVoiceChatMuted: player.isMuted, _isInVoiceChat: player.isInVoiceChat}"/>
 			</block>
 			<block>
@@ -20665,23 +20864,26 @@
 	</block>
 	<block className="BattleStats">
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'battleModeInfo'; 'battleModeInfo,updateBattleModeInfo'"/>
-		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'gameInfo'; 'initGameInfo,GameInfoUpdateFragsCount'"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'slimClientData'"/>
 		<bind name="controller" value="lesta.dialogs.battle_window_controllers.uss_controllers.ControllerBattleStats"/>
 		<bind name="collectionDH" value="CC.userPrefs; 'userPrefsCollection'"/>
 		<bind name="entityDH" value="'userPrefsEntity'; userPrefsCollection[0].id"/>
 		<bind name="watchDH" value="'userPrefs'; ['userPrefsEntity.userPrefs.evUserPrefsChanged']; userPrefsEntity.userPrefs.userPrefs"/>
 		<bind name="firstEntityDH" value="'localWeatherEntity'; CC.localWeather"/>
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
+		<bind name="watch" value="'gameModeId';	battleDataEntity.battleInfo.gameModeId"/>
+		<bind name="watch" value="'gameMode';	battleDataEntity.battleInfo.gameMode"/>
 		<bind name="watch" value="'topOffset'; (10 + (stageHeight-720)/2.2)"/>
-		<bind name="watch" value="'isBattletypeWithDynamicDivisions';	(gameInfo.battleType == BattleTypes.COOPERATIVE_BATTLE)	||
-														(gameInfo.battleType == BattleTypes.RANDOM_BATTLE)		||
-														(gameInfo.battleType == BattleTypes.EVENT_BATTLE)"/>
+		<bind name="watch" value="'isBattletypeWithDynamicDivisions';	(battleType == BattleTypes.COOPERATIVE_BATTLE)	||
+														(battleType == BattleTypes.RANDOM_BATTLE)		||
+														(battleType == BattleTypes.EVENT_BATTLE)"/>
 		<bind name="watch" value="'isDynamicDivisionsEnabled'; isBattletypeWithDynamicDivisions &amp;&amp; slimClientData.isFull"/>
-		<bind name="watch" value="'isVoiceChatEnabled';	(gameInfo.battleType == BattleTypes.CLAN_BATTLE) ||
-										((selfPlayer.divisionId != 0) &amp;&amp; ((gameInfo.battleType == BattleTypes.RANDOM_BATTLE) ||
-																		  (gameInfo.battleType == BattleTypes.COOPERATIVE_BATTLE) ||
-																		  (gameInfo.battleType == BattleTypes.PVE_BATTLE)))"/>
-		<bind name="watch" value="'validTabIndex';	(gameInfo.gameModeId == GameMode.TUTORIAL) 					? 0 :
+		<bind name="watch" value="'isVoiceChatEnabled';	(battleType == BattleTypes.CLAN_BATTLE) ||
+										((selfPlayer.divisionId != 0) &amp;&amp; ((battleType == BattleTypes.RANDOM_BATTLE) ||
+																		  (battleType == BattleTypes.COOPERATIVE_BATTLE) ||
+																		  (battleType == BattleTypes.PVE_BATTLE)))"/>
+		<bind name="watch" value="'validTabIndex';	(gameModeId == GameMode.TUTORIAL) 							? 0 :
 									((tabStatsTabIndex == 1) &amp;&amp; !(isDynamicDivisionsEnabled))	? 0
 																								: tabStatsTabIndex"/>
 		<bind name="watch" value="'tabStatsTabIndex'; (userPrefs.tabStatsTabIndex == null) ? 0 : userPrefs.tabStatsTabIndex"/>
@@ -20716,13 +20918,13 @@
 				</block>
 				<block>
 					<block>
-						<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTab_2', 
-													_width: '160px', 
-													_selected: validTabIndex == 2,
-													_action: 'setUserPref', _actionParams: {value: 2, name: 'tabStatsTabIndex'}, 
-													_label: 'IDS_SCENARIO_TASKS_TAB', 
-													_index: 2, 
-													_tooltipIDS: 'IDS_TOOLTIP_SCENARIO_TASKS_TAB', _isInBattle: true}"/>
+						<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTab_2', 
+														_width: '160px', 
+														_selected: validTabIndex == 2,
+														_action: 'setUserPref', _actionParams: {value: 2, name: 'tabStatsTabIndex'}, 
+														_label: 'IDS_SCENARIO_TASKS_TAB', 
+														_index: 2, 
+														_paragraphText: 'IDS_TOOLTIP_SCENARIO_TASKS_TAB', _isInBattle: true}"/>
 					</block>
 					<bind name="action" value="'click'; 'setUserPref' ; {value: 2, name: 'tabStatsTabIndex'}"/>
 					<block className="divider_v" type="native">
@@ -20736,13 +20938,13 @@
 					</style>
 				</block>
 				<block>
-					<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTab_0', 
-												_width: '160px', 
-												_selected: validTabIndex == 0,
-												_action: 'setUserPref', _actionParams: {value: 0, name: 'tabStatsTabIndex'}, 
-												_label: 'IDS_TEAM_STRUCTURE', 
-												_index: 0, 
-												_tooltipIDS: 'IDS_TOOLTIP_TAB_TEAM_STRUCTURE', _isInBattle: true}"/>
+					<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTab_0', 
+													_width: '160px', 
+													_selected: validTabIndex == 0,
+													_action: 'setUserPref', _actionParams: {value: 0, name: 'tabStatsTabIndex'}, 
+													_label: 'IDS_TEAM_STRUCTURE', 
+													_index: 0, 
+													_paragraphText: 'IDS_TOOLTIP_TAB_TEAM_STRUCTURE', _isInBattle: true}"/>
 				</block>
 				<block>
 					<bind name="visible" value="isDynamicDivisionsEnabled"/>
@@ -20753,13 +20955,13 @@
 						</style>
 					</block>
 					<block>
-						<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTab_1', 
-													_width: '160px', 
-													_selected: validTabIndex == 1,
-													_action: 'setUserPref', _actionParams: {value: 1, name: 'tabStatsTabIndex'}, 
-													_label: 'IDS_DIVISIONS', 
-													_index: 1, 
-													_tooltipIDS: 'IDS_TOOLTIP_TAB_DIVISIONS', _isInBattle: true}"/>
+						<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTab_1', 
+														_width: '160px', 
+														_selected: validTabIndex == 1,
+														_action: 'setUserPref', _actionParams: {value: 1, name: 'tabStatsTabIndex'}, 
+														_label: 'IDS_DIVISIONS', 
+														_index: 1, 
+														_paragraphText: 'IDS_TOOLTIP_TAB_DIVISIONS', _isInBattle: true}"/>
 					</block>
 					<style>
 						<flow value="horizontal"/>
@@ -20820,7 +21022,7 @@
 						</block>
 					</block>
 				</block>
-				<bind name="child" value="validTabIndex; {	_isBattleStats: true, gameInfo: gameInfo, battleModeInfo: battleModeInfo,
+				<bind name="child" value="validTabIndex; {	_isBattleStats: true, battleModeInfo: battleModeInfo,
 											selfPlayer: selfPlayer, enemies: enemies, allies: allies, divisions: divisions,
 											_isDynamicDivisionsEnabled: isDynamicDivisionsEnabled}
 										; 'TeamBattlePage'; 'DynamicDivisions'; 'TaskBattleStats'"/>
@@ -20849,7 +21051,7 @@
 							<width value="100%"/>
 							<marginLeft value="2px"/>
 						</style>
-						<bind name="instance" value="'VoiceChatRightPanelControl'; isVoiceChatEnabled	? {_isBattleStats: true, _battleType: gameInfo.battleType}
+						<bind name="instance" value="'VoiceChatRightPanelControl'; isVoiceChatEnabled	? {_isBattleStats: true, _battleType: battleType}
 																						: null"/>
 					</block>
 					<block>
@@ -20876,7 +21078,7 @@
 				<style>
 					<marginTop value="9px"/>
 				</style>
-				<bind name="instance" value="'PointsCharge'; {_battleModeInfo: battleModeInfo, _gameInfo: gameInfo}"/>
+				<bind name="instance" value="'PointsCharge'; {_battleModeInfo: battleModeInfo}"/>
 			</block>
 			<block>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
@@ -20887,6 +21089,8 @@
 				<bind name="primaryEntityDH" value="'operationEntity'; CC.operation; chosenOperationId"/>
 				<bind name="watchDH" value="'operationType';	['operationEntity.operation.evStatusChanged']; operationEntity.operation.type"/>
 				<bind name="watchDH" value="'operationIsHard'; []; operationEntity.operation.isHard"/>
+				<bind name="firstEntityDH" value="'clanCurrentSeasonEntity'; CC.clanBattleSeason; 'current'"/>
+				<bind name="watchDH" value="'isBrawl'; ['clanCurrentSeasonEntity.clanBattleSeason.evChanged']; clanCurrentSeasonEntity.clanBattleSeason.isBrawl"/>
 				<bind name="watch" value="'isChosenOperationOfTheWeek'; ((chosenOperationId == activeOperationId) &amp;&amp; (chosenDifficulty == 'normal'))"/>
 				<style>
 					<marginTop value="16px"/>
@@ -20899,9 +21103,10 @@
 					<style>
 						<marginTop value="0px"/>
 					</style>
-					<bind name="gotoAndStop!" value="(gameInfo.battleType == BattleTypes.RANKED_BATTLE) &amp;&amp; (rankedBattlesSeason.isJuniorSeason == true) 	? 'RankedBattle_junior' :
-									(gameInfo.battleType == BattleTypes.PVE_BATTLE)  &amp;&amp; (operationType == 'event')		? pveIconLabel 
-																																		: gameInfo.battleType"/>
+					<bind name="gotoAndStop!" value="(battleType == BattleTypes.RANKED_BATTLE) &amp;&amp; (rankedBattlesSeason.isJuniorSeason == true) 	? 'RankedBattle_junior' :
+									(battleType == BattleTypes.CLAN_BATTLE) &amp;&amp; (isBrawl)									 	? 'ClanBrawl':
+									(battleType == BattleTypes.PVE_BATTLE)  &amp;&amp; (operationType == 'event')		? pveIconLabel 
+																																		: battleType"/>
 				</block>
 				<block>
 					<styleClass value="$MiddleAligned"/>
@@ -20909,8 +21114,8 @@
 						<bind name="class" value="'$FontSizeLargeHeader'"/>
 						<styleClass value="$MiddleAligned"/>
 						<styleClass value="$TextAccentBold"/>
-						<bind name="text" value="(gameInfo.gameModeId == GameMode.PVE	? tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_NAME')
-																		: toUpperCase(tr(battleModeInfo.mapName)))"/>
+						<bind name="text" value="(gameModeId == GameMode.PVE	? tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_NAME')
+															: toUpperCase(tr(battleModeInfo.mapName)))"/>
 					</block>
 					<block type="text">
 						<styleClass value="$MiddleAligned"/>
@@ -20919,11 +21124,10 @@
 							<marginTop value="-6px"/>
 							<alpha value="0.8"/>
 						</style>
-						<bind name="text" value="(gameInfo.gameModeId == GameMode.PVE	?	tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' +	(isChosenOperationOfTheWeek == true 	? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
-																													(!(operationIsHard)						? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE')
-																																							: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
-																		:	gameInfo.battleType == BattleTypes.EVENT_BATTLE	? 'IDS_EVENTBATTLE'
-																															:	(toUpperCase(tr('IDS_')) + gameInfo.gameMode + toUpperCase(tr('_TITLE'))))"/>
+						<bind name="text" value="(gameModeId == GameMode.PVE	? tr('IDS_PVE_BATTLE_WITH_DOT') + ' ' +	(isChosenOperationOfTheWeek == true		? tr('IDS_OPERATION_OF_THE_WEEK_OPERATION_TITLE') :
+																									(!(operationIsHard)						? tr('IDS_OPERATION_NORMAL_DIFFICULTY_TITLE')
+																																			: tr('IDS_OPERATION_HARD_DIFFICULTY_TITLE')))
+															: (toUpperCase(tr('IDS_')) + gameMode + toUpperCase(tr('_TITLE'))))"/>
 					</block>
 				</block>
 			</block>
@@ -21027,14 +21231,14 @@
 		<block>
 			<style>
 				<position value="absolute"/>
-				<right value="-30px"/>
+				<left value="-30px"/>
 			</style>
 			<bind name="repeat" value="['A','B','C','D','E','F','G','H','I','J']; 'MinimapSectorLabel'; { size: minimapSize / 10}"/>
 		</block>
 		<block>
 			<style>
 				<position value="absolute"/>
-				<bottom value="-30px"/>
+				<top value="-30px"/>
 				<flow value="horizontal"/>
 			</style>
 			<bind name="repeat" value="[1,2,3,4,5,6,7,8,9,10]; 'MinimapSectorLabel'; { size: minimapSize / 10}"/>
@@ -21749,8 +21953,6 @@
 		<bind name="primaryEntityDH" value="'playerEntity'; CC.accountSimple; _playerDbId"/>
 		<bind name="watchDH" value="'dogTagList';['playerEntity.dogTagView.evComponentsChanged']; playerEntity.dogTagView.components"/>
 		<bind name="name" value="'playerDogTag'"/>
-		<bind name="collectionDH" value="CC.dogTagComponent; 'dogtagview'+'ROOT'"/>
-		<bind name="collectionDesign" value="'DES_'+'dogtagview'+'ROOT'; 'dogtagview'; {'filter': dogTagList.length &amp;&amp; ((dogTagList.indexOf(toLowerCase($entity.dogTagComponent.id)) &gt; -1)), 'sort':['dogTagComponent.categoryId']}; []"/>
 		<bind name="watch" value="'size';	_size == 'big' 				? 512 : 
 							_size == 'medium' 			? 190 : 
 							_size == 'small' 			? 80 :
@@ -21758,7 +21960,7 @@
 														: 80"/>
 		<bind name="style" value="'width'; size + 'px'"/>
 		<bind name="style" value="'height'; size + 'px'"/>
-		<bind name="repeat" value="dogtagview; 'PlayerDogTagItem'; {_path: _size == 'small' 		? 'url:../dogTags/small/'  :
+		<bind name="repeat" value="dogTagList; 'PlayerDogTagItemByPK'; {_path: _size == 'small' 		? 'url:../dogTags/small/'  :
 														  _size == 'profile' 	? 'url:../dogTags/small/' :
 														  _size == 'medium' 	? 'url:../dogTags/medium/' :
 														  _size == 'big' 		? 'url:../dogTags/big/'
@@ -23957,23 +24159,59 @@
 		<bind name="primaryEntityDH" value="'shipEntity'; CC.ship; _shipId; 'evUpdate'"/>
 		<bind name="watchDH" value="'shipInfo'; ['shipEntity.ship.evUpdate', 'shipEntity.ship.evCurrentSkinChanged']; shipEntity.ship"/>
 		<bind name="watchDH" value="'shipInfo' + 'Slim'; ['shipEntity.slimClientComponent.evUpdate']; shipEntity.slimClientComponent"/>
-		<bind name="watch" value="'defaultButtonCostSmallData'; _isOwned 	? null
-															: !(_dependencyResearched || _isExplored) ? null
-															: !(_isExplored) &amp;&amp; (_expDeficit &lt;= 0) &amp;&amp; (_group == 'upgradeable' || _group == 'upgradeableExclusive') ? { _label: toUpperCase(tr('IDS_DO_RESEARCH')), priceInfo: (_totalCostXP == _explorePriceFinal ? _explorePrice : { finalPrice: _totalCostXP, currency: 'exp' }), _action: (isLazyLogin &amp;&amp; (shipInfo.level &gt; realmConstants.lazyAccountMaxShipTier)) ? null : 'researchShip', _actionParams: { shipId: _shipId }, _enabled: true, _showDiscountTag:true }
-															: (_isExplored) &amp;&amp; (_creditsDeficit &lt;= 0) &amp;&amp; !(_isPremium) ? { _label: toUpperCase(tr('IDS_DO_PURCHASE')), priceInfo: _buyPrice, _action: (isLazyLogin &amp;&amp; (shipInfo.level &gt; realmConstants.lazyAccountMaxShipTier)) ? null : 'purchaseShip', _actionParams: { shipId: _shipId }, _enabled: (_creditsDeficit &lt;= 0), _showDiscountTag:true }
-															: _isExplored &amp;&amp; _isPremium  &amp;&amp; (accountGold - _buyPriceFinal) &gt;= 0 ? { _label: toUpperCase(tr('IDS_DO_PURCHASE')), priceInfo: _buyPrice, _action: (isLazyLogin &amp;&amp; (shipInfo.level &gt; realmConstants.lazyAccountMaxShipTier)) ? null : 'purchaseShip', _actionParams: { shipId: _shipId }, _enabled: ((accountGold - _costGold) &gt;= 0), _showDiscountTag:true }
-															: null "/>
-		<bind name="watch" value="'priceTagWithLabelData'; _isOwned 	? null
-													: (!(_isExplored) &amp;&amp; !(_dependencyResearched)) || (!(_isExplored) &amp;&amp; _expDeficit &gt; 0)? { priceInfo: { finalPrice: _totalCostXP, currency: 'exp' }, _label: 'IDS_RESEARCH_COST', _small : true}
-													: _isExplored &amp;&amp; _creditsDeficit &gt; 0 &amp;&amp; !(_isPremium) ? { priceInfo: _buyPrice, _label: 'IDS_PURCHASE_COST', _small : true}
-													: _isExplored &amp;&amp; _isPremium &amp;&amp; (accountGold - _buyPriceFinal) &lt; 0 ? {priceInfo: _buyPrice, _label: 'IDS_PURCHASE_COST', _small : true }
-													: null"/>
-		<bind name="watch" value="'priceDeficitData'; _isOwned 	? null
-												: !(_dependencyResearched) ? null
-												: !(_isExplored) &amp;&amp; _expDeficit &gt; 0 ? { priceInfo: { finalPrice: _totalCostXP, currency: 'exp' }, _small : true, _tooltipText: 'IDS_TOOLTIP_NO_XP', _deficit: _expDeficit}
-												: _isExplored &amp;&amp; _creditsDeficit &gt; 0 &amp;&amp; !(_isPremium) ? { priceInfo: _buyPrice, _label: 'IDS_PURCHASE_COST', _small : true, _tooltipText: 'IDS_TOOLTIP_NO_CREDITS', _deficit: _creditsDeficit}
-												: _isExplored &amp;&amp; _isPremium &amp;&amp; (accountGold - _buyPriceFinal) &lt; 0 ? {priceInfo: _buyPrice, _label: 'IDS_PURCHASE_COST', _deficit: -(accountGold - _buyPriceFinal), _tooltipText: 'IDS_TOOLTIP_NO_GOLD', _small : true }
-												: null"/>
+		<bind name="watch" value="'goldDeficit'; (_buyPriceFinal - accountGold)"/>
+		<bind name="watch" value="'enoughGold'; goldDeficit &lt;= 0"/>
+		<bind name="watch" value="'enoughCredits'; _creditsDeficit &lt;= 0"/>
+		<bind name="watch" value="'isGoldCurrency'; _buyPrice.currency == 'gold'"/>
+		<bind name="watch" value="'defaultButtonCostSmallData';
+		_isOwned || !(_dependencyResearched	||  _isExplored) ? null : 
+												!(_isExplored) &amp;&amp;
+													(_expDeficit &lt;= 0) &amp;&amp;
+													(_group == 'upgradeable' || _group == 'upgradeableExclusive')		?   {   _label: toUpperCase(tr('IDS_DO_RESEARCH')),
+																																priceInfo: (_totalCostXP == _explorePriceFinal  ? _explorePrice 
+																																												: { finalPrice: _totalCostXP, currency: 'exp' }),
+																																_action: (isLazyLogin &amp;&amp; (shipInfo.level &gt; realmConstants.lazyAccountMaxShipTier)) ? null : 'researchShip',
+																																_actionParams: { shipId: _shipId },
+																																_enabled: true,
+																																_showDiscountTag:true
+																															}  :
+												_isExplored &amp;&amp; 
+													((!(_isPremium) &amp;&amp; enoughCredits) || (_isPremium &amp;&amp; enoughGold))	?	{	_label: toUpperCase(tr('IDS_DO_PURCHASE')),
+																																priceInfo: _buyPrice,
+																																_action: (isLazyLogin &amp;&amp; (shipInfo.level &gt; realmConstants.lazyAccountMaxShipTier)) ? null : 'purchaseShip',
+																																_actionParams: { shipId: _shipId },
+																																_enabled: isGoldCurrency ? enoughGold : enoughCredits,
+																																_showDiscountTag:true
+																															}  
+																														: 	null "/>
+		<bind name="watch" value="'priceTagWithLabelData';   _isOwned ? null : 
+											!(_isExplored) &amp;&amp; (!(_dependencyResearched) || (_expDeficit &gt; 0))		?	{
+																															priceInfo: { finalPrice: _totalCostXP, currency: _group == 'upgradeableExclusive' ? 'freexp' : 'exp' },
+																															_label: 'IDS_RESEARCH_COST', _small : true
+																														}	:
+											_isExplored &amp;&amp;
+											((!(_isPremium) &amp;&amp; !enoughCredits) || (_isPremium &amp;&amp; !enoughGold)) 		? 	{
+																															priceInfo: _buyPrice,
+																															_label: 'IDS_PURCHASE_COST',
+																															_small : true
+																														}
+																													: null"/>
+		<bind name="watch" value="'priceDeficitData'; _isOwned || !(_dependencyResearched) ? null : 
+									!(_isExplored) &amp;&amp; _expDeficit &gt; 0 											?   {
+																														priceInfo: { finalPrice: _totalCostXP, currency: _group == 'upgradeableExclusive' ? 'freexp' : 'exp' },
+																														_small : true,
+																														_tooltipText: 'IDS_TOOLTIP_NO_XP',
+																														_deficit: _expDeficit
+																													}	: 
+									_isExplored &amp;&amp; 
+										((!(_isPremium) &amp;&amp; !enoughCredits) || (_isPremium &amp;&amp; !enoughGold)) 		? 	{ 
+																														priceInfo: _buyPrice,
+																														_label: 'IDS_PURCHASE_COST',
+																														_small : true,
+																														_tooltipText: isGoldCurrency ? 'IDS_TOOLTIP_NO_GOLD' : 'IDS_TOOLTIP_NO_CREDITS',
+																														_deficit: isGoldCurrency ? goldDeficit : _creditsDeficit
+																													}
+																												: null"/>
 		<bind name="watch" value="'statusLineWithIconData'; (_dependencyResearched || _isExplored) 	? null
 																					: { _text: 'IDS_RESEARCH_PREVIOUS_SHIPS', _positive: false, _small: true, _maxWidth: 300}"/>
 		<block>
@@ -23993,8 +24231,9 @@
 				</style>
 				<bind name="action" value="'click'; (isLazyLogin &amp;&amp; (shipInfo.level &gt; realmConstants.lazyAccountMaxShipTier)) ? 'forceCreateAccount' : null"/>
 				<bind name="instance" value="'ButtonCostSpecial'; !!defaultButtonCostSmallData ? defaultButtonCostSmallData : null"/>
+				<bind name="watch" value="'contextGuidingTipId'; _isExplored ? SC.Context_guiding_tip.TIP_TYPES.MODULES_BUY : SC.Context_guiding_tip.TIP_TYPES.MODULES_EXPLORE"/>
 				<bind name="instance" value="'ContextGuidingTipHub'; {
-												_tooltipID: _isExplored ? 'ModulesToBuyBtn' : 'ModulesToExploreBtn', 
+												_tooltipID: contextGuidingTipId, 
 												_tipPositioning: 'bottom', 
 												_extraCondition: true, 
 												_offset: 5, 
@@ -24671,20 +24910,17 @@
 		<bind name="transition" value="_isNotExpanded; 0.15; {height: 80}; {height: 30}; {height: 80}"/>
 		<block>
 			<styleClass value="$Fullsize"/>
-			<bind name="instance" value="'CrewShipPanelBlock';		(_crewId &gt; 0)	? {_crewId: _crewId, _isNotExpanded: _isNotExpanded} : null"/>
+			<bind name="instance" value="'CrewShipPanelBlock';		(_crewId &gt; 0)	? { _crewId: _crewId, _isNotExpanded: _isNotExpanded } : null"/>
 			<bind name="instance" value="'CrewHireShipPanelBlock';	(_crewId == 0)	? {} : null "/>
 		</block>
 		<block>
+			<bind name="fade" value="(feature_13 == 'new'); 0.15; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: -10}; 2"/>
 			<style>
 				<position value="absolute"/>
-				<marginTop value="-6px"/>
+				<bottom value="18px"/>
+				<right value="5px"/>
 			</style>
-			<block className="icon_sticker_new" type="native">
-				<bind name="fade" value="feature_13 == 'new'; 0.15; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: -10}; 2"/>
-				<style>
-					<hitTest value="false"/>
-				</style>
-			</block>
+			<bind name="instance" value="'MarkerNewAttention'; {}"/>
 		</block>
 		<block>
 			<bind name="visible" value="_isNotExpanded == false"/>
@@ -25561,6 +25797,9 @@
 		</block>
 	</block>
 	<block className="TaskBattleStats">
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'gameModeId';	battleDataEntity.battleInfo.gameModeId"/>
+		<bind name="watch" value="'gameMode';	battleDataEntity.battleInfo.gameMode"/>
 		<bind name="appear" value="'addedToStage'; 0.15; 0.15; {alpha: 0, top: 5}; {alpha: 1, top: 0}"/>
 		<bind name="style" value="'width'; localWeatherEntity ? '1000px' : '500px'"/>
 		<style>
@@ -25569,20 +25808,21 @@
 		<styleClass value="$MiddleAligned"/>
 		<block>
 			<block>
-				<bind name="instance" value="(gameInfo.gameModeId == GameMode.PVE) ? 'PVEBattleGoal' : 'PVPBattleGoal'; { _gameInfo: gameInfo }"/>
+				<bind name="instance" value="(gameModeId == GameMode.PVE) ? 'PVEBattleGoal' : 'PVPBattleGoal'; {}"/>
 			</block>
 			<block>
-				<bind name="instance" value="'TasksList'; { _gameInfo: gameInfo }"/>
+				<bind name="instance" value="'TasksList'; {}"/>
 			</block>
-			<bind name="watch" value="'bulletsCount';	gameInfo.gameModeId == GameMode.ANTI_STANDARD		? 2 :
-										gameInfo.gameModeId == GameMode.ATTACK_DEFENSE		? 5
-																							: null "/>
+			<bind name="watch" value="'bulletsCount';	gameModeId == GameMode.ANTI_STANDARD		? 2:
+									gameModeId == GameMode.ATTACK_DEFENSE		? 5:
+									gameModeId == GameMode.TEAM_BATTLE_ROYALE	? 5
+																				: null "/>
 			<block>
 				<style>
 					<width value="100%"/>
 				</style>
 				<bind name="visible" value="bulletsCount"/>
-				<bind name="instance" value="'GameModeRulesDescription'; bulletsCount ? {_bulletsCount: bulletsCount, _gameMode: gameInfo.gameMode} : null"/>
+				<bind name="instance" value="'GameModeRulesDescription'; bulletsCount ? {_bulletsCount: bulletsCount, _gameMode: gameMode} : null"/>
 			</block>
 		</block>
 		<block>
@@ -25661,6 +25901,9 @@
 		</block>
 	</block>
 	<block className="PVPBattleGoal">
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'gameModeId';	battleDataEntity.battleInfo.gameModeId"/>
+		<bind name="watch" value="'gameModeDescription';	battleDataEntity.battleInfo.gameModeDescription"/>
 		<style>
 			<width value="500px"/>
 			<marginBottom value="16px"/>
@@ -25671,7 +25914,7 @@
 				<width value="100%"/>
 				<marginBottom value="12px"/>
 			</style>
-			<bind name="text" value="_gameInfo.gameModeId == GameMode.TUTORIAL ? tr('IDS_YOUR_GOAL') : tr('IDS_TEAM_GOALS')"/>
+			<bind name="text" value="gameModeId == GameMode.TUTORIAL ? tr('IDS_YOUR_GOAL') : tr('IDS_TEAM_GOALS')"/>
 		</block>
 		<block type="text">
 			<style>
@@ -25680,7 +25923,7 @@
 				<alpha value="0.85"/>
 			</style>
 			<styleClass value="$TextDefault19NM"/>
-			<bind name="text" value="_gameInfo.gameModeDescription"/>
+			<bind name="text" value="gameModeDescription"/>
 		</block>
 	</block>
 	<block className="LocalWeatherDescription">
@@ -25766,8 +26009,11 @@
 		</style>
 		<bind name="collectionDH" value="CC.task; 'primaryTasksCollection'; 'category.primary'"/>
 		<bind name="collectionDH" value="CC.task; 'secondaryTasksCollection'; 'category.secondary'"/>
-		<bind name="watch" value="'headerTextPrimary'; 	(_gameInfo.gameModeId == GameMode.PVE) ? 'IDS_PRIMARYHEADER' 	: 'IDS_PVP_PERSONAL_TASK'"/>
-		<bind name="watch" value="'headerTextSecondary'; (_gameInfo.gameModeId == GameMode.PVE) ? 'IDS_SECONDARYHEADER' 	: 'IDS_PVP_PERSONAL_TASK'"/>
+		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
+		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
+		<bind name="watch" value="'gameModeId';	battleDataEntity.battleInfo.gameModeId"/>
+		<bind name="watch" value="'headerTextPrimary'; 	(gameModeId == GameMode.PVE) ? 'IDS_PRIMARYHEADER' 	: 'IDS_PVP_PERSONAL_TASK'"/>
+		<bind name="watch" value="'headerTextSecondary'; (gameModeId == GameMode.PVE) ? 'IDS_SECONDARYHEADER' 	: 'IDS_PVP_PERSONAL_TASK'"/>
 		<block>
 			<style>
 				<width value="100%"/>
@@ -25866,6 +26112,7 @@
 		<bind name="repeat" value="_bulletsArr; 'ListWithBulletsElement'; {_width: _width, _bulletType: _bulletType, _textClass: _textClass}"/>
 	</block>
 	<block className="ListWithBulletsElement">
+		<bind name="visible" value="_text || ($value.length &gt; 0)"/>
 		<bind name="watch" value="'bulletIndex'; _bulletIndex ? _bulletIndex : false"/>
 		<bind name="style" value="'width'; _width ? _width : '100%'"/>
 		<bind name="style" value="'marginBottom'; _marginBottom ? _marginBottom : '12px'"/>
@@ -28429,6 +28676,7 @@
 		</style>
 		<bind name="style" value="'height'; _isSmallCarouselView ? '63px' : '126px'"/>
 		<block>
+			<bind name="name" value="'carouselItem' + $index"/>
 			<bind name="name" value="shipEntity.mainShipFilter.excluded ? 'excluded' : 'included'"/>
 			<bind name="style" value="'alpha'; !excluded ? 1 : 0.3"/>
 			<styleClass value="$MiddleAligned"/>
@@ -32228,6 +32476,8 @@
 		<bind name="firstEntityDH" value="'currentEventStateEntity'; CC.selectedEventBattle"/>
 		<bind name="watchDH" value="'currentEventId'; ['currentEventStateEntity.eventBattleState.evChanged']; currentEventStateEntity.eventBattleState.eventId"/>
 		<bind name="primaryEntityDH" value="'eventBattleParamsEntity'; CC.eventBattleParams; currentEventId"/>
+		<bind name="firstEntityDH" value="'clanCurrentSeasonEntity'; CC.clanBattleSeason; 'current'"/>
+		<bind name="watchDH" value="'isBrawl'; ['clanCurrentSeasonEntity.clanBattleSeason.evChanged']; clanCurrentSeasonEntity.clanBattleSeason.isBrawl"/>
 		<bind name="watch" value="'restrictionsEntityId';	selectedBattle.type == BattleTypes.PVE_BATTLE 		? 	operationEntity.id :
 											selectedBattle.type == BattleTypes.TRAINING_BATTLE	?	trainingRoomEntity.id :
 											selectedBattle.type == BattleTypes.RANKED_BATTLE	?	rankedRestrictionsEntity.id :
@@ -32239,12 +32489,14 @@
 								selectedBattle.type == BattleTypes.RANKED_BATTLE	?	(rankedBattlesSeason.isJuniorSeason == true) 	? 'rank_junior' 
 																																		: 'rank' :
 								selectedBattle.type == BattleTypes.EVENT_BATTLE		?	'event' :
-								selectedBattle.type == BattleTypes.CLAN_BATTLE		?	'club'
+								selectedBattle.type == BattleTypes.CLAN_BATTLE		?	isBrawl ? 'brawl'
+																								: 'club'
 																					:	'no_icon'"/>
 		<bind name="watch" value="'filterText';	selectedBattle.type == BattleTypes.PVE_BATTLE		? tr('IDS_' + toUpperCase(operationEntity.operation.gpName) + '_NAME') :
 								selectedBattle.type == BattleTypes.TRAINING_BATTLE	? 'IDS_CUSTOM_ROOM' :
 								selectedBattle.type == BattleTypes.RANKED_BATTLE 	? 'IDS_RANKED_BATTLES' :
-								selectedBattle.type == BattleTypes.CLAN_BATTLE 		? 'IDS_CLANBATTLE' :
+								selectedBattle.type == BattleTypes.CLAN_BATTLE 		? isBrawl ? 'IDS_CLAN_BRAWL'
+																							  : 'IDS_CLANBATTLE' :
 								selectedBattle.type == BattleTypes.EVENT_BATTLE 	? 'IDS_EVENTBATTLE'
 																					: 'UNKNOWN_BATTLE_TYPE'"/>
 		<style>
@@ -33228,13 +33480,13 @@
 				</style>
 				<block>
 					<block>
-						<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTabPBS_0', 
-													_width: '210px', 
-													_selected: inset == 0,
-													_dispatch: 'changeResultScreenInset', _dispatchParams: {inset: 0, _searchState: 0}, 
-													_label: 'IDS_BATTLE_STATS_PERSONAL_REPORT', 
-													_index: 0, 
-													_tooltipIDS: 'IDS_TOOLTIP_BATTLE_STATS_PERSONAL_REPORT', _isInBattle: false}"/>
+						<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTabPBS_0', 
+														_width: '210px', 
+														_selected: inset == 0,
+														_dispatch: 'changeResultScreenInset', _dispatchParams: {inset: 0, _searchState: 0}, 
+														_label: 'IDS_BATTLE_STATS_PERSONAL_REPORT', 
+														_index: 0, 
+														_paragraphText: 'IDS_TOOLTIP_BATTLE_STATS_PERSONAL_REPORT', _isInBattle: false}"/>
 					</block>
 					<block className="divider_v" type="native">
 						<style>
@@ -33248,13 +33500,13 @@
 				</block>
 				<block>
 					<block>
-						<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTabPBS_1', 
-													_width: '210px', 
-													_selected: inset == 1,
-													_dispatch: 'changeResultScreenInset', _dispatchParams: {inset: 1, _searchState: 0}, 
-													_label: 'IDS_BATTLE_STATS_TEAM_REPORT', 
-													_index: 1, 
-													_tooltipIDS: 'IDS_TOOLTIP_BATTLE_STATS_TEAM_REPORT', _isInBattle: false}"/>
+						<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTabPBS_1', 
+														_width: '210px', 
+														_selected: inset == 1,
+														_dispatch: 'changeResultScreenInset', _dispatchParams: {inset: 1, _searchState: 0}, 
+														_label: 'IDS_BATTLE_STATS_TEAM_REPORT', 
+														_index: 1, 
+														_paragraphText: 'IDS_TOOLTIP_BATTLE_STATS_TEAM_REPORT', _isInBattle: false}"/>
 					</block>
 					<block className="divider_v" type="native">
 						<style>
@@ -33268,13 +33520,13 @@
 				</block>
 				<block>
 					<block>
-						<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTabPBS_2', 
-												_width: '210px', 
-												_selected: inset == 2,
-												_dispatch: 'changeResultScreenInset', _dispatchParams: {inset: 2, _searchState: 0}, 
-												_label: 'IDS_BATTLE_STATS_DETAILED_REPORT', 
-												_index: 2, 
-												_tooltipIDS: 'IDS_TOOLTIP_BATTLE_STATS_DETAILED_REPORT', _isInBattle: false}"/>
+						<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTabPBS_2', 
+													_width: '210px', 
+													_selected: inset == 2,
+													_dispatch: 'changeResultScreenInset', _dispatchParams: {inset: 2, _searchState: 0}, 
+													_label: 'IDS_BATTLE_STATS_DETAILED_REPORT', 
+													_index: 2, 
+													_paragraphText: 'IDS_TOOLTIP_BATTLE_STATS_DETAILED_REPORT', _isInBattle: false}"/>
 					</block>
 					<block className="divider_v" type="native">
 						<style>
@@ -33287,13 +33539,13 @@
 					</style>
 				</block>
 				<block>
-					<bind name="instance" value="'MainTabNew'; 	{_name: 'itemTabPBS_3', 
-												_width: '210px', 
-												_selected: inset == 3,
-												_dispatch: 'changeResultScreenInset', _dispatchParams: {inset: 3, _searchState: 0}, 
-												_label: 'IDS_BATTLE_STATS_CREDITS_AND_EXP', 
-												_index: 3, 
-												_tooltipIDS: 'IDS_TOOLTIP_BATTLE_STATS_CREDITS_AND_EXP', _isInBattle: false}"/>
+					<bind name="instance" value="'MainTabButton'; 	{_name: 'itemTabPBS_3', 
+													_width: '210px', 
+													_selected: inset == 3,
+													_dispatch: 'changeResultScreenInset', _dispatchParams: {inset: 3, _searchState: 0}, 
+													_label: 'IDS_BATTLE_STATS_CREDITS_AND_EXP', 
+													_index: 3, 
+													_paragraphText: 'IDS_TOOLTIP_BATTLE_STATS_CREDITS_AND_EXP', _isInBattle: false}"/>
 				</block>
 				<style>
 					<flow value="horizontal"/>
