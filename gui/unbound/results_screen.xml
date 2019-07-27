@@ -513,8 +513,8 @@
 		</style>
 	</block>
 	<block className="BlurMap">
-		<bind name="visible" value="optionData.blurEnabled"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+		<bind name="visible" value="optionData.blurEnabled"/>
 		<style>
 			<hitTest value="false"/>
 		</style>
@@ -533,8 +533,8 @@
 		</block>
 	</block>
 	<block className="BlurMapLow">
-		<bind name="visible" value="optionData.blurEnabled"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+		<bind name="visible" value="optionData.blurEnabled"/>
 		<style>
 			<hitTest value="false"/>
 		</style>
@@ -2032,8 +2032,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -2154,8 +2154,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -2859,8 +2859,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -3112,7 +3112,7 @@
 				</style>
 				<bind name="visible" value="_isMilestone != true"/>
 				<block>
-					<bind name="action" value="'click'; 'log'; {event: 'other:sse.ButtonToBattle'} "/>
+					<bind name="action" value="'click'; 'log'; { event: 'click:sse.ButtonToBattle' }"/>
 					<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
 					<bind name="fade" value="$index == currentSelectedIndex &amp;&amp; inQuestWindow &amp;&amp; !(isDoneForToday); 0.2; {alpha: 0, top: 15}; {alpha: 1, top: 0}"/>
 					<bind name="watch" value="'battleTypeForQuest';	activeStepInfo.battleType																		? activeStepInfo.battleType :
@@ -3200,8 +3200,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -4024,8 +4024,8 @@
 			<width value="322px"/>
 		</style>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -4241,8 +4241,8 @@
 			<width value="322px"/>
 		</style>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -4310,8 +4310,8 @@
 					<marginTop value="1px"/>
 				</style>
 				<block className="BlurMap">
-					<bind name="visible" value="optionData.blurEnabled"/>
 					<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+					<bind name="visible" value="optionData.blurEnabled"/>
 					<style>
 						<hitTest value="false"/>
 					</style>
@@ -4479,8 +4479,8 @@
 		<bind name="watch" value="'abuseStatus';	_entity.battleResultsEntry.color == USSConstants.COLOR_PINK	? 1
 																							: 2"/>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -5958,8 +5958,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -6340,8 +6340,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -7461,8 +7461,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -8347,8 +8347,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -8896,8 +8896,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -9844,7 +9844,7 @@
 				<block>
 					<style>
 						<width value="100%f"/>
-						<right value="0px"/>
+						<right value="3px"/>
 						<position value="absolute"/>
 					</style>
 					<bind name="instance" value="'PlayerNameAndClanTag'; { 	_isDead: !isAlive, _ttkStatus: ttkStatus, 
@@ -10466,8 +10466,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -10989,8 +10989,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -12291,8 +12291,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -12346,8 +12346,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -12621,12 +12621,13 @@
 			</block>
 			<block type="text">
 				<bind name="visible" value="_subheaderText"/>
-				<styleClass value="$TextDefault17NM"/>
+				<styleClass value="$TextDefaultNM"/>
 				<bind name="class" value="_subheaderClass ? _subheaderClass : '$None'"/>
 				<style>
 					<width value="100%"/>
 					<leading value="-3"/>
-					<marginTop value="16px"/>
+					<marginTop value="8px"/>
+					<alpha value="0.9"/>
 				</style>
 				<bind name="text" value="_subheaderText"/>
 			</block>
@@ -12649,7 +12650,7 @@
 				<width value="100%"/>
 				<margin value="16px"/>
 			</style>
-			<bind name="repeat" value="_multiParagraphArray; 'RepeatParagraphItemNM'; {_maxWidth: _maxWidth, _marginBottom: _marginBottom, _leading: (_leading ? _leading : -3)}"/>
+			<bind name="repeat" value="_multiParagraphArray; 'RepeatParagraphItemNM'; {_maxWidth: _maxWidth, _marginBottom: _marginBottom, _leading: (_leading ? _leading : 0)}"/>
 		</block>
 	</block>
 	<block className="AccountCompletionRewardTooltip">
@@ -12668,8 +12669,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -13130,8 +13131,8 @@
 					<marginTop value="1px"/>
 				</style>
 				<block className="BlurMap">
-					<bind name="visible" value="optionData.blurEnabled"/>
 					<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+					<bind name="visible" value="optionData.blurEnabled"/>
 					<style>
 						<hitTest value="false"/>
 					</style>
@@ -13650,8 +13651,8 @@
 			<width value="300px"/>
 		</style>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -13781,8 +13782,8 @@
 			<width value="380px"/>
 		</style>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -13932,8 +13933,8 @@
 			<width value="300px"/>
 		</style>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -14113,8 +14114,8 @@
 		<styleClass value="$DefaultInstantTooltipBehaviour"/>
 		<styleClass value="$MouseDisable"/>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -14274,8 +14275,8 @@
 		<styleClass value="$DefaultInstantTooltipBehaviour"/>
 		<styleClass value="$MouseDisable"/>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -14411,8 +14412,8 @@
 		<styleClass value="$DefaultInstantTooltipBehaviour"/>
 		<styleClass value="$MouseDisable"/>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -14527,8 +14528,8 @@
 		</style>
 		<bind name="watch" value="'exteriorsList'; _entity.battleResultsEntry.values[2].value"/>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -15312,8 +15313,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -15581,8 +15582,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -16980,8 +16981,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -17169,8 +17170,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -17348,8 +17349,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -17931,8 +17932,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -18470,8 +18471,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -18613,8 +18614,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -19288,8 +19289,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -19513,8 +19514,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -19567,7 +19568,7 @@
 					<bind name="instance" value="'CurrentXPLarge'; shipOwnEntity != null ? { _exp: ownShipExp, _label: 'IDS_SHIP_EXPERIENCE'} : null"/>
 				</block>
 				<block>
-					<bind name="visible" value="!isOwned &amp;&amp; !(_inRewards) &amp;&amp; !(shipInfo.isEventLike)"/>
+					<bind name="visible" value="!isOwned &amp;&amp; !(_inRewards) &amp;&amp; !(shipInfo.isEventLike || shipInfo.group == 'earlyAccess')"/>
 					<style>
 						<width value="100%"/>
 						<marginTop value="12px"/>
@@ -19749,8 +19750,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -19810,8 +19811,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -19992,8 +19993,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -22013,9 +22014,8 @@
 		<bind name="watchDH" value="'iconPath'; ['dogTagEntity.dogTagComponent.evUpdate']; dogTagEntity.dogTagComponent.iconPath"/>
 		<bind name="firstEntityDH" value="'selfPlayerEntity'; CC.accountSelf"/>
 		<bind name="watchDH" value="'selfPlayerDbId'; 		[]; selfPlayerEntity.accountSimple.dbId"/>
-		<bind name="watchDH" value="'selfPlayerName'; 		['selfPlayerEntity.accountName.evChanged']; selfPlayerEntity.accountName.name"/>
-		<bind name="watchDH" value="'selfPlayerNickName'; 	['selfPlayerEntity.accountName.evChanged']; selfPlayerEntity.accountName.nickName"/>
-		<bind name="watchDH" value="'clanId'; ['selfPlayerEntity.clanman.evClanIdChanged']; selfPlayerEntity.clanman.clanId"/>
+		<bind name="primaryEntityDH" value="'dogtagOwnerPlayerEntity'; CC.accountSimple; _playerDbId ? _playerDbId : selfPlayerDbId"/>
+		<bind name="watchDH" value="'clanId'; ['dogtagOwnerPlayerEntity.clanman.evClanIdChanged']; dogtagOwnerPlayerEntity.clanman.clanId"/>
 		<bind name="primaryEntityDH" value="'clanEntity'; CC.clan; clanId"/>
 		<bind name="watchDH" value="'clanTag'; ['clanEntity.clan.evTagChanged']; clanEntity.clan.tag"/>
 		<bind name="watchDH" value="'clanTagOffsetX';['dogTagEntity.dogTagComponent.evUpdate']; dogTagEntity.dogTagComponent.clanTagOffsetX"/>
@@ -22098,8 +22098,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -22939,8 +22939,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -23600,8 +23600,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -24733,8 +24733,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -25593,8 +25593,8 @@
 				<width value="100%"/>
 			</style>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -27410,8 +27410,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -27549,8 +27549,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -27801,8 +27801,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -27938,8 +27938,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -28168,8 +28168,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -28682,8 +28682,8 @@
 			<styleClass value="$MiddleAligned"/>
 			<styleClass value="$MiddleVAligned"/>
 			<block className="BlurMapLow">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -29414,10 +29414,6 @@
 		<bind name="watchDH" value="'bonusTagIds'; ['shipEntity.ownShip.evBonusTagsChanged']; shipEntity.ownShip.bonusTags"/>
 		<bind name="watch" value="'bonusTagVisible'; bonusTagIds.length &gt; 0"/>
 		<block>
-			<styleClass value="$FullsizeAbsolute"/>
-			<bind name="instance" value="'BonusTagItemBackground'; bonusTagVisible ? {_bonusTagId: bonusTagIds[0], _selected: _selected} : null"/>
-		</block>
-		<block>
 			<style>
 				<position value="absolute"/>
 				<bottom value="4px"/>
@@ -29515,8 +29511,8 @@
 		<bind name="entityDH" value="'bonusTagEntity'; $value"/>
 		<bind name="tooltip" value="'BonusTagItemTooltip'; {_bonusTagEntityId: $value}"/>
 		<style>
-			<width value="21px"/>
-			<height value="21px"/>
+			<width value="25px"/>
+			<height value="25px"/>
 			<marginRight value="4px"/>
 		</style>
 		<bind name="style" value="'backgroundImage'; 'url:../service_kit/bonus_tags/' + bonusTagEntity.bonusTag.type + '.png'"/>
@@ -29528,7 +29524,7 @@
 		<bind name="watch" value="'expirationDate'; bonusTagEntity.bonusTag.finishTime"/>
 		<bind name="var" value="{
 		tooltipWidth: 310,
-		contentMaxWidth: tooltipWidth - 16
+		contentMaxWidth: 278
 	}"/>
 		<bind name="style" value="'width'; tooltipWidth + 'px'"/>
 		<block className="DeclareBlurLayer">
@@ -29542,8 +29538,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -29575,9 +29571,40 @@
 			</style>
 			<bind name="instance" value="'TooltipHeaderWithIcon'; {
 			_iconPath: 'url:../service_kit/bonus_tags/' + bonusTagType + '_big.png', 
-			_headerText:  toUpperCase(tr('IDS_BONUSTAG_' + bonusTagType + '_HEADER')), 
-			_subheaderText: toUpperCase(tr('IDS_BONUSTAG_' + bonusTagType + '_SUBHEADER'))
+			_headerText:  tr('IDS_BONUSTAG_' + toUpperCase(bonusTagType) + '_HEADER'), 
+			_subheaderText: 'IDS_BONUSTAG_SUBHEADER'
 		}"/>
+		</block>
+		<block>
+			<style>
+				<width value="100%"/>
+			</style>
+			<bind name="visible" value="expirationDate &gt; 0"/>
+			<block>
+				<style>
+					<width value="100%"/>
+				</style>
+				<block className="HorizontalDivider">
+					<styleClass value="$PxHorizontalCorrection"/>
+					<style>
+						<width value="100%"/>
+						<height value="3px"/>
+					</style>
+					<block className="divider_h" type="native">
+						<styleClass value="$Fullsize"/>
+					</block>
+				</block>
+			</block>
+			<block>
+				<bind name="timeFormat" value="expirationDate; 'dd.MM.yyyy'; 'formattedExpirationDate'; true"/>
+				<style>
+					<width value="100%"/>
+				</style>
+				<bind name="instance" value="'TooltipContentTextBlock'; {
+				_multiParagraphArray: [	{_paragraphText: subst('IDS_EXPIRY_DATE_COLON', [], {'date': formattedExpirationDate}), _class: '$TextDefaultNM', _marginBottom: '0'} ],
+				_maxWidth: contentMaxWidth
+			}"/>
+			</block>
 		</block>
 		<block>
 			<style>
@@ -29599,7 +29626,7 @@
 				<width value="100%"/>
 			</style>
 			<bind name="instance" value="'TooltipContentTextBlock'; {
-			_multiParagraphArray: [{ _paragraphText: toUpperCase(tr('IDS_BONUSTAG_' + bonusTagType + '_DESCRIPTION_1')), _class: '$TextDefaultNM', _marginBottom: '0' }],
+			_multiParagraphArray: [{ _paragraphText: tr('IDS_BONUSTAG_' + toUpperCase(bonusTagType) + '_DESCRIPTION'), _class: '$TextDefaultNM', _marginBottom: '0' }],
 			_maxWidth: contentMaxWidth
 		}"/>
 		</block>
@@ -29637,33 +29664,6 @@
 				</style>
 				<bind name="repeat" value="rewards; 'BonusTagItemTooltipRewardRepeater'; rewards.length &gt; 0 ? {} : null"/>
 			</block>
-		</block>
-		<block>
-			<style>
-				<width value="100%"/>
-			</style>
-			<block className="HorizontalDivider">
-				<styleClass value="$PxHorizontalCorrection"/>
-				<style>
-					<width value="100%"/>
-					<height value="3px"/>
-				</style>
-				<block className="divider_h" type="native">
-					<styleClass value="$Fullsize"/>
-				</block>
-			</block>
-		</block>
-		<block>
-			<bind name="timeFormat" value="expirationDate; 'dd.MM.yyyy'; 'formattedExpirationDate'; true"/>
-			<style>
-				<width value="100%"/>
-			</style>
-			<bind name="instance" value="'TooltipContentTextBlock'; {
-			_multiParagraphArray: expirationDate &gt; 0	? [	{_paragraphText: toUpperCase(tr('IDS_BONUSTAG_' + bonusTagType + '_DESCRIPTION_2')), _class: '$TextDefaultNM'}, 
-															{_paragraphText: subst('IDS_EXPIRY_DATE_COLON', [], {'date': formattedExpirationDate}), _class: '$TextDefaultTech', _marginBottom: '0'} ]
-														: [ {_paragraphText: toUpperCase(tr('IDS_BONUSTAG_' + bonusTagType + '_DESCRIPTION_2')), _class: '$TextDefaultNM', _marginBottom: '0'} ],
-			_maxWidth: contentMaxWidth
-		}"/>
 		</block>
 	</block>
 	<block className="BonusTagItemTooltipRewardRepeater">
@@ -29709,7 +29709,7 @@
 		<bind name="watchDH" value="'remainingExpBonusWins';	['shipOwnEntity.ownShip.evUpdateConfig'];		shipOwnEntity.ownShip.remainingExpBonusWins"/>
 		<bind name="var" value="{
 		tooltipWidth: 310,
-		contentMaxWidth: tooltipWidth - 16
+		contentMaxWidth: 278
 	}"/>
 		<bind name="style" value="'width'; tooltipWidth + 'px'"/>
 		<block className="DeclareBlurLayer">
@@ -29723,8 +29723,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -29757,7 +29757,7 @@
 			<bind name="instance" value="'TooltipHeaderWithIcon'; {
 			_iconPath: 'url:../reward_icons/icon_reward_expCoeff.png', 
 			_headerText: 'IDS_BONUSTAG_FIRST_WIN', 
-			_subheaderText: 'IDS_DAILY_ACTION'
+			_subheaderText: 'IDS_BONUSTAG_SUBHEADER'
 		}"/>
 		</block>
 		<block>
@@ -29780,12 +29780,7 @@
 				<width value="100%"/>
 			</style>
 			<bind name="instance" value="'TooltipContentTextBlock'; {
-			_multiParagraphArray: [
-				{	_paragraphText: (remainingExpBonusWins &gt; 1) ? subst('IDS_TOOLTIP_EXPERIENCE_MULTIPLIER', [], {_battleAmount: remainingExpBonusWins}, remainingExpBonusWins)
-																			: 'IDS_TOOLTIP_EXPERIENCE_MULTIPLIER_FIRST_WIN',
-					_class: '$TextDefaultNM',
-					_marginBottom: '0' }
-			],
+			_multiParagraphArray: [{ _paragraphText: tr('IDS_BONUSTAG_FIRST_WIN_DESCRIPTION'), _class: '$TextDefaultNM', _marginBottom: '0' }],
 			_maxWidth: contentMaxWidth
 		}"/>
 		</block>
@@ -29839,30 +29834,6 @@
 					</block>
 				</block>
 			</block>
-		</block>
-		<block>
-			<style>
-				<width value="100%"/>
-			</style>
-			<block className="HorizontalDivider">
-				<styleClass value="$PxHorizontalCorrection"/>
-				<style>
-					<width value="100%"/>
-					<height value="3px"/>
-				</style>
-				<block className="divider_h" type="native">
-					<styleClass value="$Fullsize"/>
-				</block>
-			</block>
-		</block>
-		<block>
-			<style>
-				<width value="100%"/>
-			</style>
-			<bind name="instance" value="'TooltipContentTextBlock'; {
-			_multiParagraphArray: [{ _paragraphText: 'IDS_FIRST_WIN_HINT_EXT', _class: '$TextDefaultNM', _marginBottom: '0' }],
-			_maxWidth: contentMaxWidth
-		}"/>
 		</block>
 	</block>
 	<block className="ShipCarouselSmallSlot">
@@ -30006,10 +29977,6 @@
 			</block>
 			<bind name="watchDH" value="'bonusTagIds'; ['shipEntity.ownShip.evBonusTagsChanged']; shipEntity.ownShip.bonusTags"/>
 			<bind name="watch" value="'bonusTagVisible'; bonusTagIds.length &gt; 0"/>
-			<block>
-				<styleClass value="$FullsizeAbsolute"/>
-				<bind name="instance" value="'BonusTagItemBackground'; bonusTagVisible ? {_bonusTagId: bonusTagIds[0], _isSmall: true, _selected: _selected} : null"/>
-			</block>
 			<block>
 				<style>
 					<position value="absolute"/>
@@ -30376,8 +30343,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -30456,8 +30423,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -30527,8 +30494,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -30621,8 +30588,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -31153,8 +31120,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -31404,8 +31371,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -31797,8 +31764,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -32405,14 +32372,17 @@
 		<bind name="entityDH" value="'clubsCommonEntity'; clubsCommonCollection[0].id"/>
 		<bind name="watchDH" value="'clubBattlesSeasonId'; ['clubsCommonEntity.clubsCommon.evRulesChanged']; clubsCommonEntity.clubsCommon.seasonId"/>
 		<bind name="watchDH" value="'clubBattlesSeasonStage'; ['clubsCommonEntity.clubsCommon.evRulesChanged']; clubsCommonEntity.clubsCommon.stage"/>
+		<bind name="collectionDH" value="CC.ownShip; 'shipsWithSnowflakes'+'ROOT'"/>
+		<bind name="collectionDesign" value="'DES_'+'shipsWithSnowflakes'+'ROOT'; 'shipsWithSnowflakes'; {'filter':$entity.ownShip.bonusTags.length &gt; 0}; []"/>
 		<bind name="name" value="'CarouselCheckBox_' + _filterType + '_' + field"/>
 		<bind name="feature" value="13; ''"/>
 		<bind name="feature" value="16; ''"/>
 		<bind name="feature" value="19; ''"/>
-		<bind name="watch" value="'isVisible';	(field == 'IDS_RANKED_BATTLES'	&amp;&amp;	(feature_16 == 'locked' || rankedBattlesSeason.denyReason &amp; RBDeny.NO_SEASON))			? false :
-								(field == 'IDS_CLUB_BATTLES'	&amp;&amp;	(feature_19 == 'locked' || clubBattlesSeasonId &lt;= 0 || clubBattlesSeasonStage != 2))	? false :
-								((field == 'IDS_WITH_COMMANDER'	||	field == 'IDS_WITHOUT_COMMANDER') &amp;&amp; feature_13 == 'locked')							? false
-																																							: true"/>
+		<bind name="watch" value="'isVisible';	(field == 'IDS_RANKED_BATTLES'		&amp;&amp;	(feature_16 == 'locked' || rankedBattlesSeason.denyReason &amp; RBDeny.NO_SEASON))			? false :
+								(field == 'IDS_CLUB_BATTLES'		&amp;&amp;	(feature_19 == 'locked' || clubBattlesSeasonId &lt;= 0 || clubBattlesSeasonStage != 2))	? false :
+								((field == 'IDS_WITH_COMMANDER'		||	field == 'IDS_WITHOUT_COMMANDER') &amp;&amp; feature_13 == 'locked')							? false :
+								(field == 'IDS_SNOWFLAKES_FILTER'	&amp;&amp; !(shipsWithSnowflakes.length &gt; 0))														? false
+																																								: true"/>
 		<bind name="visible" value="isVisible"/>
 		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
 		<bind name="action" value="'left_click'; 'setFilterValue' ; {type: _filterType, field: field, value: !value, ident: _ident}"/>
@@ -32427,6 +32397,7 @@
 													(field == 'IDS_PVE_BATTLES')		? 'IDS_HINT_CHECKBOX_FILTER_PVE'	:
 													(field == 'IDS_CLUB_BATTLES')		? 'IDS_HINT_CHECKBOX_FILTER_CLUB'	:
 													(field == 'IDS_PROMO_FILTER')		? 'IDS_HINT_CHECKBOX_FILTER_SHARE'	:
+													(field == 'IDS_SNOWFLAKES_FILTER')	? 'IDS_HINT_CHECKBOX_FILTER_SNOWFLAKES'	:
 													'UNKNOWN_FILTER_TYPE')}"/>
 		<style>
 			<marginBottom value="8px"/>
@@ -32454,7 +32425,8 @@
 													IDS_CLUB_BATTLES: 'ClubIcon',
 													IDS_PROMO_FILTER: 'ShareIcon',
 													IDS_WITH_COMMANDER: 'WithCrewIcon',
-													IDS_WITHOUT_COMMANDER: 'WithoutCrewIcon'}"/>
+													IDS_WITHOUT_COMMANDER: 'WithoutCrewIcon',
+													IDS_SNOWFLAKES_FILTER: 'SnowflakesIcon'}"/>
 		</block>
 	</block>
 	<block className="AppliedBattleTypeFilter">
@@ -32759,7 +32731,8 @@
 								IDS_CLUB_BATTLES: 'ClubIcon',
 								IDS_PROMO_FILTER: 'ShareIcon',
 								IDS_WITH_COMMANDER: 'WithCrewIcon',
-								IDS_WITHOUT_COMMANDER: 'WithoutCrewIcon'}"/>
+								IDS_WITHOUT_COMMANDER: 'WithoutCrewIcon',
+								IDS_SNOWFLAKES_FILTER: 'SnowflakesIcon'}"/>
 	</block>
 	<block className="NotEliteIcon">
 		<block className="icon_filters" type="native">
@@ -32803,6 +32776,14 @@
 		</style>
 		<block className="icon_filters" type="native">
 			<bind name="gotoAndStop!" value="'share'"/>
+		</block>
+	</block>
+	<block className="SnowflakesIcon">
+		<style>
+			<marginTop value="1px"/>
+		</style>
+		<block className="icon_filters" type="native">
+			<bind name="gotoAndStop!" value="'snowflakes'"/>
 		</block>
 	</block>
 	<block className="RankedIcon">
@@ -33045,8 +33026,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>

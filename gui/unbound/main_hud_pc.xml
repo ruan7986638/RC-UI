@@ -2681,58 +2681,14 @@
 		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
 		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity.aircarrier.activeSquadron"/>
 		<bind name="watchDH" value="'squadronCameraMode'; ['ownCarrierEntity.aircarrier.evSquadronCameraModeChanged']; ownCarrierEntity.aircarrier.squadronCameraMode"/>
-		<bind name="watchDH" value="'canLaunchSquadrons'; ['ownCarrierEntity.aircarrier.evCanLaunchSquadronsChanged']; ownCarrierEntity.aircarrier.canLaunchSquadrons"/>
 		<bind name="firstEntityDH" value="'airDefenseFocusEntity'; CC.airDefenseFocus"/>
 		<bind name="watchDH" value="'airDefenseFocusActive'; ['airDefenseFocusEntity.airDefenseFocus.evActiveChanged']; airDefenseFocusEntity.airDefenseFocus.active"/>
-		<bind name="firstEntityDH" value="'battleStateEntity'; CC.battleState"/>
-		<bind name="watchDH" value="'battleState'; ['battleStateEntity.battleState.evBattleStateChanged']; battleStateEntity.battleState.battleState"/>
-		<bind name="primaryEntityDH" value="'currentSquadronEntity'; CC.ownSquadron; activeSquadron"/>
-		<bind name="watchDH" value="'flightState';	['currentSquadronEntity.ownSquadron.evStateChanged']; currentSquadronEntity.ownSquadron.state"/>
 		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
-		<bind name="watchDH" value="'timeToLive'; ['avatar.playerAvatar.evWillDieSoon']; avatar.playerAvatar.timeToLive"/>
 		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
-		<styleClass value="$FullsizeAbsolute"/>
-		<bind name="watch" value="'lastAttackStartedState'; squadronCameraMode == 'lastSquadronAttackStart'"/>
 		<bind name="watch" value="'isOnSquadron'; activeSquadron != -1 &amp;&amp; squadronCameraMode == 'default'"/>
 		<bind name="watch" value="'isOnNoAvatarCamera'; squadronCameraMode != 'default'"/>
-		<bind name="watch" value="'isTimerToDieVisible'; (isOnSquadron &amp;&amp; timeToLive != 0)"/>
-		<bind name="watch" value="'isDeathCamera'; !(isOnSquadron || isAlive)"/>
-		<bind name="firstEntityDH" value="'aircarrierEntity'; CC.aircarrier"/>
-		<bind name="watchDH" value="'selectedSquadronId'; ['aircarrierEntity.aircarrier.evSelectedSquadronChanged']; aircarrierEntity.aircarrier.selectedSquadron"/>
+		<styleClass value="$FullsizeAbsolute"/>
 		<bind name="fade" value="!tacticalMap &amp;&amp; !airDefenseFocusActive; 0.08; {alpha: 0}; {alpha: 1}; {alpha: 0}; 0"/>
-		<block>
-			<bind name="fade" value="isOnNoAvatarCamera &amp;&amp; isAlive &amp;&amp; !lastAttackStartedState; 0.08; {alpha: 0, top: 5}; {alpha:1, top: 0}; {alpha: 0, top: 5}; 0; 0.08"/>
-			<styleClass value="$MiddleAlignedAbsolutely"/>
-			<style>
-				<bottom value="92px"/>
-			</style>
-			<block type="text">
-				<style>
-					<maxWidth value="590"/>
-					<textAlign value="center"/>
-					<leading value="-6"/>
-				</style>
-				<styleClass value="$TextDefaultBold21NM"/>
-				<bind name="substitute" value="8; null; tr('IDS_CLICK_TO_RETURN_TO_AIRCARRIER_INFO'); '_bg'"/>
-			</block>
-		</block>
-		<block>
-			<style>
-				<bottom value="0px"/>
-				<left value="50%"/>
-				<position value="absolute"/>
-			</style>
-			<bind name="fade" value="!isOnNoAvatarCamera &amp;&amp; !isDeathCamera; 0.08; {alpha: 0, top: 5}; {alpha:1, top: 0}; {alpha: 0, top: 5}; 0; 0.08"/>
-			<block>
-				<style>
-					<bottom value="117px"/>
-					<marginLeft value="-50%"/>
-					<position value="absolute"/>
-				</style>
-				<bind name="visible" value="(activeSquadron == -1 &amp;&amp; battleState==0 &amp;&amp; canLaunchSquadrons)"/>
-				<bind name="instance" value="'AircraftCarrierPanelInstruction'; {_selectedSquadronEntityId: selectedSquadronId}"/>
-			</block>
-		</block>
 		<block>
 			<style>
 				<left value="50%"/>
@@ -2740,33 +2696,6 @@
 			</style>
 			<bind name="fade" value="(isOnSquadron || isOnNoAvatarCamera) &amp;&amp; isAlive; 0.1; {alpha: 0, top: 5}; {alpha:1, top: 0}; {alpha: 0, top: 5}; 0; isOnSquadron ? 0.18 : 0.08"/>
 			<bind name="instance" value="'AirCraftStatusLog'; {}"/>
-		</block>
-	</block>
-	<block className="AircraftCarrierPanelInstruction">
-		<bind name="primaryEntityDH" value="'selectedSquadronEntity'; CC.ownSquadron; _selectedSquadronEntityId"/>
-		<bind name="watchDH" value="'numPlanes';		['selectedSquadronEntity.health.evValueChanged']; selectedSquadronEntity.health.value"/>
-		<bind name="watchDH" value="'flightState'; ['selectedSquadronEntity.ownSquadron.evStateChanged']; selectedSquadronEntity.ownSquadron.state"/>
-		<bind name="watchDH" value="'ammoType';		[]; selectedSquadronEntity.plane.ammoType"/>
-		<bind name="watchDH" value="'commandId';		[]; selectedSquadronEntity.ownSquadron.commandId"/>
-		<bind name="primaryEntityDH" value="'cmdEntity'; CC.commandMappingCommand; commandId"/>
-		<bind name="watchDH" value="'commandName'; ['cmdEntity.commandMappingCommandName.evChanged']; cmdEntity.commandMappingCommandName.commandName"/>
-		<bind name="watch" value="'notEnough'; numPlanes == 0 ? '_NOT_ENOUGH' : ''"/>
-		<bind name="watch" value="'logMessage'; 	ammoType == 0				?  tr('IDS_AIRCRAFT_CARRIER_LOGMESSAGE_FIGHTER' + notEnough):
-								ammoType == 1 				?  tr('IDS_AIRCRAFT_CARRIER_LOGMESSAGE_BOMBER' + notEnough):
-								ammoType == 2			?  tr('IDS_AIRCRAFT_CARRIER_LOGMESSAGE_BOMBER_AP' + notEnough):
-								ammoType == 3				?  tr('IDS_AIRCRAFT_CARRIER_LOGMESSAGE_TORPEDO' + notEnough):
-								ammoType == 4	?  tr('IDS_AIRCRAFT_CARRIER_LOGMESSAGE_TORPEDO_DEEPWATER' + notEnough)
-																				:  ''"/>
-		<bind name="fade" value="flightState == 2; 0.15; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: 10}; 2"/>
-		<bind name="watch" value="'logMessageSubst'; subst(logMessage, [], {_cmd: '[' + commandName + ']'})"/>
-		<block type="text">
-			<style>
-				<maxWidth value="590"/>
-				<textAlign value="center"/>
-				<leading value="-6"/>
-			</style>
-			<styleClass value="$TextDefaultBold21NM"/>
-			<bind name="substitute" value="8; null; logMessageSubst; '_bg'"/>
 		</block>
 	</block>
 	<block className="CapturingIndicator">
@@ -3400,8 +3329,8 @@
 		</style>
 	</block>
 	<block className="BlurMap">
-		<bind name="visible" value="optionData.blurEnabled"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+		<bind name="visible" value="optionData.blurEnabled"/>
 		<style>
 			<hitTest value="false"/>
 		</style>
@@ -3420,8 +3349,8 @@
 		</block>
 	</block>
 	<block className="BlurMapLow">
-		<bind name="visible" value="optionData.blurEnabled"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+		<bind name="visible" value="optionData.blurEnabled"/>
 		<style>
 			<hitTest value="false"/>
 		</style>
@@ -3790,8 +3719,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -3845,8 +3774,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -4120,12 +4049,13 @@
 			</block>
 			<block type="text">
 				<bind name="visible" value="_subheaderText"/>
-				<styleClass value="$TextDefault17NM"/>
+				<styleClass value="$TextDefaultNM"/>
 				<bind name="class" value="_subheaderClass ? _subheaderClass : '$None'"/>
 				<style>
 					<width value="100%"/>
 					<leading value="-3"/>
-					<marginTop value="16px"/>
+					<marginTop value="8px"/>
+					<alpha value="0.9"/>
 				</style>
 				<bind name="text" value="_subheaderText"/>
 			</block>
@@ -4148,7 +4078,7 @@
 				<width value="100%"/>
 				<margin value="16px"/>
 			</style>
-			<bind name="repeat" value="_multiParagraphArray; 'RepeatParagraphItemNM'; {_maxWidth: _maxWidth, _marginBottom: _marginBottom, _leading: (_leading ? _leading : -3)}"/>
+			<bind name="repeat" value="_multiParagraphArray; 'RepeatParagraphItemNM'; {_maxWidth: _maxWidth, _marginBottom: _marginBottom, _leading: (_leading ? _leading : 0)}"/>
 		</block>
 	</block>
 	<block className="AccountCompletionRewardTooltip">
@@ -4167,8 +4097,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -5352,8 +5282,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -5875,8 +5805,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -7721,8 +7651,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -8260,8 +8190,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -8403,8 +8333,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -9078,8 +9008,8 @@
 				</style>
 			</block>
 			<block className="BlurMap">
-				<bind name="visible" value="optionData.blurEnabled"/>
 				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+				<bind name="visible" value="optionData.blurEnabled"/>
 				<style>
 					<hitTest value="false"/>
 				</style>
@@ -10058,8 +9988,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -10247,8 +10177,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -10426,8 +10356,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
@@ -10567,9 +10497,8 @@
 		<bind name="watchDH" value="'iconPath'; ['dogTagEntity.dogTagComponent.evUpdate']; dogTagEntity.dogTagComponent.iconPath"/>
 		<bind name="firstEntityDH" value="'selfPlayerEntity'; CC.accountSelf"/>
 		<bind name="watchDH" value="'selfPlayerDbId'; 		[]; selfPlayerEntity.accountSimple.dbId"/>
-		<bind name="watchDH" value="'selfPlayerName'; 		['selfPlayerEntity.accountName.evChanged']; selfPlayerEntity.accountName.name"/>
-		<bind name="watchDH" value="'selfPlayerNickName'; 	['selfPlayerEntity.accountName.evChanged']; selfPlayerEntity.accountName.nickName"/>
-		<bind name="watchDH" value="'clanId'; ['selfPlayerEntity.clanman.evClanIdChanged']; selfPlayerEntity.clanman.clanId"/>
+		<bind name="primaryEntityDH" value="'dogtagOwnerPlayerEntity'; CC.accountSimple; _playerDbId ? _playerDbId : selfPlayerDbId"/>
+		<bind name="watchDH" value="'clanId'; ['dogtagOwnerPlayerEntity.clanman.evClanIdChanged']; dogtagOwnerPlayerEntity.clanman.clanId"/>
 		<bind name="primaryEntityDH" value="'clanEntity'; CC.clan; clanId"/>
 		<bind name="watchDH" value="'clanTag'; ['clanEntity.clan.evTagChanged']; clanEntity.clan.tag"/>
 		<bind name="watchDH" value="'clanTagOffsetX';['dogTagEntity.dogTagComponent.evUpdate']; dogTagEntity.dogTagComponent.clanTagOffsetX"/>
@@ -10652,8 +10581,8 @@
 			</style>
 		</block>
 		<block className="BlurMap">
-			<bind name="visible" value="optionData.blurEnabled"/>
 			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
+			<bind name="visible" value="optionData.blurEnabled"/>
 			<style>
 				<hitTest value="false"/>
 			</style>
