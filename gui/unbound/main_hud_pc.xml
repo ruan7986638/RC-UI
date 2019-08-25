@@ -123,6 +123,7 @@
 				<bind name="transition" value="chatInput_rollOver || (!isGloballyMuted &amp;&amp; isInputFocused); 0.1; {alpha: 0.6}; {alpha: 1}; {alpha: 0.6}"/>
 				<block className="chat_input_background" type="native">
 					<styleClass value="$FullsizeAbsolute"/>
+					<bind name="style" value="'hitTest'; isGloballyMuted ? false : true"/>
 					<bind name="gotoAndStop!" value="isInputFocused ? 'focused' : 'default'"/>
 				</block>
 				<block>
@@ -132,7 +133,6 @@
 						<marginLeft value="6px"/>
 						<marginRight value="4px"/>
 					</style>
-					<bind name="visible" value="isGloballyMuted ? 0 : 1"/>
 					<params>
 						<param name="name" value="txaHeader"/>
 					</params>
@@ -141,12 +141,14 @@
 							<hitTest value="false"/>
 						</style>
 						<styleClass value="$TextSecondaryBold"/>
-						<bind name="class" value="	currentChannelId == BattleChatChannelType.TEAM		? '$HeaderColorTeam' :
+						<bind name="class" value="	isGloballyMuted ?	'$HeaderColorGeneral' :
+									currentChannelId == BattleChatChannelType.TEAM		? '$HeaderColorTeam' :
 									currentChannelId == BattleChatChannelType.DIVISION	? '$HeaderColorDivision'
-																								: '$HeaderColorGeneral'"/>
-						<bind name="text" value="currentChannelId == BattleChatChannelType.TEAM		? '&lt;body&gt;&lt;h1&gt;' + tr('IDS_BATTLE_CHAT_TEAM') + ':&lt;/h1&gt;&lt;/body&gt;' :
+																						: '$HeaderColorGeneral'"/>
+						<bind name="text" value="isGloballyMuted ?	'&lt;body&gt;&lt;h1&gt;IDS_CHAT_SWITCH_ON&lt;/h1&gt;&lt;/body&gt;' :
+								currentChannelId == BattleChatChannelType.TEAM		? '&lt;body&gt;&lt;h1&gt;' + tr('IDS_BATTLE_CHAT_TEAM') + ':&lt;/h1&gt;&lt;/body&gt;' :
 								currentChannelId == BattleChatChannelType.DIVISION	? '&lt;body&gt;&lt;h1&gt;' + tr('IDS_LOBBY_CHAT_DIVISION') + ':&lt;/h1&gt;&lt;/body&gt;'
-																							: '&lt;body&gt;&lt;h1&gt;' + tr('IDS_BATTLE_CHAT_GENERAL') + ':&lt;/h1&gt;&lt;/body&gt;'"/>
+																					: '&lt;body&gt;&lt;h1&gt;' + tr('IDS_BATTLE_CHAT_GENERAL') + ':&lt;/h1&gt;&lt;/body&gt;'"/>
 					</block>
 					<block className="battle_chat_text_area_input" type="native">
 						<params>
@@ -180,20 +182,6 @@
 			</style>
 			<bind name="instance" value="'VoiceChatOutgoingIcon'; {_isInBattle: true, _isSpeaking: selfPlayer.isSpeaking}"/>
 		</block>
-		<block type="text">
-			<params>
-				<param name="name" value="chatDisabledLabel"/>
-			</params>
-			<style>
-				<position value="absolute"/>
-				<hitTest value="false"/>
-				<left value="4px"/>
-				<top value="258px"/>
-			</style>
-			<styleClass value="$TextSecondary"/>
-			<bind name="visible" value="isGloballyMuted"/>
-			<text value="IDS_CHAT_SWITCH_ON"/>
-		</block>
 		<block className="button_mute" type="native">
 			<params>
 				<param name="name" value="mute_button"/>
@@ -201,28 +189,42 @@
 			<style>
 				<position value="absolute"/>
 				<top value="284px"/>
+				<left value="234px"/>
 			</style>
 			<bind name="catch" value="'rollOver'; {isOverMuteButton: true}"/>
 			<bind name="catch" value="'rollOut'; {isOverMuteButton: false}"/>
 			<bind name="catch" value="'click'; {isOverMuteButton: isOverMuteButton &amp;&amp; !isGloballyMuted}"/>
 			<bind name="selected" value="isGloballyMuted"/>
 			<bind name="visible" value="isOverMuteButton || isInputFocused || isGloballyMuted"/>
-			<bind name="action" value="'click'; 'battleChat.globalMuteChanged'; { isMuted: !isGloballyMuted }"/>
-			<bind name="tooltip" value="'MouseInstructionTooltip'; { _multiParagraphArray: [{_paragraphText: isGloballyMuted ? 'IDS_CHAT_ENABLE_HINT' : 'IDS_CHAT_DISABLE_HINT'}],
+			<bind name="action" value="'click';	'setUserPref' ; {value: isGloballyMuted,	name: 'enableBattleChat'}"/>
+			<bind name="tooltip" value="'MouseInstructionTooltip'; { _multiParagraphArray: [{_paragraphText: isGloballyMuted ? 'IDS_CHAT_ENABLE_HINT'
+																											: 'IDS_CHAT_DISABLE_HINT'}],
 													_isInBattle: true}"/>
 		</block>
-		<block className="txtQuickChatHelp" type="native">
+		<block>
+			<bind name="visible" value="isInputFocused &amp;&amp; !isGloballyMuted"/>
 			<params>
 				<param name="name" value="txtChatHelp"/>
 			</params>
-			<bind name="visible" value="isInputFocused &amp;&amp; !isGloballyMuted"/>
 			<style>
 				<position value="absolute"/>
-				<left value="55px"/>
+				<left value="-1px"/>
 				<top value="285px"/>
 				<hitTest value="false"/>
 			</style>
-			<bind name="text" value="'IDS_TAB_CHANGE_CHANNEL'"/>
+			<block className="txtQuickChatHelp" type="native"/>
+			<block type="text">
+				<styleClass value="$TextDefault13NM"/>
+				<style>
+					<alpha value="0.8"/>
+					<marginLeft value="4px"/>
+					<marginTop value="4px"/>
+				</style>
+				<bind name="text" value="'IDS_TAB_CHANGE_CHANNEL'"/>
+			</block>
+			<style>
+				<flow value="horizontal"/>
+			</style>
 		</block>
 	</block>
 	<block className="CombatLogMessageRenderer">
@@ -478,44 +480,46 @@
 		</block>
 	</block>
 	<block className="FogHornIndicator">
+		<bind name="firstEntityDH" value="'prefs'; CC.prefsMarker"/>
+		<bind name="watchDH" value="'hearFoghorn'; ['prefs.prefsBattle.evUpdate']; prefs.prefsBattle.hearFoghorn"/>
+		<bind name="firstEntityDH" value="'selfVehicleEntity'; CC.selfVehicle"/>
+		<bind name="watchDH" value="'foghornMaxValue';		[''];	selfVehicleEntity.fogHorn.max"/>
+		<bind name="watchDH" value="'foghornMaxRegenTime';	[''];	selfVehicleEntity.fogHorn.maxRegenTime"/>
+		<bind name="watchDH" value="'foghornValue';			['selfVehicleEntity.fogHorn.evFoghornStateChanged'];	selfVehicleEntity.fogHorn.value"/>
+		<bind name="watchDH" value="'isHorning';				['selfVehicleEntity.fogHorn.evFoghornStateChanged'];	selfVehicleEntity.fogHorn.isHorning"/>
+		<bind name="watchDH" value="'isRegenerating';		['selfVehicleEntity.fogHorn.evFoghornStateChanged'];	selfVehicleEntity.fogHorn.isRegenerating"/>
+		<bind name="watch" value="'animationTime'; (foghornMaxRegenTime - (foghornValue / foghornMaxValue) * foghornMaxRegenTime)"/>
+		<bind name="watch" value="'visibilityAnimationDelay'; (animationTime &gt; 5.6) 	? 4 : 0"/>
+		<bind name="watch" value="'visibilityAnimationDuration'; (animationTime &lt; 1.6) ? animationTime : 1.6"/>
+		<bind name="watch" value="'progressBarWidth'; ((foghornValue / foghornMaxValue) * 253)"/>
 		<styleClass value="$FullsizeAbsolute"/>
 		<block>
 			<bind name="visible" value="hearFoghorn"/>
 			<style>
-				<bottom value="308px"/>
-				<left value="9px"/>
-				<width value="257px"/>
+				<bottom value="317px"/>
+				<left value="10px"/>
+				<width value="255px"/>
 				<position value="absolute"/>
 				<alpha value="0"/>
 			</style>
-			<bind name="transition" value="isHorning; 0.4; {alpha: 0}; {alpha: 1}; 0; 0"/>
-			<bind name="transition" value="isRegenerating; 1.6; {alpha: 1}; {alpha: 0}; {}; 0; 4"/>
-			<bind name="firstEntityDH" value="'prefs'; CC.prefsMarker"/>
-			<bind name="watchDH" value="'hearFoghorn'; ['prefs.prefsBattle.evUpdate']; prefs.prefsBattle.hearFoghorn"/>
-			<bind name="firstEntityDH" value="'selfVehicleEntity'; CC.selfVehicle"/>
-			<bind name="watchDH" value="'foghornMaxValue';		[''];	selfVehicleEntity.fogHorn.max"/>
-			<bind name="watchDH" value="'foghornMaxRegenTime';	[''];	selfVehicleEntity.fogHorn.maxRegenTime"/>
-			<bind name="watchDH" value="'foghornValue';	['selfVehicleEntity.fogHorn.evFoghornStateChanged'];	selfVehicleEntity.fogHorn.value"/>
-			<bind name="watchDH" value="'isHorning';	['selfVehicleEntity.fogHorn.evFoghornStateChanged'];	selfVehicleEntity.fogHorn.isHorning"/>
-			<bind name="watchDH" value="'isRegenerating';	['selfVehicleEntity.fogHorn.evFoghornStateChanged'];	selfVehicleEntity.fogHorn.isRegenerating"/>
-			<bind name="watch" value="'progressBarWidth'; ((foghornValue / foghornMaxValue) * 257)"/>
-			<block className="indicator_progress_bar_lightgreen" type="native">
+			<bind name="transition" value="isHorning; 0.4; {alpha: 0}; {alpha: 1}; {alpha: 1}; 0; 0"/>
+			<bind name="transition" value="isRegenerating; visibilityAnimationDuration; {alpha: 1}; {alpha: 0}; 0; 0; visibilityAnimationDelay"/>
+			<block className="indicator_progress_bar_bg_thin" type="native">
 				<style>
 					<width value="100%"/>
 				</style>
-				<bind name="value" value="0"/>
-				<bind name="maximum" value="1"/>
 			</block>
 			<block>
 				<style>
-					<height value="2px"/>
+					<height value="1px"/>
+					<marginLeft value="1px"/>
 					<marginTop value="1px"/>
-					<backgroundColor value="0xFF3af9d2"/>
+					<backgroundColor value="0xFF4CE8AA"/>
 					<position value="absolute"/>
 				</style>
 				<bind name="style" value="'width'; progressBarWidth + 'px'"/>
-				<bind name="transition" value="isRegenerating; (foghornMaxRegenTime - (foghornValue / foghornMaxValue) * foghornMaxRegenTime); {width: progressBarWidth}; {width: 257}; 0; 0"/>
 				<bind name="transition" value="isHorning; foghornValue; {width: progressBarWidth}; {width: 0}; 0; 0"/>
+				<bind name="transition" value="isRegenerating; animationTime; {width: progressBarWidth}; {width: 253}; 0; 0"/>
 			</block>
 		</block>
 	</block>
@@ -2028,183 +2032,6 @@
 			</block>
 		</block>
 	</block>
-	<block className="CentralDangersIndicationContainer">
-		<styleClass value="$FullsizeAbsolute"/>
-		<style>
-			<align value="center|middle"/>
-			<hitTest value="false"/>
-		</style>
-		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
-		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
-		<bind name="watch" value="'farDist'; _farDist ? _farDist : 260"/>
-		<bind name="watch" value="'nearDist'; _nearDist ? _nearDist : 230"/>
-		<bind name="watch" value="'innerDist'; _innerDist ? _innerDist : 190"/>
-		<bind name="firstEntityDH" value="'airDefenseFocusEntity'; CC.airDefenseFocus"/>
-		<bind name="watchDH" value="'airDefenseFocusActive'; ['airDefenseFocusEntity.airDefenseFocus.evActiveChanged']; airDefenseFocusEntity.airDefenseFocus.active"/>
-		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
-		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
-		<bind name="watch" value="'isOnShip'; activeSquadron == -1"/>
-		<bind name="watch" value="'dangersCollectionPath'; isOnShip ? 'shipDangers' : 'aircraftDangers'"/>
-		<block>
-			<style>
-				<width value="0"/>
-				<height value="0"/>
-			</style>
-			<block>
-				<styleClass value="$FullsizeAbsolute"/>
-				<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
-				<bind name="watchDH" value="'cameraMode'; ['cameraEntity.camera.evModeChanged']; cameraEntity.camera.mode"/>
-				<bind name="firstEntityDH" value="'nearEntity'; CC.nearestEnemyIndication"/>
-				<bind name="watchDH" value="'showNearestEnemy'; ['nearEntity.nearestEnemyIndication.evShowNearestEnemyChanged']; nearEntity.nearestEnemyIndication.showNearestEnemy"/>
-				<bind name="instance" value="'NearEnemyItemContainer'; cameraMode != 5 &amp;&amp; showNearestEnemy ? {_farDist: farDist, _nearDist: nearDist, _innerDist: innerDist} : null"/>
-			</block>
-			<block>
-				<bind name="visible" value="isOnShip"/>
-				<styleClass value="$FullsizeAbsolute"/>
-				<bind name="instance" value="'ReceivedDamageContainer'; {_farDist: farDist, _nearDist: nearDist, _innerDist: innerDist}"/>
-			</block>
-			<block>
-				<bind name="visible" value="((isAlive &amp;&amp; isOnShip) || !(isOnShip)) &amp;&amp; !(airDefenseFocusActive)"/>
-				<styleClass value="$FullsizeAbsolute"/>
-				<bind name="instance" value="'DangerItemContainer'; {_dangersPath: dangersCollectionPath, _farDist: farDist, _nearDist: nearDist, _innerDist: innerDist}"/>
-			</block>
-		</block>
-	</block>
-	<block className="NearEnemyItemContainer">
-		<styleClass value="$FullsizeAbsolute"/>
-		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
-		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
-		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
-		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity ? ownCarrierEntity.aircarrier.activeSquadron : -1"/>
-		<bind name="watch" value="'isOnPlane'; activeSquadron != -1"/>
-		<bind name="visible" value="isAlive || isOnPlane"/>
-		<bind name="firstEntityDH" value="'nearEntity'; CC.nearestEnemyIndication"/>
-		<bind name="watchDH" value="'yawToNearestEnemyDegrees'; ['nearEntity.nearestEnemyIndication.evYawToNearestEnemyRelativeDegreesChanged']; nearEntity.nearestEnemyIndication.yawToNearestEnemyRelativeDegrees"/>
-		<bind name="instance" value="'CenteredRotationItem'; {_item: 'NearEnemyItem', _rotation: yawToNearestEnemyDegrees, _itemData: {_nearDist: _nearDist}}"/>
-	</block>
-	<block className="NearEnemyItem">
-		<block>
-			<style>
-				<position value="absolute"/>
-				<top value="-230px"/>
-				<marginLeft value="-50%"/>
-			</style>
-			<bind name="style" value="'top'; -(_nearDist) + 'px'"/>
-			<block className="sector_nearest_enemy" type="native"/>
-		</block>
-	</block>
-	<block className="ReceivedDamageContainer">
-		<styleClass value="$FullsizeAbsolute"/>
-		<bind name="firstEntityDH" value="'dmgEntity'; CC.damageDanger"/>
-		<bind name="handleEventDH" value="'dmgEntity.damageDanger.evDamage'; 'evReceiveDamage'"/>
-		<bind name="fxInstance" value="'evReceiveDamage'; 'ReceivedDamageItem'; {lifetime: 3, _innerDist: _innerDist}"/>
-	</block>
-	<block className="ReceivedDamageItem">
-		<styleClass value="$FullsizeAbsolute"/>
-		<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
-		<bind name="firstEntityDH" value="'timerEntity'; CC.timer"/>
-		<bind name="watchDH" value="'damageYaw'; ['timerEntity.timer.evFrequent']; $args[0] - cameraEntity.camera.yaw"/>
-		<bind name="watch" value="'damageYawDegrees'; math.radToGrad(damageYaw)"/>
-		<bind name="instance" value="'CenteredRotationItem'; {_item: 'ReceivedDamageItemClip', _rotation: damageYawDegrees, _itemData: {_lifetime: lifetime, _innerDist: _innerDist}}"/>
-	</block>
-	<block className="ReceivedDamageItemClip">
-		<bind name="dispatch" value="'addedToStage'; 'evShow'; {}; 2"/>
-		<bind name="dispatch" value="'evShow'; 'evFadeOut'; {}; 2; 0.3"/>
-		<block>
-			<style>
-				<position value="absolute"/>
-				<top value="190px"/>
-			</style>
-			<bind name="style" value="'top'; _innerDist + 'px'"/>
-			<bind name="appear" value="'evShow'; 0.2; 0; {alpha:0}; {alpha: 1}; 1"/>
-			<bind name="appear" value="'evFadeOut'; _lifetime-0.2; 0; {alpha: 1}; {alpha: 0}"/>
-			<block className="received_damage_indicator_clip" type="native"/>
-		</block>
-	</block>
-	<block className="DangerItemContainer">
-		<styleClass value="$FullsizeAbsolute"/>
-		<bind name="collectionRepeatDH" value="CC.visibleDanger; 'DangerItem'; _dangersPath; {_farDist: _farDist, _nearDist: _nearDist}"/>
-	</block>
-	<block className="DangerItem">
-		<styleClass value="$FullsizeAbsolute"/>
-		<bind name="entityDH" value="'dangerEntity'; $dataRef.ref.id"/>
-		<bind name="watchDH" value="'dangerYawDegrees'; ['dangerEntity.visibleDanger.evChanged']; dangerEntity.visibleDanger.yawRelativeDegrees"/>
-		<bind name="watchDH" value="'dangerType'; ['dangerEntity.visibleDanger.evChanged']; dangerEntity.visibleDanger.type"/>
-		<bind name="watch" value="'typeToChild'; dangerType == 0 ? 'CollisionDangerItem' : 'SimpleDangerItem'"/>
-		<bind name="instance" value="'CenteredRotationItem'; {_item: typeToChild, _rotation: dangerYawDegrees, _itemData: {_dangerEntityId: dangerEntity.id, _rotation: -(dangerYawDegrees), _farDist: _farDist, _nearDist: _nearDist}}"/>
-	</block>
-	<block className="CollisionDangerItem">
-		<bind name="visible" value="dist == 'near'"/>
-		<bind name="entityDH" value="'dangerEntity'; _dangerEntityId"/>
-		<bind name="watchDH" value="'state'; ['dangerEntity.collisionDanger.evChanged']; dangerEntity.collisionDanger.state"/>
-		<bind name="watch" value="'dist'; state &lt; 3 ? 'far' : 'near'"/>
-		<block>
-			<bind name="appear" value="'addedToStage'; 0.2; 0; {scaleX: 2, scaleY: 2, alpha:0}; {scaleX: 1, scaleY: 1, alpha: 1}; 1"/>
-			<style>
-				<position value="absolute"/>
-				<top value="-260px"/>
-				<marginLeft value="-50%"/>
-				<width value="208px"/>
-				<height value="52px"/>
-				<align value="center|middle"/>
-				<backgroundSize value="cover"/>
-				<backgroundImage value="symbol:sector_collision_shallow_large"/>
-			</style>
-			<bind name="style" value="'top'; -(_farDist) + 'px'"/>
-			<block className="icon_collision_terrain_center" type="native">
-				<style>
-					<marginLeft value="32px"/>
-					<marginTop value="20px"/>
-				</style>
-				<bind name="rotation" value="_rotation"/>
-			</block>
-		</block>
-	</block>
-	<block className="SimpleDangerItem">
-		<styleClass value="$FullsizeAbsolute"/>
-		<bind name="entityDH" value="'dangerEntity'; _dangerEntityId"/>
-		<bind name="watchDH" value="'dangerType'; ['dangerEntity.visibleDanger.evChanged']; dangerEntity.visibleDanger.type"/>
-		<bind name="watchDH" value="'dist'; ['dangerEntity.simpleDanger.evChanged']; dangerEntity.simpleDanger.dist"/>
-		<bind name="watchDH" value="'shipSubtype'; []; dangerEntity.avatar.ship.ref.ship.subtype"/>
-		<bind name="watch" value="'type'; 	dangerType == 1 ? 'torpedo' : 
-							dangerType == 4	? toLowerCase(shipSubtype)
-															: 'plane'"/>
-		<bind name="y" value="dist == 'near' ? -(_nearDist) : -(_farDist)"/>
-		<bind name="changeDispatch" value="dist; 'evToFar'; {}; 2; 'far'"/>
-		<bind name="changeDispatch" value="dist; 'evToNear'; {}; 2; 'near'"/>
-		<bind name="catch" value="'evToFar'; {secondEvToFar: true}"/>
-		<bind name="watch" value="'nearDist'; secondEvToFar ? -(_nearDist) : -(_farDist + 20)"/>
-		<bind name="appear" value="'addedToStage'; 0.2; 0; {alpha: 0}; {alpha: 1}; 2"/>
-		<bind name="appear" value="'evToFar'; 0.2; 0; { y: nearDist }; { y: -(_farDist) }; 2"/>
-		<bind name="appear" value="'evToNear'; 0.2; 0; { y: -(_farDist) }; { y: -(_nearDist) }; 2"/>
-		<block>
-			<style>
-				<position value="absolute"/>
-				<width value="32px"/>
-				<height value="32px"/>
-				<marginLeft value="-50%"/>
-			</style>
-			<bind name="style" value="'backgroundImage'; 'symbol:icon_danger_' + type + '_' + dist"/>
-		</block>
-	</block>
-	<block className="CenteredRotationItem">
-		<styleClass value="$FullsizeAbsolute"/>
-		<style>
-			<top value="50%"/>
-			<left value="50%"/>
-		</style>
-		<bind name="rotation" value="_rotation"/>
-		<block>
-			<style>
-				<position value="absolute"/>
-				<width value="0"/>
-				<height value="0"/>
-				<marginLeft value="-50%"/>
-				<marginTop value="-50%"/>
-			</style>
-			<bind name="instance" value="_item; _itemData ? _itemData : {}"/>
-		</block>
-	</block>
 	<css name="$IndicatorText">
 		<fontFamily value="$WWSDefaultFontBold"/>
 		<mouseEnabled value="false"/>
@@ -2310,8 +2137,9 @@
 							 	isHit &amp;&amp; _isOnSquadron 		? 'attacked':
 							 	isUnderAntiAirAttack 		? 'antiAir' :
 							 	isVolley 					? 'volley' :
-							 	spotType 					? spotType 
-															: 'ship'"/>
+							 	spotType 					? spotType :
+							 	iconName                    ? iconName :'ship'
+    "/>
 		<bind name="var" value="{showDuration: 4}"/>
 		<bind name="var" value="{isHit:	false}"/>
 		<bind name="handleEventDH" value="'selfAvatarEntity.vehicle.evHit'; 'evAircraftHit'"/>
@@ -2681,14 +2509,12 @@
 		<bind name="firstEntityDH" value="'ownCarrierEntity'; CC.aircarrier;"/>
 		<bind name="watchDH" value="'activeSquadron'; ['ownCarrierEntity.aircarrier.evStateChanged']; ownCarrierEntity.aircarrier.activeSquadron"/>
 		<bind name="watchDH" value="'squadronCameraMode'; ['ownCarrierEntity.aircarrier.evSquadronCameraModeChanged']; ownCarrierEntity.aircarrier.squadronCameraMode"/>
-		<bind name="firstEntityDH" value="'airDefenseFocusEntity'; CC.airDefenseFocus"/>
-		<bind name="watchDH" value="'airDefenseFocusActive'; ['airDefenseFocusEntity.airDefenseFocus.evActiveChanged']; airDefenseFocusEntity.airDefenseFocus.active"/>
 		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
 		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
 		<bind name="watch" value="'isOnSquadron'; activeSquadron != -1 &amp;&amp; squadronCameraMode == 'default'"/>
 		<bind name="watch" value="'isOnNoAvatarCamera'; squadronCameraMode != 'default'"/>
 		<styleClass value="$FullsizeAbsolute"/>
-		<bind name="fade" value="!tacticalMap &amp;&amp; !airDefenseFocusActive; 0.08; {alpha: 0}; {alpha: 1}; {alpha: 0}; 0"/>
+		<bind name="fade" value="!tacticalMap; 0.08; {alpha: 0}; {alpha: 1}; {alpha: 0}; 0"/>
 		<block>
 			<style>
 				<left value="50%"/>
@@ -3438,6 +3264,23 @@
 		<marginTop value="12"/>
 		<marginLeft value="12"/>
 		<marginRight value="12"/>
+	</css>
+	<css name="$DragScrollerStyleVertical">
+		<scrollbarController value="lesta.unbound.style.UbScrollingControllerDrag"/>
+		<wheelScrollSpeed value="100"/>
+		<flow value="vertical"/>
+		<height value="100%f"/>
+		<mouseEnabledWhileScroll value="false"/>
+		<scrollbar value="ModernScrollBar"/>
+		<overflow value="scroll"/>
+	</css>
+	<css name="$DragScrollerStyleHorizonal">
+		<scrollbarController value="lesta.unbound.style.UbScrollingControllerDrag"/>
+		<wheelScrollSpeed value="0"/>
+		<flow value="horizontal"/>
+		<width value="100%f"/>
+		<mouseEnabledWhileScroll value="true"/>
+		<overflow value="scroll"/>
 	</css>
 	<css name="$DefaultTooltipBehaviour">
 		<userData value="{
@@ -4400,6 +4243,7 @@
 	</css>
 	<css name="$TextDefaultNM">
 		<fontFamily value="$WWSDefaultFont"/>
+		<leading value="-3"/>
 		<mouseEnabled value="false"/>
 		<mouseChildren value="false"/>
 		<fontSize value="15"/>
@@ -4460,6 +4304,7 @@
 	</css>
 	<css name="$TextDefault21NM">
 		<fontFamily value="$WWSDefaultFont"/>
+		<leading value="-4"/>
 		<mouseEnabled value="false"/>
 		<mouseChildren value="false"/>
 		<fontSize value="21"/>
@@ -4578,6 +4423,24 @@
 		<selectable value="false"/>
 		<textColor value="0xFFFFFF"/>
 	</css>
+	<css name="$TextWithoutGlow17NM">
+		<mouseChildren value="false"/>
+		<mouseEnabled value="false"/>
+		<fontFamily value="$WWSDefaultFont"/>
+		<fontSize value="17"/>
+		<marginText value="-3px|-4px|-7px|-6px"/>
+		<selectable value="false"/>
+		<textColor value="0xFFFFFF"/>
+	</css>
+	<css name="$TextWithoutGlowBold23NM">
+		<mouseChildren value="false"/>
+		<mouseEnabled value="false"/>
+		<fontFamily value="$WWSDefaultFontBold"/>
+		<fontSize value="23"/>
+		<marginText value="-3px|-3px|-9px|-6px"/>
+		<selectable value="false"/>
+		<textColor value="0xFFFFFF"/>
+	</css>
 	<css name="$ComplaintMenuListItemBattleMargins">
 		<marginLeft value="2px"/>
 		<marginRight value="2px"/>
@@ -4599,7 +4462,7 @@
 		<bind name="watchDH" value="'entityAccountBattleDbId'; [];  entityAccountBattle.accountSimple.dbId"/>
 		<bind name="primaryEntityDH" value="'playerEntity'; CC.accountSimple; _playerDbId ? _playerDbId : entityAccountBattleDbId"/>
 		<bind name="watchDH" value="'isSuspended'; ['playerEntity.accountSimple.evSuspendedChanged']; playerEntity.accountSimple.suspended"/>
-		<bind name="watchDH" value="'isTextChatMuted'; ['playerEntity.avatar.evMuteChanged']; playerEntity.avatar.mute"/>
+		<bind name="watchDH" value="'isPlayerMessagesMuted'; ['playerEntity.avatar.evMuteChanged']; playerEntity.avatar.mute"/>
 		<bind name="watchDH" value="'isBotAvatar'; []; playerEntity.avatar.isBot"/>
 		<bind name="watchDH" value="'accountDbId'; [];  playerEntity.accountSimple.dbId"/>
 		<bind name="watchDH" value="'groupIdsOfAccount'; ['playerEntity.elementInGroups.evGroupsChanged']; playerEntity.elementInGroups.groupIds"/>
@@ -4795,44 +4658,31 @@
 				</block>
 			</block>
 			<block>
-				<bind name="visible" value="(_isBattleStats == true) &amp;&amp; !(isBot) &amp;&amp; !(isSuspended)"/>
+				<bind name="visible" value="(_isBattleStats == true) &amp;&amp; !(isBot) &amp;&amp; !(isSuspended) &amp;&amp; (!isIgnored)"/>
+				<bind name="watch" value="'playerMuteIdses'; isPlayerMessagesMuted 	? 'IDS_UNMUTE_PLAYER_CHAT'
+																	: 'IDS_MUTE_PLAYER_CHAT'"/>
+				<bind name="tooltip" value="'MouseInstructionTooltip'; {	_multiParagraphArray: [{_paragraphText: playerMuteIdses + '_HINT'}],
+														_maxWidth: 300,
+														_isInBattle: _isBattleStats}"/>
 				<bind name="name" value="'id_mute'"/>
 				<style>
 					<width value="100%"/>
 				</style>
 				<block className="dock_submenu_item" type="native">
 					<styleClass value="$FullsizeAbsolute"/>
-					<bind name="action" value="'buttonClick'; isTextChatMuted ? 'unmuteUser' : 'muteUser'; {id: _player.id}"/>
+					<bind name="action" value="'buttonClick'; isPlayerMessagesMuted ? 'unmuteUser' : 'muteUser'; {id: _player.id}"/>
 				</block>
-				<block>
+				<block type="text">
 					<style>
 						<width value="100%"/>
 						<marginLeft value="7px"/>
+						<marginBottom value="3px"/>
+						<marginRight value="4px"/>
+						<leading value="-3"/>
 						<hitTest value="false"/>
 					</style>
-					<block className="icon_text_chat_small" type="native">
-						<style>
-							<top value="6px"/>
-							<marginRight value="4px"/>
-						</style>
-						<bind name="gotoAndStop!" value="(isTextChatMuted ? 'muted' : 'on')"/>
-					</block>
-					<block type="text">
-						<style>
-							<width value="100%"/>
-							<marginBottom value="3px"/>
-							<hitTest value="false"/>
-							<marginRight value="4px"/>
-							<leading value="-3"/>
-						</style>
-						<styleClass value="$TextDefault"/>
-						<bind name="class" value="isTextChatMuted	? '$FontColorUnready'
-													: '$FontColorWhite'"/>
-						<bind name="text" value="isTextChatMuted ? 'IDS_UNMUTE_PLAYER_TEXT_CHAT' : 'IDS_MUTE_PLAYER_TEXT_CHAT'"/>
-					</block>
-					<style>
-						<flow value="horizontal"/>
-					</style>
+					<styleClass value="$TextDefault"/>
+					<bind name="text" value="playerMuteIdses"/>
 				</block>
 			</block>
 			<block>
@@ -4859,13 +4709,6 @@
 						<marginLeft value="7px"/>
 						<hitTest value="false"/>
 					</style>
-					<block className="icon_voice_chat_small" type="native">
-						<style>
-							<marginTop value="6px"/>
-							<marginRight value="4px"/>
-						</style>
-						<bind name="gotoAndStop!" value="state"/>
-					</block>
 					<block type="text">
 						<style>
 							<width value="100%"/>
@@ -4879,6 +4722,13 @@
 									_player.isMuted				? '$FontColorUnready'
 																: '$FontColorWhite'"/>
 						<bind name="text" value="voiceChatMenuText"/>
+					</block>
+					<block className="icon_voice_chat_small" type="native">
+						<style>
+							<marginTop value="6px"/>
+							<marginRight value="4px"/>
+						</style>
+						<bind name="gotoAndStop!" value="state"/>
 					</block>
 					<style>
 						<flow value="horizontal"/>
@@ -4980,6 +4830,11 @@
 					<bind name="tooltip" value="'MoveToGroupContextSubMenu'; {_entityAccountId: playerEntityId, canAddGroupEntitiesId: canAddGroupEntitiesId, _dropDown: false, _isInBattle: _isBattleStats}; 7"/>
 				</block>
 				<block>
+					<bind name="watch" value="'ignoreIdses'; (!isIgnored) ? 'IDS_IGNORE_PLAYER' : 'IDS_NOT_IGNORE_PLAYER'"/>
+					<bind name="tooltip" value="'MouseInstructionTooltip'; isChatServerAvailable ? {	_multiParagraphArray: [{_paragraphText: ignoreIdses + '_HINT'}],
+																					_maxWidth: 300,
+																					_isInBattle: _isBattleStats}
+																				: null"/>
 					<styleClass value="$ContextMenuListItem"/>
 					<bind name="style" value="'hitTest'; isChatServerAvailable ? true : false"/>
 					<block className="MenuItem">
@@ -4991,7 +4846,7 @@
 							<styleClass value="$TextDefault"/>
 							<styleClass value="$MiddleVAligned"/>
 							<styleClass value="$ContextMenuListItemContent"/>
-							<bind name="text" value="(!isIgnored) ? 'IDS_IGNORE_PLAYER' : 'IDS_NOT_IGNORE_PLAYER'"/>
+							<bind name="text" value="ignoreIdses"/>
 						</block>
 					</block>
 					<bind name="action" value="'click'; 'userIgnoreContact'; {dbId: accountDbId, ignore: !(isIgnored)}"/>
@@ -5214,9 +5069,10 @@
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'VoiceChatState'"/>
 		<bind name="primaryEntityDH" value="'playerEntity'; CC.avatar; _playerId"/>
 		<bind name="watchDH" value="'pureName';			[]; playerEntity.avatar.pureName"/>
-		<bind name="watchDH" value="'isTextChatMuted'; ['playerEntity.avatar.evMuteChanged']; playerEntity.avatar.mute"/>
+		<bind name="watchDH" value="'isPlayerMessagesMuted'; ['playerEntity.avatar.evMuteChanged']; playerEntity.avatar.mute"/>
 		<bind name="watchDH" value="'relation'; 			['playerEntity.relation.evChanged']; playerEntity.relation.value"/>
 		<bind name="watch" value="'isSelf'; (relation == 0)"/>
+		<bind name="watchDH" value="'isIgnored';['playerEntity.contact.evIsIgnoredChanged']; !!playerEntity.contact.isIgnored"/>
 		<bind name="watch" value="'playerCanBeInChat';	((_battleType == BattleTypes.CLAN_BATTLE) &amp;&amp; VoiceChatState.enabled) ||
 										((_isInSameDivision &amp;&amp; VoiceChatState.enabled) &amp;&amp;	((_battleType == BattleTypes.RANDOM_BATTLE) ||
 																							(_battleType == BattleTypes.COOPERATIVE_BATTLE) ||
@@ -5226,14 +5082,14 @@
 																			(_battleType == BattleTypes.COOPERATIVE_BATTLE) ||
 																			(_battleType == BattleTypes.PVE_BATTLE)))"/>
 		<bind name="watch" value="'canBeInChat'; (playerCanBeInChat || selfCanBeInChat)"/>
-		<bind name="name" value="isTextChatMuted ? 'mute_' + pureName
+		<bind name="name" value="isPlayerMessagesMuted ? 'mute_' + pureName
 								: 'not_mute_' + pureName"/>
 		<block>
 			<bind name="visible" value="canBeInChat"/>
 			<style>
 				<position value="absolute"/>
 			</style>
-			<bind name="transition" value="canBeInChat &amp;&amp; isTextChatMuted &amp;&amp; (_isSpeaking || _isVoiceChatMuted || !(_isInVoiceChat)); 0.15; {alpha: 1, top: 9}; {alpha: 1, top: 3}; {alpha: 1, top: 9}; 1"/>
+			<bind name="transition" value="canBeInChat &amp;&amp; (isPlayerMessagesMuted || isIgnored) &amp;&amp; (_isSpeaking || _isVoiceChatMuted || !(_isInVoiceChat)); 0.15; {alpha: 1, top: 9}; {alpha: 1, top: 3}; {alpha: 1, top: 9}; 1"/>
 			<bind name="watch" value="'state';	!(_isInVoiceChat)	? 'disabled' :
 								_isVoiceChatMuted	? 'muted' :
 								_isSpeaking			? 'speak'
@@ -5249,9 +5105,9 @@
 			<style>
 				<position value="absolute"/>
 			</style>
-			<bind name="transition" value="canBeInChat &amp;&amp; isTextChatMuted &amp;&amp; (_isSpeaking || _isVoiceChatMuted || !(_isInVoiceChat)); 0.15; {alpha: 1, top: 8}; {alpha: 1, top: 14}; {alpha: 1, top: 8}; 1"/>
+			<bind name="transition" value="canBeInChat &amp;&amp; (isPlayerMessagesMuted || isIgnored) &amp;&amp; (_isSpeaking || _isVoiceChatMuted || !(_isInVoiceChat)); 0.15; {alpha: 1, top: 8}; {alpha: 1, top: 14}; {alpha: 1, top: 8}; 1"/>
 			<block>
-				<bind name="transition" value="isTextChatMuted; 0.1; {alpha: 0}; {alpha: 1}; {alpha: 0}; 1"/>
+				<bind name="transition" value="(isPlayerMessagesMuted || isIgnored); 0.1; {alpha: 0}; {alpha: 1}; {alpha: 0}; 1"/>
 				<block className="icon_text_chat_small" type="native">
 					<bind name="gotoAndStop!" value="'muted')"/>
 				</block>
@@ -5928,12 +5784,16 @@
 		<bind name="style" value="'marginBottom'; _marginBottom ? _marginBottom : '16px'"/>
 		<bind name="class" value="_middleAligned ? '$MiddleAligned' : ''"/>
 		<bind name="watch" value="'textItem'; _isTextInValue ? $value : _paragraphText"/>
+		<bind name="style" value="'width'; _width ? _width : 'auto'"/>
 		<block type="text">
 			<styleClass value="$TextDefaultNM"/>
 			<bind name="class" value="_class"/>
 			<bind name="style" value="'leading'; _leading ? _leading : 0"/>
 			<bind name="style" value="'textAlign'; _textAlign ? _textAlign : 'left'"/>
-			<bind name="style" value="'maxWidth'; _maxWidth ? _maxWidth : 300"/>
+			<bind name="style" value="'maxWidth'; _maxWidth	? _maxWidth :
+									_width	? 3000
+											: 300"/>
+			<bind name="style" value="'width'; _width ? _width : 'auto'"/>
 			<bind name="substitute" value="_substitute.imageOffset ? _substitute.imageOffset : 0;
 							_substitute.map ? _substitute.map : {}; (_toUpperCase ? toUpperCase(tr(textItem)) : textItem)"/>
 		</block>
@@ -5949,12 +5809,14 @@
 	<block className="CheckBox">
 		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
 		<bind name="watch" value="'isEnabled'; _disabled != true"/>
+		<bind name="style" value="'alpha'; isEnabled ? 1 : 0.7"/>
 		<block className="checkbox_no_label" type="native">
 			<styleClass value="$FullsizeAbsolute"/>
 			<bind name="enabled" value="isEnabled"/>
-			<bind name="selected" value="switchProperty"/>
+			<bind name="selected" value="isEnabled ? switchProperty : false"/>
 		</block>
 		<block type="text">
+			<bind name="style" value="'alpha'; isEnabled ? 1 : 0.4"/>
 			<styleClass value="$TextHeaderBigDefault"/>
 			<style>
 				<marginLeft value="23px"/>
@@ -5962,7 +5824,7 @@
 				<hitTest value="false"/>
 			</style>
 			<bind name="style" value="'maxWidth'; _maxTfWidth ? _maxTfWidth : 300"/>
-			<bind name="transition" value="(rollOver &amp;&amp; !mouseDown) &amp;&amp; isEnabled; 0.15; {alpha: 0.8}; {alpha: 1}; {alpha: 0.8}; 2"/>
+			<bind name="transition" value="(rollOver &amp;&amp; !mouseDown) &amp;&amp; isEnabled; 0.07; {alpha: 0.8}; {alpha: 1}; {alpha: 0.8}; 2"/>
 			<bind name="text" value="label"/>
 		</block>
 	</block>
@@ -6244,43 +6106,6 @@
 			</style>
 		</block>
 	</block>
-	<block className="ScoreRatioCounter">
-		<style>
-			<flow value="horizontal"/>
-		</style>
-		<block>
-			<bind name="tooltip" value="'SimpleTooltip'; _tooltipTextPlayerResult ? { tooltipText: _tooltipTextPlayerResult } : null"/>
-			<bind name="style" value="'alpha'; (_playerPointsCounter == 0) ? 0.5 : 1"/>
-			<block type="text">
-				<bind name="class" value="'$TextHeaderWhiteBold'"/>
-				<bind name="text" value="_playerPointsCounter"/>
-			</block>
-		</block>
-		<block>
-			<bind name="tooltip" value="'SimpleTooltip'; _tooltipTextTotalResult ? { tooltipText: _tooltipTextTotalResult } : null"/>
-			<style>
-				<alpha value="0.7"/>
-			</style>
-			<block type="text">
-				<style>
-					<marginTop value="1px"/>
-				</style>
-				<bind name="class" value="'$TextHeaderBold'"/>
-				<bind name="text" value="'/'"/>
-			</block>
-			<block type="text">
-				<style>
-					<marginTop value="2px"/>
-					<marginLeft value="-1px"/>
-				</style>
-				<bind name="class" value="'$TextHeaderBold'"/>
-				<bind name="text" value="_totalPointsCounter"/>
-			</block>
-			<style>
-				<flow value="horizontal"/>
-			</style>
-		</block>
-	</block>
 	<block className="PlayerNameAndClanTag">
 		<bind name="watch" value="'clanTagColor'; ('0xff' + _clanTagColor)"/>
 		<bind name="watch" value="'haveClanTag'; _clanTag != null &amp;&amp;
@@ -6530,48 +6355,106 @@
 			</block>
 		</block>
 	</block>
+	<block className="StatusLine">
+		<style>
+			<flow value="horizontal"/>
+		</style>
+		<bind name="style" value="'width'; _width ? _width : 'auto'"/>
+		<bind name="watch" value="'textColor';	_unifiedStatus == SC.Ui_styles.UNIFIED_STATUS.ATTENTION			? SC.Ui_styles.SERVICE_COLORS.ORANGE :
+									_unifiedStatus == SC.Ui_styles.UNIFIED_STATUS.DATE_ATTENTION	? SC.Ui_styles.SERVICE_COLORS.ORANGE :
+									_unifiedStatus == SC.Ui_styles.UNIFIED_STATUS.CHECK				? SC.Ui_styles.SERVICE_COLORS.YELLOW :
+									_unifiedStatus == SC.Ui_styles.UNIFIED_STATUS.NEGATIVE			? SC.Ui_styles.SERVICE_COLORS.RED	:
+									_unifiedStatus == SC.Ui_styles.UNIFIED_STATUS.WARNING			? SC.Ui_styles.SERVICE_COLORS.RED	:
+									_unifiedStatus == SC.Ui_styles.UNIFIED_STATUS.DEFAULT			? SC.Ui_styles.SERVICE_COLORS.WHITE
+																									: SC.Ui_styles.SERVICE_COLORS.WHITE"/>
+		<bind name="watch" value="'textAlpha';	textColor == SC.Ui_styles.SERVICE_COLORS.ORANGE	? 1 :
+									textColor == SC.Ui_styles.SERVICE_COLORS.YELLOW	? 1 :
+									textColor == SC.Ui_styles.SERVICE_COLORS.RED		? 1
+																							: 0.9"/>
+		<block>
+			<style>
+				<width value="19px"/>
+				<height value="19px"/>
+				<marginTop value="-3px"/>
+				<marginLeft value="-3px"/>
+				<marginBottom value="-7px"/>
+				<marginRight value="5px"/>
+				<backgroundSize value="cover"/>
+			</style>
+			<bind name="style" value="'backgroundImage'; 'url:../service_kit/unified_status_icons/icon_' + _unifiedStatus + '.png'"/>
+		</block>
+		<block type="text">
+			<bind name="style" value="'width'; _width ? _width : 'auto'"/>
+			<bind name="class" value="_textClass ? _textClass : '$TextDefaultNM'"/>
+			<bind name="style" value="'leading'; _leading ? _leading : -3"/>
+			<bind name="style" value="'alpha'; textAlpha"/>
+			<bind name="style" value="'textColor'; textColor"/>
+			<bind name="text" value="_text"/>
+		</block>
+	</block>
 	<block className="ParamsModifierItem">
 		<style>
 			<width value="100%"/>
-			<flow value="horizontal"/>
 			<marginBottom value="16px"/>
 		</style>
 		<bind name="style" value="'paddingTop'; (_shrinkHeight == true) ? '-8px' : '0'"/>
-		<block type="text">
-			<styleClass value="$TextDefaultNM"/>
+		<bind name="watch" value="'textColor';	category == 'positive'	? 0xFF4CE8AA :
+								category == 'negative'	? 0xFFFF6600
+														: 0xFFFFFFFF"/>
+		<block>
 			<style>
-				<leading value="-3"/>
-				<alpha value="0.8"/>
 				<width value="100%"/>
 			</style>
-			<bind name="text" value="attributeIDS"/>
-		</block>
-		<block type="text">
+			<block type="text">
+				<bind name="class" value="_fontClass ? _fontClass : '$TextDefaultNM'"/>
+				<style>
+					<leading value="-3"/>
+					<alpha value="0.8"/>
+					<width value="100%"/>
+				</style>
+				<bind name="text" value="attributeIDS"/>
+			</block>
+			<block type="text">
+				<bind name="class" value="_fontClass ? _fontClass : '$TextDefaultNM'"/>
+				<style>
+					<marginLeft value="12px"/>
+				</style>
+				<bind name="style" value="'textColor'; textColor"/>
+				<bind name="substitute" value="5;	{	'[battleship]'	: 'battleship_small_own',
+										'[aircarrier]'	: 'carrier_small_own',
+										'[destroyer]'	: 'destroyer_small_own',
+										'[submarine]'	: 'submarine_small_own'
+									}; measuredValue"/>
+			</block>
+			<block type="text">
+				<bind name="class" value="_fontClass ? _fontClass : '$TextDefaultNM'"/>
+				<style>
+					<marginLeft value="4px"/>
+				</style>
+				<bind name="style" value="'alpha'; category == 'positive' ? 0.65 : 0.8"/>
+				<bind name="style" value="'textColor'; textColor"/>
+				<bind name="text" value="measure"/>
+			</block>
 			<style>
-				<marginLeft value="12px"/>
+				<flow value="horizontal"/>
 			</style>
-			<styleClass value="$TextDefaultNM"/>
-			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
-					 category == 'negative'	? '$FontColorCompareNegative'
-					 						: '$FontColorDefault'"/>
-			<bind name="substitute" value="5; {
-								 '[battleship]' : 'battleship_small_own',
-								  '[aircarrier]' : 'carrier_small_own',
-								   '[cruiser]' : 'cruiser_small_own',
-								   '[destroyer]' : 'destroyer_small_own',
-								   '[submarine]' : 'submarine_small_own'
-								   }; measuredValue"/>
 		</block>
-		<block type="text">
+		<block>
+			<bind name="visible" value="_dottedDivider ? true : false"/>
 			<style>
-				<marginLeft value="4px"/>
+				<width value="100%"/>
+				<marginTop value="1px"/>
+				<alpha value="0.5"/>
 			</style>
-			<styleClass value="$TextDefaultNM"/>
-			<bind name="style" value="'alpha'; category == 'positive' ? 0.65 : 0.8"/>
-			<bind name="class" value="category == 'positive' ? '$FontColorComparePositive' : 
-					 category == 'negative'	? '$FontColorCompareNegative'
-					 						: '$FontColorDefault'"/>
-			<bind name="text" value="measure"/>
+			<block className="DottedLine">
+				<style>
+					<backgroundImage value="symbol:dotted_line"/>
+					<backgroundRepeatX value="true"/>
+					<width value="100%"/>
+					<height value="1px"/>
+					<alpha value="0.5"/>
+				</style>
+			</block>
 		</block>
 	</block>
 	<block className="ParamsModifierList">
@@ -6582,19 +6465,19 @@
 			<style>
 				<width value="100%"/>
 			</style>
-			<bind name="repeat" value="_attributesPositive; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
+			<bind name="repeat" value="_attributesPositive; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight, _dottedDivider: _dottedDivider, _fontClass: _fontClass}"/>
 		</block>
 		<block>
 			<style>
 				<width value="100%"/>
 			</style>
-			<bind name="repeat" value="_attributesNegative; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
+			<bind name="repeat" value="_attributesNegative; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight, _dottedDivider: _dottedDivider, _fontClass: _fontClass}"/>
 		</block>
 		<block>
 			<style>
 				<width value="100%"/>
 			</style>
-			<bind name="repeat" value="_attributesNeutral; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight}"/>
+			<bind name="repeat" value="_attributesNeutral; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight, _dottedDivider: _dottedDivider, _fontClass: _fontClass}"/>
 		</block>
 	</block>
 	<block className="SubmarineWeaponsPanel">
@@ -8258,13 +8141,13 @@
 		<bind name="watchDH" value="'notReadyWindowState'; ['trainingRoomEntity.trainingRoomWindowState.evUpdate']; trainingRoomEntity.trainingRoomWindowState.notReadyWindowState"/>
 		<bind name="watchDH" value="'windowInset'; ['trainingRoomEntity.trainingRoomWindowState.evUpdate']; trainingRoomEntity.trainingRoomWindowState.inset"/>
 		<bind name="watchDH" value="'windowInsetLabel'; ['trainingRoomEntity.trainingRoomWindowState.evUpdate']; trainingRoomEntity.trainingRoomWindowState.insetLabel"/>
+		<bind name="firstEntityDH" value="'dockStateEntity'; CC.dockState"/>
+		<bind name="watchDH" value="'dockStateName'; ['dockStateEntity.dockState.evUpdate']; dockStateEntity.dockState.stateName"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'shipOverview'"/>
 		<bind name="transition" value="shipOverview.enabled; shipOverview.enabled ? 0.4 : 0.25; {alpha: 1}; {alpha: 0}; {alpha: 1}; 2; !(shipOverview.enabled) &amp;&amp; !(inPort) ? 0.15 : 0.5"/>
 		<bind name="style" value="'hitTest'; !(shipOverview.enabled)"/>
 		<styleClass value="$DefaultMenuBehaviour"/>
 		<styleClass value="$ContextMenuDimentions"/>
-		<bind name="firstEntityDH" value="'dockStateEntity'; CC.dockState"/>
-		<bind name="watchDH" value="'dockStateName'; ['dockStateEntity.dockState.evUpdate']; dockStateEntity.dockState.stateName"/>
 		<bind name="firstEntityDH" value="'selfPlayerEntity'; CC.accountSelf"/>
 		<bind name="watchDH" value="'selfPlayerDbId'; 		[]; selfPlayerEntity.accountSimple.dbId"/>
 		<bind name="watchDH" value="'selfPlayerName'; 		['selfPlayerEntity.accountName.evChanged']; selfPlayerEntity.accountName.name"/>
@@ -10084,21 +9967,22 @@
 	</block>
 	<block className="ArcEventEventLoyaltyPoints">
 		<style>
+			<flow value="horizontal"/>
 			<width value="100%"/>
 			<marginTop value="8px"/>
 			<marginBottom value="8px"/>
 		</style>
 		<block type="text">
+			<style>
+				<width value="100%"/>
+			</style>
 			<styleClass value="$TextDefault17NM"/>
 			<bind name="text" value="_text"/>
 		</block>
 		<block>
-			<style>
-				<position value="absolute"/>
-				<right value="0px"/>
-				<marginTop value="-8px"/>
-			</style>
-			<bind name="instance" value="'ScoreRatioCounter'; { _playerPointsCounter: _playerPointsCounter, _totalPointsCounter: _totalPointsCounter }"/>
+			<bind name="instance" value="'DefaultDividedCounter'; {	_curValueTextClass: '$TextDefaultBold17NM',
+													_curValue: _playerPointsCounter,
+													_maxValue: _totalPointsCounter}"/>
 		</block>
 	</block>
 	<block className="ArcEventSideModifier">
@@ -11641,9 +11525,9 @@
 		</block>
 	</block>
 	<block className="ModalWindowHeaderFullSize">
-		<bind name="style" value="'paddingTop';		_paddingTop   ? _paddingTop   : '720:20,2160:100ah'"/>
-		<bind name="style" value="'paddingRight';	_paddingRight ? _paddingRight : '1280:20,1920:46aw'"/>
-		<bind name="style" value="'paddingLeft'; 	_paddingLeft  ? _paddingLeft  : '1280:20,1920:46aw'"/>
+		<bind name="style" value="'paddingTop';		_paddingTop		? _paddingTop	:	'720:20,2160:100ah'"/>
+		<bind name="style" value="'paddingRight';	_paddingRight	? _paddingRight	:	'1280:20,1920:46aw'"/>
+		<bind name="style" value="'paddingLeft'; 	_paddingLeft	? _paddingLeft	:	'1280:20,1920:46aw'"/>
 		<style>
 			<width value="100%"/>
 		</style>
@@ -11651,7 +11535,7 @@
 			<bind name="visible" value="_hideBackButton != true"/>
 			<style>
 				<position value="absolute"/>
-				<marginTop value="-3px"/>
+				<top value="-5px"/>
 			</style>
 			<bind name="instance" value="'BackButton'; { _text: _backButtonText,
 										_event: _event, _eventData: _eventData,
@@ -11660,7 +11544,7 @@
 		</block>
 		<block>
 			<bind name="visible" value="_windowName != null"/>
-			<styleClass value="$MiddleAligned"/>
+			<bind name="class" value="_leftAligned ? '$None' : '$MiddleAligned' "/>
 			<block type="text">
 				<styleClass value="$TextDefaultBold21NM"/>
 				<bind name="text" value="toUpperCase(tr(_windowName))"/>
@@ -11671,7 +11555,7 @@
 			<style>
 				<position value="absolute"/>
 				<right value="4"/>
-				<top value="2"/>
+				<top value="3px"/>
 			</style>
 			<block className="ModalWindowCloseIcon">
 				<style>
@@ -11726,6 +11610,33 @@
 			<bind name="visible" value="_hideDivider != true"/>
 			<style>
 				<width value="100%"/>
+				<marginTop value="720:12,1080:16ah"/>
+			</style>
+			<block className="HorizontalDivider">
+				<styleClass value="$PxHorizontalCorrection"/>
+				<style>
+					<width value="100%"/>
+					<height value="3px"/>
+				</style>
+				<block className="divider_h" type="native">
+					<styleClass value="$Fullsize"/>
+				</block>
+			</block>
+		</block>
+	</block>
+	<block className="ModalWindowHeaderFullSizeFakeBlock">
+		<bind name="style" value="'paddingTop';		_paddingTop		? _paddingTop	:	'720:20,2160:100ah'"/>
+		<style>
+			<alpha value="0"/>
+			<hitTest value="false"/>
+		</style>
+		<block type="text">
+			<styleClass value="$TextDefaultBold21NM"/>
+			<bind name="text" value="'Fake offset block'"/>
+		</block>
+		<block>
+			<style>
+				<width value="10px"/>
 				<marginTop value="720:12,1080:16ah"/>
 			</style>
 			<block className="HorizontalDivider">
@@ -11820,19 +11731,25 @@
 			<bind name="action" value="'buttonClick'; _action ? _action : null; _actionParams ? _actionParams : {}"/>
 		</block>
 	</block>
+	<css name="$ResizeableButtonLabelWithoutAlignment">
+		<marginLeft value="16px"/>
+		<marginRight value="16px"/>
+	</css>
 	<block className="DefaultButtonCostMedium">
 		<bind name="firstEntityDH" value="'resourceEntity'; CC.accountResource"/>
 		<bind name="watchDH" value="'operationsAccountLocked';	['resourceEntity.accountResource.evOperationsLockChanged'];	resourceEntity.accountResource.operationsLocked"/>
 		<bind name="tooltip" value="'DiscountTooltip'; priceInfo.basePrice &amp;&amp; (priceInfo.finalPrice != priceInfo.basePrice) ? { priceInfo: priceInfo, _isExternal: _isExternal } : null"/>
 		<style>
-			<width value="100%"/>
+			<width value="1px"/>
 		</style>
+		<bind name="style" value="'width'; _width ? _width : '100%'"/>
 		<bind name="style" value="'height'; _height ? _height : 'auto'"/>
 		<bind name="name" value="_name ? _name : null"/>
 		<block className="button_default_no_label" type="native">
 			<style>
-				<width value="100%"/>
+				<width value="1px"/>
 			</style>
+			<bind name="style" value="'width'; _width ? _width : '100%'"/>
 			<bind name="style" value="'height'; _height ? _height : 'auto'"/>
 			<bind name="focus" value="_focusIndex; _defaultFocused"/>
 			<bind name="enabled" value="_enabled &amp;&amp; (_isTransactionBtn ? !(operationsAccountLocked) : true)"/>
@@ -11842,7 +11759,7 @@
 			<bind name="action" value="'buttonClick'; _action ? _action : null; _actionParams ? _actionParams : {}"/>
 			<bind name="selected" value="_selected"/>
 			<block>
-				<styleClass value="$MiddleAligned"/>
+				<bind name="class" value="_width ? '$ResizeableButtonLabelWithoutAlignment' : '$MiddleAligned'"/>
 				<style>
 					<marginTop value="3px"/>
 					<marginBottom value="4px"/>
@@ -11870,6 +11787,15 @@
 						<marginLeft value="8px"/>
 					</style>
 					<block className="icon_out_grey" type="native"/>
+				</block>
+				<block>
+					<bind name="fade" value="_isNewMarker; 0.15; {alpha: 0, top: 10}; {alpha: 1, top: 0}; {alpha: 0, top: -10}; 2"/>
+					<style>
+						<position value="absolute"/>
+						<right value="-35px"/>
+						<top value="-4px"/>
+					</style>
+					<bind name="instance" value="'MarkerNewAttention'; { }"/>
 				</block>
 				<style>
 					<flow value="horizontal"/>
@@ -12071,6 +11997,52 @@
 			</block>
 		</block>
 	</block>
+	<block className="ImageButton">
+		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController"/>
+		<bind name="request" value="'click'; _request &amp;&amp; _enabled ? _request : null; _requestParams ? _requestParams : {}"/>
+		<bind name="action" value="'click'; _action &amp;&amp; _enabled ? _action : null; _actionParams ? _actionParams : {}"/>
+		<bind name="controller" value="lesta.unbound.controls.UbInteractiveController; null; 'ct_'"/>
+		<bind name="var" value="{ 
+		ctRollOver: {
+			redMultiplier: 1,
+			greenMultiplier: 1,
+			blueMultiplier: 1,
+			alphaMultiplier: 1,
+			redOffset: 30,
+			greenOffset: 30,
+			blueOffset: 30,
+			alphaOffset: 0
+		}
+	}"/>
+		<bind name="var" value="{ 
+		ctMouseDown: {
+			redMultiplier: 1,
+			greenMultiplier: 1,
+			blueMultiplier: 1,
+			alphaMultiplier: 1,
+			redOffset: -30,
+			greenOffset: -30,
+			blueOffset: -30,
+			alphaOffset: 0
+		}
+	}"/>
+		<bind name="colorTransform" value="	_enabled &amp;&amp; (ct_mouseDown)	? ctMouseDown :
+							_enabled &amp;&amp; (ct_rollOver)	? ctRollOver
+														: {}"/>
+		<bind name="style" value="'width'; _width ? _width : '50px'"/>
+		<bind name="style" value="'height'; _height ? _height : '50px'"/>
+		<block>
+			<bind name="name" value="_name"/>
+			<bind name="style" value="'width'; _width ? _width : '50px'"/>
+			<bind name="style" value="'height'; _height ? _height : '50px'"/>
+			<style>
+				<backgroundStretchX value="true"/>
+				<backgroundStretchY value="true"/>
+			</style>
+			<bind name="style" value="'alpha'; _alpha != null ? _alpha : 1.0"/>
+			<bind name="style" value="'backgroundImage'; _backgroundImage"/>
+		</block>
+	</block>
 	<block className="MainHUDPCContainer">
 		<styleClass value="$FullsizeAbsolute"/>
 		<bind name="firstEntityDH" value="'cameraEntity'; CC.camera"/>
@@ -12088,7 +12060,6 @@
 				<styleClass value="$FullsizeAbsolute"/>
 				<bind name="transition" value="!tacticalMap; 0.1; {alpha: 0}; {alpha: 1}; {alpha: 0}; 2"/>
 				<bind name="instance" value="'TeamStructure'; {}"/>
-				<bind name="instance" value="'CentralDangersIndicationContainer'; {}"/>
 				<bind name="instance" value="'BattleIndicatorsContainer'; {}"/>
 			</block>
 			<bind name="instance" value="'CombatLogPanel'; {}"/>
