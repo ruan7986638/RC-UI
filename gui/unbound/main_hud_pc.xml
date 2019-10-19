@@ -337,13 +337,14 @@
 		<styleClass value="$Fullsize"/>
 		<bind name="firstEntityDH" value="'selfPlayerEntity'; CC.accountSelf"/>
 		<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
+		<bind name="firstEntityDH" value="'spectatorEntity'; CC.spectator"/>
 		<bind name="watchDH" value="'playerIsAlive'; ['selfAvatarEntity.playerAvatar.evIsAliveChanged']; selfAvatarEntity.playerAvatar.isAlive"/>
 		<bind name="watchDH" value="'killerId'; ['selfAvatarEntity.health.evKillerIdChanged']; selfAvatarEntity.health.killerId"/>
 		<bind name="primaryEntityDH" value="'killerEntity'; CC.avatar; killerId"/>
 		<bind name="watchDH" value="'enemyName'; ['killerEntity.accountName.evChanged']; killerEntity.accountName.name"/>
 		<block>
 			<styleClass value="$Fullsize"/>
-			<bind name="instance" value="'BattleKillerDogTag'; (!playerIsAlive) &amp;&amp; (killerId != 0) ? {_killerId: killerId, _enemyName: enemyName} : null"/>
+			<bind name="instance" value="'BattleKillerDogTag'; (!playerIsAlive) &amp;&amp; (!spectatorEntity) &amp;&amp; (killerId != 0) ? {_killerId: killerId, _enemyName: enemyName} : null"/>
 		</block>
 	</block>
 	<block className="BattleKillerDogTag">
@@ -431,16 +432,18 @@
 			<bind name="primaryEntityDH" value="'vehicleEntity'; CC.vehicle; observedShipId"/>
 			<bind name="watchDH" value="'vehicleAvatarId'; []; vehicleEntity.accountSimple.dbId"/>
 			<bind name="var" value="{currentDogTag:[]}"/>
+			<bind name="var" value="{observedPlayerDbId:null}"/>
+			<bind name="var" value="{vehicleAlreadySwitched: false}"/>
 			<bind name="catch" value="'changeCurrentDogTag'"/>
-			<bind name="dispatch" value="'vehicleEntity'+varChanged; vehicleEntity != null ? 'changeCurrentDogTag' : ''; {currentDogTag:vehicleEntity.dogTagView.components}; 0; 0"/>
+			<bind name="dispatch" value="'vehicleEntity'+varChanged; vehicleEntity != null ? 'changeCurrentDogTag' : ''; {currentDogTag:vehicleEntity.dogTagView.components, observedPlayerDbId:vehicleAvatarId, vehicleAlreadySwitched: true}; 0; 0"/>
 			<bind name="firstEntityDH" value="'selfAvatarEntity'; CC.playerAvatar"/>
 			<bind name="watchDH" value="'selfAvatarId'; []; selfAvatarEntity.accountSimple.dbId"/>
 			<bind name="watchDH" value="'killerId'; ['selfAvatarEntity.health.evKillerIdChanged']; selfAvatarEntity.health.killerId"/>
 			<bind name="watchDH" value="'isDead'; ['selfAvatarEntity.playerAvatar.evIsAliveChanged']; !selfAvatarEntity.playerAvatar.isAlive"/>
 			<bind name="watch" value="'isVisible'; isDead &amp;&amp; (killerId != 0)"/>
 			<bind name="fade" value="isVisible; 0.2; {alpha: 0}; {alpha: 1}; {alpha: 0}; 1; 0.2"/>
-			<bind name="repeat" value=" (currentDogTag.length &gt; 0) ? currentDogTag : selfAvatarEntity.dogTagView.components; 'DogTagViewImageItemAvatarSpectator';
-		{_playerDbId : ((currentDogTag.length &gt; 0) ? vehicleAvatarId : selfAvatarId)}"/>
+			<bind name="repeat" value=" vehicleAlreadySwitched ? currentDogTag : selfAvatarEntity.dogTagView.components; 'DogTagViewImageItemAvatarSpectator';
+		{_playerDbId : (vehicleAlreadySwitched ? observedPlayerDbId : selfAvatarId)}"/>
 		</block>
 	</block>
 	<block className="DogTagViewImageItemAvatarSpectator">
@@ -718,11 +721,13 @@
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'slimClientData'"/>
 		<bind name="firstEntityDH" value="'battleDataEntity'; CC.battleData"/>
 		<bind name="watch" value="'battleType';	battleDataEntity.battleInfo.battleType"/>
+		<bind name="watch" value="'gameModeId';	battleDataEntity.battleInfo.gameModeId"/>
 		<bind name="firstEntityDH" value="'prefs'; CC.prefsMarker"/>
 		<bind name="watchDH" value="'earsConfigEnabled'; ['prefs.prefsBattle.evUpdate']; prefs.prefsBattle.enableEars"/>
 		<bind name="watch" value="'enableEars';	(earsConfigEnabled &amp;&amp;
 								(battleType != BattleTypes.INTRO_MISSION) &amp;&amp;
-								(battleType != BattleTypes.PVE_BATTLE))"/>
+								(battleType != BattleTypes.PVE_BATTLE) &amp;&amp;
+								gameModeId != GameMode.ESCAPE_TO_PORTAL)"/>
 		<bind name="watch" value="'isBattletypeWithDynamicDivisions';	(battleType == BattleTypes.COOPERATIVE_BATTLE)	||
 														(battleType == BattleTypes.RANDOM_BATTLE)		||
 														(battleType == BattleTypes.EVENT_BATTLE)"/>
@@ -5890,26 +5895,37 @@
 			</style>
 		</block>
 	</block>
-	<block className="ShipTitleWithIconAndSilhouette">
-		<bind name="primaryEntityDH" value="'shipEntity'; CC.ship; _shipID; 'evUpdate'"/>
+	<block className="ShipIcon">
+		<bind name="primaryEntityDH" value="'shipEntity'; CC.ship; _shipId; 'evUpdate'"/>
 		<bind name="watchDH" value="'shipInfo'; ['shipEntity.ship.evUpdate', 'shipEntity.ship.evCurrentSkinChanged']; shipEntity.ship"/>
 		<bind name="watchDH" value="'shipInfo' + 'Slim'; ['shipEntity.slimClientComponent.evUpdate']; shipEntity.slimClientComponent"/>
+		<bind name="watchDH" value="'upgradableShipInfo'; ['shipEntity.upgradableShipInfo.evUpdate']; shipEntity.upgradableShipInfo"/>
+		<style>
+			<width value="27px"/>
+			<height value="27px"/>
+		</style>
 		<block>
-			<block>
-				<bind name="instance" value="'ShipTitleWithIconAndLevel'; {_shipID : _shipID}"/>
-			</block>
-			<block>
-				<style>
-					<width value="122px"/>
-					<height value="22px"/>
-					<marginLeft value="12px"/>
-					<marginTop value="-2px"/>
-				</style>
-				<bind name="style" value="'backgroundImage'; 'url:' + shipInfo.pathTinyIcon"/>
-			</block>
 			<style>
-				<flow value="horizontal"/>
+				<marginTop value="-1px"/>
 			</style>
+			<bind name="style" value="'backgroundImage'; 'url:../service_kit/ship_classes/icon_' + toLowerCase(shipInfo.subtype) + '_' + (
+					shipInfo.uiSpecial	? 'special' :
+					shipInfo.isFarming	? 'premium' :
+			upgradableShipInfo.isElite	? 'elite'
+										: 'standard'
+			) + '.png'"/>
+		</block>
+	</block>
+	<block className="ShipStereotype">
+		<bind name="primaryEntityDH" value="'shipEntity'; CC.ship; _shipId; 'evUpdate'"/>
+		<bind name="watchDH" value="'shipInfo'; ['shipEntity.ship.evUpdate', 'shipEntity.ship.evCurrentSkinChanged']; shipEntity.ship"/>
+		<bind name="watchDH" value="'shipInfo' + 'Slim'; ['shipEntity.slimClientComponent.evUpdate']; shipEntity.slimClientComponent"/>
+		<bind name="watchDH" value="'upgradableShipInfo'; ['shipEntity.upgradableShipInfo.evUpdate']; shipEntity.upgradableShipInfo"/>
+		<block>
+			<bind name="instance" value="'ShipIcon'; {_shipId: _shipId}"/>
+		</block>
+		<block type="text">
+			<bind name="text" value="shipInfo.levelRome + ' ' + toUpperCase(tr(shipInfo.nameIDS))"/>
 		</block>
 	</block>
 	<block className="ShipTitleWithIconAndLevel">
@@ -5917,45 +5933,48 @@
 		<bind name="watchDH" value="'shipInfo'; ['shipEntity.ship.evUpdate', 'shipEntity.ship.evCurrentSkinChanged']; shipEntity.ship"/>
 		<bind name="watchDH" value="'shipInfo' + 'Slim'; ['shipEntity.slimClientComponent.evUpdate']; shipEntity.slimClientComponent"/>
 		<bind name="watchDH" value="'upgradableShipInfo'; ['shipEntity.upgradableShipInfo.evUpdate']; shipEntity.upgradableShipInfo"/>
+		<style>
+			<flow value="horizontal"/>
+			<height value="27px"/>
+		</style>
 		<block>
 			<style>
-				<height value="27px"/>
+				<marginLeft value="1px"/>
 			</style>
-			<block className="icon_wreath" type="native">
-				<styleClass value="$MouseDisable"/>
-				<style>
-					<position value="absolute"/>
-					<top value="-1px"/>
-				</style>
-				<bind name="visible" value="upgradableShipInfo.isElite || shipInfo.isPremium || shipInfo.uiSpecial"/>
-				<bind name="gotoAndStop!" value="(shipInfo.isPremium || shipInfo.uiSpecial) 	? 'premium' : 'elite'"/>
-			</block>
-			<block>
-				<style>
-					<marginLeft value="5px"/>
-					<marginTop value="7px"/>
-				</style>
-				<block className="icon_ship" type="native">
-					<styleClass value="$MouseDisable"/>
-					<bind name="gotoAndStop!" value="shipInfo.isPremium || shipInfo.uiSpecial 	? shipInfo.subtype + '_P'
-																				: shipInfo.subtype"/>
-				</block>
-			</block>
-			<block>
-				<style>
-					<marginLeft value="6px"/>
-					<marginTop value="-2px"/>
-				</style>
-				<block type="text">
-					<styleClass value="$FontShipnameWhite"/>
-					<bind name="class" value="shipInfo.isPremium || shipInfo.uiSpecial	? '$FontShipnameGolden'
-																		: '$FontShipnameWhite'"/>
-					<bind name="text" value="shipInfo.levelRome + ' ' + toUpperCase(tr(shipInfo.nameIDS))"/>
-				</block>
-			</block>
+			<bind name="instance" value="'ShipIcon'; {_shipId: _shipID}"/>
+		</block>
+		<block>
 			<style>
-				<flow value="horizontal"/>
+				<marginLeft value="3px"/>
+				<marginTop value="-2px"/>
 			</style>
+			<block type="text">
+				<bind name="class" value="_size == 'medium' ? '$TextHeaderBold' : '$TextHeaderWhiteBold'"/>
+				<bind name="class" value="shipInfo.isFarming || shipInfo.uiSpecial ? '$FontColorGolden' : '$None'"/>
+				<bind name="text" value="shipInfo.levelRome + ' ' + toUpperCase(tr(shipInfo.nameIDS))"/>
+			</block>
+		</block>
+	</block>
+	<block className="ShipTitleWithIconAndSilhouette">
+		<bind name="primaryEntityDH" value="'shipEntity'; CC.ship; _shipID; 'evUpdate'"/>
+		<bind name="watchDH" value="'shipInfo'; ['shipEntity.ship.evUpdate', 'shipEntity.ship.evCurrentSkinChanged']; shipEntity.ship"/>
+		<bind name="watchDH" value="'shipInfo' + 'Slim'; ['shipEntity.slimClientComponent.evUpdate']; shipEntity.slimClientComponent"/>
+		<style>
+			<flow value="horizontal"/>
+		</style>
+		<block>
+			<bind name="instance" value="'ShipIcon'; {_shipId: _shipID}"/>
+		</block>
+		<block>
+			<style>
+				<marginLeft value="6px"/>
+				<marginTop value="-2px"/>
+			</style>
+			<block type="text">
+				<styleClass value="$FontShipnameWhite"/>
+				<bind name="class" value="shipInfo.isFarming || shipInfo.uiSpecial ? '$FontShipnameGolden' : '$FontShipnameWhite'"/>
+				<bind name="text" value="shipInfo.levelRome + ' ' + toUpperCase(tr(shipInfo.nameIDS))"/>
+			</block>
 		</block>
 	</block>
 	<block className="CharCounter">
@@ -7072,7 +7091,6 @@
 		<bind name="watch" value="'actionDenyReason';	(_playerContext.type == 'inviteToDivision') ?	!(accountOnline)				? 'IDS_INVITE_TO_DIVISION_ACTION_DENY_REASON_OFFLINE' :
 																						isInvitedToDivision 			? 'IDS_INVITE_TO_DIVISION_ACTION_DENY_REASON_ALREADY_INVITED'
 																														: 'no_reason' :
-										(_playerContext.type == 'inviteToParty')	?	!(clubBattleFeatureUnLocked)	? 'IDS_INVITE_TO_PARTY_ACTION_DENY_REASON_LOW_LEVEL' :
 																						!(accountOnline)				? 'IDS_INVITE_TO_PARTY_ACTION_DENY_REASON_OFFLINE' :
 																						isInvitedToYourParty			? 'IDS_INVITE_TO_PARTY_ACTION_DENY_REASON_ALREADY_INVITED' :
 																						isInYourParty					? 'IDS_INVITE_TO_PARTY_ACTION_DENY_REASON_ALREADY_IN_PARTY'
@@ -7100,9 +7118,15 @@
 			<bind name="style" value="'hitTest'; !(isSuspended) || ((isSuspended) &amp;&amp; (groupIdsOfAccount != null))"/>
 			<styleClass value="$PxHorizontalCorrection"/>
 			<styleClass value="$FullsizeAbsolute"/>
-			<bind name="menu" value="'ContactContextMenu';	!(isSelf)	? {	_entityAccountId: _entityAccountId, _currentGroupId: _currentGroupId, _actionDenyReason: actionDenyReason,
-															_playerContext: _playerContext, _inviteType: InviteType.COMMON}
-														: null; null; 'contactContextMenuVisible'"/>
+			<bind name="menu" value="'ContactContextMenu';	!(isSelf)	? 	{	
+																_entityAccountId: _entityAccountId, 
+																_currentGroupId: _currentGroupId, 
+																_actionDenyReason: actionDenyReason,
+																_playerContext: _playerContext, 
+																_inviteType: InviteType.COMMON,
+																_channelId: _channelId}
+														: 	null; 
+											null; 'contactContextMenuVisible'"/>
 			<bind name="tooltip" value="'ContactInfoTooltip'; !(isSuspended) ?	{	_entityAccountId: _entityAccountId,
 																	_playerContext: _playerContext,
 																	_actionDenyReason: actionDenyReason,
@@ -7365,10 +7389,10 @@
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'divisionEntranceData'"/>
 		<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInDivision'; 'pureName'; pureName; 'playerInDivision'"/>
 		<bind name="entityDH" value="'entityAccount'; _entityAccountId"/>
-		<bind name="watchDH" value="'nickName'; 			['entityAccount.accountName.evChanged']; entityAccount.accountName.nickName"/>
-		<bind name="watchDH" value="'pureName'; 			['entityAccount.accountName.evChanged']; entityAccount.accountName.name"/>
-		<bind name="watchDH" value="'clubsMembership'; 	['entityAccount.clubman.evClubsMembershipChanged']; entityAccount.clubman.clubsMembership"/>
-		<bind name="watchDH" value="'accountOnline'; 	['entityAccount.accountStatus.evOnlineChanged']; entityAccount.accountStatus.online"/>
+		<bind name="watchDH" value="'nickName';			['entityAccount.accountName.evChanged']; entityAccount.accountName.nickName"/>
+		<bind name="watchDH" value="'pureName';			['entityAccount.accountName.evChanged']; entityAccount.accountName.name"/>
+		<bind name="watchDH" value="'clubsMembership';	['entityAccount.clubman.evClubsMembershipChanged']; entityAccount.clubman.clubsMembership"/>
+		<bind name="watchDH" value="'accountOnline';		['entityAccount.accountStatus.evOnlineChanged']; entityAccount.accountStatus.online"/>
 		<bind name="watchDH" value="'inBattle'; 			['entityAccount.accountStatus.evInBattleChanged']; entityAccount.accountStatus.inBattle"/>
 		<bind name="watchDH" value="'rank'; 				['entityAccount.accountRank.evRankChanged']; entityAccount.accountRank.rank"/>
 		<bind name="watchDH" value="'rankSeasonId'; 		['entityAccount.accountRank.evRankChanged']; entityAccount.accountRank.seasonId"/>
@@ -7458,7 +7482,7 @@
 				<style>
 					<marginTop value="2px"/>
 				</style>
-				<bind name="instance" value="'IconRankSmall'; {_rankId: rank}"/>
+				<bind name="instance" value="'IconRankSmall'; {_rankId: rank, _seasonId: rankSeasonId}"/>
 			</block>
 			<block type="text">
 				<bind name="name" value="'playerContactName_' + nickName"/>
@@ -7489,11 +7513,11 @@
 	</block>
 	<block className="ContactInfoTooltip">
 		<bind name="entityDH" value="'entityAccount'; _entityAccountId"/>
-		<bind name="watchDH" value="'inBattle'; ['entityAccount.accountStatus.evInBattleChanged']; entityAccount.accountStatus.inBattle"/>
-		<bind name="watchDH" value="'accountOnline'; ['entityAccount.accountStatus.evOnlineChanged']; entityAccount.accountStatus.online"/>
-		<bind name="watchDH" value="'accountLevel'; ['entityAccount.accountLevel.evLevelChanged']; entityAccount.accountLevel.level"/>
-		<bind name="watchDH" value="'rank'; ['entityAccount.accountRank.evRankChanged']; entityAccount.accountRank.rank"/>
-		<bind name="watchDH" value="'isSuspended'; ['entityAccount.accountSimple.evSuspendedChanged']; entityAccount.accountSimple.suspended"/>
+		<bind name="watchDH" value="'inBattle'; 		['entityAccount.accountStatus.evInBattleChanged']; entityAccount.accountStatus.inBattle"/>
+		<bind name="watchDH" value="'accountOnline';	['entityAccount.accountStatus.evOnlineChanged']; entityAccount.accountStatus.online"/>
+		<bind name="watchDH" value="'accountLevel'; 	['entityAccount.accountLevel.evLevelChanged']; entityAccount.accountLevel.level"/>
+		<bind name="watchDH" value="'rank'; 			['entityAccount.accountRank.evRankChanged']; entityAccount.accountRank.rank"/>
+		<bind name="watchDH" value="'isSuspended'; 	['entityAccount.accountSimple.evSuspendedChanged']; entityAccount.accountSimple.suspended"/>
 		<bind name="watchDH" value="'referralType'; 		['entityAccount.referral.evTypeUpdated']; entityAccount.referral.type"/>
 		<bind name="watch" value="'isRefSysParticipant'; referralType != null"/>
 		<bind name="watchDH" value="'pureName'; ['entityAccount.accountName.evChanged']; entityAccount.accountName.name"/>
@@ -8409,18 +8433,6 @@
 			<bind name="action" value="'click'; 'openChannelForPrivateMessages'; {dbId: accountDbId}"/>
 		</block>
 		<block>
-			<bind name="feature" value="19;	''"/>
-			<bind name="watch" value="'isInvitedToClubItemVisible';	(feature_19 != 'locked') &amp;&amp;
-													(_playerContext.type != 'inviteToChannel') &amp;&amp;
-													(_playerContext.type != 'inviteToClub')	&amp;&amp;
-													(playersClubs.length &gt; 0)	? true
-																				: false"/>
-			<style>
-				<width value="100%"/>
-			</style>
-			<bind name="instance" value="'InviteToClubContextMenuItem'; isInvitedToClubItemVisible ? {_entityAccountId: _entityAccountId} : null"/>
-		</block>
-		<block>
 			<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInDivision'; 'playersInDivision'"/>
 			<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInvitedToDivision'; 'playersInvitedToDivision'"/>
 			<bind name="watch" value="'freePlaces'; (divisionData.maxPlayersInDivision - playersInDivision.length - playersInvitedToDivision.length)"/>
@@ -8532,20 +8544,26 @@
 		</block>
 		<block>
 			<bind name="visible" value="!(_isBot)"/>
-			<styleClass value="$ContextMenuListItem"/>
-			<block className="MenuItem">
-				<styleClass value="$Fullsize"/>
-				<block className="dock_submenu_item" type="native">
-					<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<width value="100%"/>
+			</style>
+			<block>
+				<styleClass value="$ContextMenuListItem"/>
+				<block className="MenuItem">
+					<styleClass value="$Fullsize"/>
+					<block className="dock_submenu_item" type="native">
+						<styleClass value="$FullsizeAbsolute"/>
+					</block>
+					<block type="text">
+						<styleClass value="$TextDefault"/>
+						<styleClass value="$MiddleVAligned"/>
+						<styleClass value="$ContextMenuListItemContent"/>
+						<bind name="text" value="(!isIgnored) ? 'IDS_IGNORE_PLAYER' : 'IDS_NOT_IGNORE_PLAYER'"/>
+					</block>
 				</block>
-				<block type="text">
-					<styleClass value="$TextDefault"/>
-					<styleClass value="$MiddleVAligned"/>
-					<styleClass value="$ContextMenuListItemContent"/>
-					<bind name="text" value="(!isIgnored) ? 'IDS_IGNORE_PLAYER' : 'IDS_NOT_IGNORE_PLAYER'"/>
-				</block>
+				<bind name="action" value="'click'; 'userIgnoreContact'; {dbId: accountDbId, ignore: !(isIgnored)}"/>
 			</block>
-			<bind name="action" value="'click'; 'userIgnoreContact'; {dbId: accountDbId, ignore: !(isIgnored)}"/>
+			<bind name="instance" value="'MenuItemReportPortChatMisbehaviour'; {_dbId: entityAccount.accountSimple.dbId, _channelId: _channelId}"/>
 		</block>
 		<block>
 			<bind name="visible" value="((groupIdsOfAccount!=null) &amp;&amp; !(isIgnored)) &amp;&amp; !(_isBot)"/>
@@ -8835,170 +8853,6 @@
 		</block>
 		<bind name="action" value="'click'; 'addContactToGroupGroup'; {dbId: accountDbId, toGroupId: group.groupOfElements.groupId, fromGroupId: _currentGroupId}"/>
 	</block>
-	<block className="InviteToClubContextMenuItem">
-		<bind name="firstEntityDH" value="'dockStateEntity'; CC.dockState"/>
-		<bind name="watchDH" value="'dockStateName'; ['dockStateEntity.dockState.evUpdate']; dockStateEntity.dockState.stateName"/>
-		<bind name="style" value="'alpha'; (dockStateName == 'balancer') ? 0.5 : 1"/>
-		<bind name="tooltip" value="'SimpleWarningTooltip'; (dockStateName == 'balancer') ? {_text: tr('IDS_CONTEXT_ACTION_NOT_AVAILABLE_IN_MATCHMAKER')} : null"/>
-		<styleClass value="$ContextMenuListItem"/>
-		<style>
-			<backgroundColor value="0x01000000"/>
-		</style>
-		<block>
-			<styleClass value="$Fullsize"/>
-			<bind name="style" value="'hitTest';	(dockStateName == 'balancer') ? false : true"/>
-			<block className="MenuItem">
-				<styleClass value="$Fullsize"/>
-				<block className="dock_submenu_item" type="native">
-					<styleClass value="$FullsizeAbsolute"/>
-				</block>
-				<block type="text">
-					<styleClass value="$TextDefault"/>
-					<styleClass value="$MiddleVAligned"/>
-					<styleClass value="$ContextMenuListItemContent"/>
-					<bind name="text" value="'IDS_INVITE_TO_CLUB'"/>
-				</block>
-			</block>
-			<block className="button_expand_h" type="native">
-				<bind name="visible" value="(dockStateName == 'balancer') ? false : true"/>
-				<style>
-					<position value="absolute"/>
-					<right value="6px"/>
-				</style>
-				<styleClass value="$MouseDisable"/>
-				<styleClass value="$MiddleVAligned"/>
-			</block>
-			<bind name="tooltip" value="'InviteToClubContextSubMenu'; {_entityAccountId: _entityAccountId, _dropDown: (_dropDown ? _dropDown : false)}; 7"/>
-		</block>
-	</block>
-	<block className="InviteToClubContextSubMenu">
-		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'shipOverview'"/>
-		<bind name="transition" value="shipOverview.enabled; shipOverview.enabled ? 0.4 : 0.25; {alpha: 1}; {alpha: 0}; {alpha: 1}; 2; !(shipOverview.enabled) &amp;&amp; !(inPort) ? 0.15 : 0.5"/>
-		<bind name="style" value="'hitTest'; !(shipOverview.enabled)"/>
-		<bind name="collectionDH" value="CC.club; 'clubs'"/>
-		<styleClass value="$DefaultMenuBehaviour"/>
-		<styleClass value="$ContextMenuDimentions"/>
-		<block className="MenuBg">
-			<styleClass value="$FullsizeAbsolute"/>
-			<block className="DeclareBlurLayer">
-				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
-				<bind name="visible" value="optionData.blurEnabled"/>
-				<block className="transparentPixel" type="native">
-					<bind name="blurLayer" value="0"/>
-				</block>
-				<style>
-					<position value="absolute"/>
-				</style>
-			</block>
-			<block className="BlurMap">
-				<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
-				<bind name="visible" value="optionData.blurEnabled"/>
-				<style>
-					<hitTest value="false"/>
-				</style>
-				<styleClass value="$FullsizeAbsolute"/>
-				<block className="mc_blurmap_medium" type="native">
-					<bind name="appear" value="'startShow'; 0.3; 0; {alpha: 0}; {alpha: 1}"/>
-					<bind name="appear" value="'startHide'; 0.15; 0; {alpha: 1}; {alpha: 0}"/>
-					<styleClass value="$FullsizeAbsolute"/>
-					<bind name="blurMap" value="0"/>
-				</block>
-				<block className="inner_panel" type="native">
-					<style>
-						<alpha value="0.5"/>
-					</style>
-					<styleClass value="$FullsizeAbsolute"/>
-				</block>
-			</block>
-			<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'optionData'"/>
-			<block className="contrast_panel" type="native">
-				<bind name="visible" value="optionData.contrast &amp;&amp; !(_dropDown)"/>
-				<styleClass value="$FullsizeAbsolute"/>
-			</block>
-			<block>
-				<styleClass value="$FullsizeAbsolute"/>
-				<bind name="visible" value="!(_dropDown)"/>
-				<block className="hint_panel" type="native">
-					<styleClass value="$FullsizeAbsolute"/>
-				</block>
-			</block>
-			<block>
-				<styleClass value="$FullsizeAbsolute"/>
-				<bind name="visible" value="_dropDown"/>
-				<block className="dock_panel" type="native">
-					<styleClass value="$FullsizeAbsolute"/>
-					<style>
-						<marginBottom value="-19px"/>
-						<marginRight value="-14px"/>
-						<marginLeft value="-14px"/>
-						<marginTop value="-9px"/>
-					</style>
-				</block>
-			</block>
-		</block>
-		<block>
-			<style>
-				<width value="100%"/>
-			</style>
-			<bind name="repeat" value="clubs; 'InviteToClubContextSubMenuItem'; {_entityAccountId: _entityAccountId}"/>
-		</block>
-	</block>
-	<block className="InviteToClubContextSubMenuItem">
-		<bind name="collectionDH" value="CC.clubsCommon; 'clubsCommonCollection'"/>
-		<bind name="entityDH" value="'clubsCommonEntity'; clubsCommonCollection[0].id"/>
-		<bind name="dataRefDH" value="'maxClubsCapacity'; 'clubsCommonEntity.clubsCommon.maxClubsCapacity'"/>
-		<bind name="watchDH" value="'clubsVoted'; ['clubsCommonEntity.clubsCommon.evClubsVotedChanged']; clubsCommonEntity.clubsCommon.clubsVoted"/>
-		<bind name="dataRefDH" value="'entityClub'; '$dataRef.ref'"/>
-		<bind name="watchDH" value="'clubName';['entityClub.club.evNameChanged']; entityClub.club.name"/>
-		<bind name="watchDH" value="'leaderDbId';['entityClub.club.evleaderIdChanged']; entityClub.club.leaderId"/>
-		<bind name="watchDH" value="'clubMembers'; ['entityClub.club.evMembersChanged']; entityClub.club.members"/>
-		<bind name="watchDH" value="'invitedPlayers'; ['entityClub.club.evInvitedClubmansChanged']; entityClub.club.invitedClubmans"/>
-		<bind name="entityDH" value="'entityAccount'; _entityAccountId"/>
-		<bind name="dataRefDH" value="'accountDbId'; 'entityAccount.accountSimple.dbId'"/>
-		<bind name="watchDH" value="'accountLevel'; ['entityAccount.accountLevel.evLevelChanged']; entityAccount.accountLevel.level"/>
-		<bind name="contains" value="clubMembers; ($item == _entityAccountId); 'isClubMember'"/>
-		<bind name="contains" value="invitedPlayers; ($item.accountEntityId == _entityAccountId); 'isInvitedToClub'"/>
-		<bind name="firstEntityDH" value="'selfPlayerEntity'; CC.accountSelf"/>
-		<bind name="watchDH" value="'selfPlayerDbId'; 		[]; selfPlayerEntity.accountSimple.dbId"/>
-		<bind name="watchDH" value="'selfPlayerName'; 		['selfPlayerEntity.accountName.evChanged']; selfPlayerEntity.accountName.name"/>
-		<bind name="watchDH" value="'selfPlayerNickName'; 	['selfPlayerEntity.accountName.evChanged']; selfPlayerEntity.accountName.nickName"/>
-		<bind name="levelToFeature" value="accountLevel; 19; 'clubBattleFeatureUnLocked'"/>
-		<bind name="watch" value="'isVoteInCurClub';	(clubsVoted[0] == entityClub.club.id) ||
-									(clubsVoted[1] == entityClub.club.id) ||
-									(clubsVoted[2] == entityClub.club.id) ? true : false"/>
-		<bind name="watch" value="'inviteToClubDenyReason';	(isVoteInCurClub &amp;&amp; (selfPlayerDbId != leaderDbId)) ? tr('IDS_UNABLE_TO_START_VOTE_TILL_CURRENT_NOT_FINISHED') :
-											(maxClubsCapacity &lt;= (clubMembers.length + invitedPlayers.length)) ? tr('IDS_INVITE_TO_CLUB_ACTION_DENY_REASON_NO_FREE_PLACE') :
-											!(clubBattleFeatureUnLocked)	? tr('IDS_INVITE_TO_CLUB_ACTION_DENY_REASON_LOW_LEVEL') :
-											isClubMember					? tr('IDS_INVITE_TO_CLUB_ACTION_DENY_REASON_ALREADY_IN_CLUB') :
-											isInvitedToClub					? tr('IDS_INVITE_TO_CLUB_ACTION_DENY_REASON_ALREADY_INVITED')
-																			: 'no_reason'"/>
-		<styleClass value="$ContextMenuListItem"/>
-		<bind name="style" value="'alpha'; (inviteToClubDenyReason == 'no_reason') ? 1 : 0.5"/>
-		<style>
-			<backgroundColor value="0x01000000"/>
-		</style>
-		<block>
-			<bind name="style" value="'hitTest'; (inviteToClubDenyReason == 'no_reason')"/>
-			<styleClass value="$ContextMenuListItem"/>
-			<block className="MenuItem">
-				<styleClass value="$Fullsize"/>
-				<block className="dock_submenu_item" type="native">
-					<styleClass value="$FullsizeAbsolute"/>
-				</block>
-				<block type="text">
-					<styleClass value="$TextDefault"/>
-					<styleClass value="$MiddleVAligned"/>
-					<styleClass value="$ContextMenuListItemContent"/>
-					<bind name="text" value="clubName"/>
-				</block>
-			</block>
-			<style>
-				<flow value="horizontal"/>
-			</style>
-		</block>
-		<bind name="tooltip" value="'SimpleWarningTooltip'; (inviteToClubDenyReason != 'no_reason') ? {_text: inviteToClubDenyReason} : null"/>
-		<bind name="action" value="'click'; (inviteToClubDenyReason == 'no_reason') ? 'inviteUserToClub' : '' ; {clubId: entityClub.club.id, playerName: entityAccount.accountName.name, userId: accountDbId}"/>
-	</block>
 	<block className="VoiceChatDockIcon">
 		<bind name="primaryEntityDH" value="'selfVoiceChatEntity'; CC.voiceChat; 0"/>
 		<bind name="watchDH" value="'selfVoiceChatEnabled'; ['selfVoiceChatEntity.voiceChat.evEnabledChanged']; selfVoiceChatEntity.voiceChat.enabled"/>
@@ -9052,6 +8906,30 @@
 		</style>
 		<bind name="style" value="'backgroundImage'; _referralType == SC.Common.REFERRAL_TYPE.VETERAN 	? '/url:../service_kit/icons/icon_status_list_veteran.png'
 																						: '/url:../service_kit/icons/icon_status_list_referal.png'"/>
+	</block>
+	<block className="MenuItemReportPortChatMisbehaviour">
+		<styleClass value="$ContextMenuListItem"/>
+		<bind name="primaryEntityDH" value="'channelEntity'; CC.channel; _channelId"/>
+		<bind name="watchDH" value="'canReportPortChatMisbehaviour'; ['channelEntity.channel.evTypeChanged']; channelEntity.channel.typeIdent != SC.Channel.CHANNEL_TYPE_IDENT_VALUE.PREBATTLE &amp;&amp; 
+																								channelEntity.channel.typeIdent != SC.Channel.CHANNEL_TYPE_IDENT_VALUE.TRAINING_ROOM"/>
+		<bind name="visible" value="_channelId != null &amp;&amp; canReportPortChatMisbehaviour"/>
+		<bind name="primaryEntityDH" value="'playerEntity'; CC.accountSimple; _dbId"/>
+		<bind name="watchDH" value="'banRequestAlreadySent'; ['playerEntity.accountSimple.evReportedChanged'];  playerEntity.accountSimple.reported"/>
+		<bind name="style" value="'mouseChildren'; !banRequestAlreadySent"/>
+		<bind name="style" value="'alpha'; banRequestAlreadySent ? 0.5 : 1.0"/>
+		<block className="MenuItemWithAction">
+			<styleClass value="$Fullsize"/>
+			<block className="dock_submenu_item" type="native">
+				<styleClass value="$FullsizeAbsolute"/>
+			</block>
+			<block type="text">
+				<styleClass value="$TextDefault"/>
+				<styleClass value="$MiddleVAligned"/>
+				<styleClass value="$ContextMenuListItemContent"/>
+				<bind name="text" value="'IDS_REQUEST_BAN_PLAYER_DOCK'"/>
+			</block>
+			<bind name="action" value="'click'; 'makeChatComplaint'; {subjectSpaID: _dbId, channelID: _channelId}"/>
+		</block>
 	</block>
 	<block className="ArcEventHeader3">
 		<bind name="watch" value="'isMainScreen'; _page &gt; 0"/>
@@ -12050,6 +11928,8 @@
 		<bind name="firstEntityDH" value="'selfVehicleEntity'; CC.selfVehicle"/>
 		<bind name="firstEntityDH" value="'avatar'; CC.playerAvatar"/>
 		<bind name="watchDH" value="'isAlive'; ['avatar.health.evIsAliveChanged']; avatar.health.isAlive"/>
+		<bind name="firstEntityDH" value="'spectatorEntity'; CC.spectator"/>
+		<bind name="watchDH" value="'isSpectator'; []; spectatorEntity != null"/>
 		<bind name="watch" value="'isSubmarineHudVisible'; (avatar.avatar.ship.ref.ship.subtype == ShipTypes.Submarine) &amp;&amp; isAlive"/>
 		<bind name="watch" value="'isAircraftHudVisible'; (avatar.avatar.ship.ref.ship.subtype == ShipTypes.AircraftCarrier)"/>
 		<block>
@@ -12062,7 +11942,7 @@
 				<bind name="instance" value="'TeamStructure'; {}"/>
 				<bind name="instance" value="'BattleIndicatorsContainer'; {}"/>
 			</block>
-			<bind name="instance" value="'CombatLogPanel'; {}"/>
+			<bind name="instance" value="'CombatLogPanel'; isSpectator ? null : {}"/>
 			<bind name="instance" value="'DogTagInHUD'; {}"/>
 			<bind name="instance" value="'DogTagInHUDSpectator'; {}"/>
 			<bind name="instance" value="'FogHornIndicator'; {}"/>
