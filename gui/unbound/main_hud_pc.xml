@@ -2992,6 +2992,15 @@
 		<fontSize value="30"/>
 		<dropShadowFilter value="1 90 0x08222a 0.5 2.0 2.0 1.0 2"/>
 	</css>
+	<css name="$TextMetaHeader">
+		<fontFamily value="$WWSDefaultFontBold"/>
+		<mouseEnabled value="false"/>
+		<mouseChildren value="false"/>
+		<fontSize value="15"/>
+		<dropShadowFilter value="1 90 0x08222a 0.5 2.0 2.0 1.0 2"/>
+		<selectable value="false"/>
+		<textColor value="0xFFFFFF"/>
+	</css>
 	<css name="$Fullsize">
 		<width value="100%"/>
 		<height value="100%"/>
@@ -3591,11 +3600,12 @@
 				<styleClass value="$FullsizeAbsolute"/>
 				<bind name="visible" value="optionData.contrast"/>
 			</block>
-			<block className="hint_panel" type="native">
+			<block>
+				<styleClass value="$FullsizeAbsolute"/>
 				<style>
-					<position value="absolute"/>
+					<backgroundImage value="url:../panel_background/hint_panel.png"/>
+					<background9Slice value="[3]"/>
 				</style>
-				<styleClass value="$Fullsize"/>
 			</block>
 			<block type="text">
 				<styleClass value="$InfoBlockIndentNoWidth"/>
@@ -3969,8 +3979,12 @@
 			<styleClass value="$FullsizeAbsolute"/>
 			<bind name="visible" value="optionData.contrast"/>
 		</block>
-		<block className="hint_panel" type="native">
+		<block>
 			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<backgroundImage value="url:../panel_background/hint_panel.png"/>
+				<background9Slice value="[3]"/>
+			</style>
 		</block>
 		<block>
 			<style>
@@ -4248,7 +4262,7 @@
 	</css>
 	<css name="$TextDefaultNM">
 		<fontFamily value="$WWSDefaultFont"/>
-		<leading value="-3"/>
+		<leading value="-2"/>
 		<mouseEnabled value="false"/>
 		<mouseChildren value="false"/>
 		<fontSize value="15"/>
@@ -4413,7 +4427,7 @@
 		<mouseEnabled value="false"/>
 		<mouseChildren value="false"/>
 		<fontSize value="50"/>
-		<marginText value="-3px|-4px|-15px|-13px"/>
+		<marginText value="-4px|-4px|-15px|-13px"/>
 		<dropShadowFilter value="1 90 0x08222a 0.5 2.0 2.0 1.0 2"/>
 		<selectable value="false"/>
 		<textColor value="0xFFFFFF"/>
@@ -4423,7 +4437,7 @@
 		<mouseEnabled value="false"/>
 		<mouseChildren value="false"/>
 		<fontSize value="60"/>
-		<marginText value="-3px|-4px|-20px|-15px"/>
+		<marginText value="-4px|-4px|-20px|-15px"/>
 		<dropShadowFilter value="1 90 0x08222a 0.5 2.0 2.0 1.0 2"/>
 		<selectable value="false"/>
 		<textColor value="0xFFFFFF"/>
@@ -6391,10 +6405,11 @@
 									textColor == SC.Ui_styles.SERVICE_COLORS.RED		? 1
 																							: 0.9"/>
 		<block>
+			<bind name="visible" value="_unifiedStatus != SC.Ui_styles.UNIFIED_STATUS.DEFAULT"/>
 			<style>
 				<width value="19px"/>
 				<height value="19px"/>
-				<marginTop value="-3px"/>
+				<marginTop value="-4px"/>
 				<marginLeft value="-3px"/>
 				<marginBottom value="-7px"/>
 				<marginRight value="5px"/>
@@ -6414,9 +6429,9 @@
 	<block className="ParamsModifierItem">
 		<style>
 			<width value="100%"/>
-			<marginBottom value="16px"/>
 		</style>
-		<bind name="style" value="'paddingTop'; (_shrinkHeight == true) ? '-8px' : '0'"/>
+		<bind name="style" value="'marginBottom';	(_isTooltipSystem == true)	? '12px' : '16px'"/>
+		<bind name="style" value="'paddingTop';		(_shrinkHeight == true)		? '-8px' : '0'"/>
 		<bind name="watch" value="'textColor';	category == 'positive'	? 0xFF4CE8AA :
 								category == 'negative'	? 0xFFFF6600
 														: 0xFFFFFFFF"/>
@@ -6427,7 +6442,7 @@
 			<block type="text">
 				<bind name="class" value="_fontClass ? _fontClass : '$TextDefaultNM'"/>
 				<style>
-					<leading value="-3"/>
+					<leading value="-2"/>
 					<alpha value="0.8"/>
 					<width value="100%"/>
 				</style>
@@ -6484,19 +6499,19 @@
 			<style>
 				<width value="100%"/>
 			</style>
-			<bind name="repeat" value="_attributesPositive; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight, _dottedDivider: _dottedDivider, _fontClass: _fontClass}"/>
+			<bind name="repeat" value="_attributesPositive; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight, _dottedDivider: _dottedDivider, _fontClass: _fontClass, _isTooltipSystem: _isTooltipSystem}"/>
 		</block>
 		<block>
 			<style>
 				<width value="100%"/>
 			</style>
-			<bind name="repeat" value="_attributesNegative; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight, _dottedDivider: _dottedDivider, _fontClass: _fontClass}"/>
+			<bind name="repeat" value="_attributesNegative; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight, _dottedDivider: _dottedDivider, _fontClass: _fontClass, _isTooltipSystem: _isTooltipSystem}"/>
 		</block>
 		<block>
 			<style>
 				<width value="100%"/>
 			</style>
-			<bind name="repeat" value="_attributesNeutral; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight, _dottedDivider: _dottedDivider, _fontClass: _fontClass}"/>
+			<bind name="repeat" value="_attributesNeutral; 'ParamsModifierItem'; {_shrinkHeight: _shrinkHeight, _dottedDivider: _dottedDivider, _fontClass: _fontClass, _isTooltipSystem: _isTooltipSystem}"/>
 		</block>
 	</block>
 	<block className="SubmarineWeaponsPanel">
@@ -9773,8 +9788,12 @@
 			<styleClass value="$FullsizeAbsolute"/>
 			<bind name="visible" value="optionData.contrast"/>
 		</block>
-		<block className="hint_panel" type="native">
+		<block>
 			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<backgroundImage value="url:../panel_background/hint_panel.png"/>
+				<background9Slice value="[3]"/>
+			</style>
 		</block>
 		<block type="text">
 			<style>
@@ -9963,8 +9982,12 @@
 			<styleClass value="$FullsizeAbsolute"/>
 			<bind name="visible" value="optionData.contrast"/>
 		</block>
-		<block className="hint_panel" type="native">
+		<block>
 			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<backgroundImage value="url:../panel_background/hint_panel.png"/>
+				<background9Slice value="[3]"/>
+			</style>
 		</block>
 		<block>
 			<style>
@@ -10142,8 +10165,12 @@
 			<styleClass value="$FullsizeAbsolute"/>
 			<bind name="visible" value="optionData.contrast"/>
 		</block>
-		<block className="hint_panel" type="native">
+		<block>
 			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<backgroundImage value="url:../panel_background/hint_panel.png"/>
+				<background9Slice value="[3]"/>
+			</style>
 		</block>
 		<block>
 			<style>
@@ -10367,8 +10394,12 @@
 			<styleClass value="$FullsizeAbsolute"/>
 			<bind name="visible" value="optionData.contrast"/>
 		</block>
-		<block className="hint_panel" type="native">
+		<block>
 			<styleClass value="$FullsizeAbsolute"/>
+			<style>
+				<backgroundImage value="url:../panel_background/hint_panel.png"/>
+				<background9Slice value="[3]"/>
+			</style>
 		</block>
 		<bind name="primaryEntityDH" value="'dogTagEntity'; CC.dogTagComponent; _id"/>
 		<bind name="watchDH" value="'enabled'; ['dogTagEntity.dogTagComponent.evUpdate']; dogTagEntity.dogTagComponent.enabled"/>
