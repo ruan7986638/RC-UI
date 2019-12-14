@@ -6426,6 +6426,36 @@
 			<bind name="text" value="_text"/>
 		</block>
 	</block>
+	<block className="FlatProgressBar">
+		<style>
+			<width value="1177px"/>
+		</style>
+		<block>
+			<style>
+				<marginBottom value="40"/>
+			</style>
+			<styleClass value="$MiddleAligned"/>
+			<block type="text">
+				<styleClass value="$TextDefaultBold17NM"/>
+				<bind name="text" value="_progressBarHeader"/>
+			</block>
+		</block>
+		<block>
+			<bind name="visible" value="!_hideProgressBar"/>
+			<style>
+				<width value="100%"/>
+				<height value="2px"/>
+				<backgroundColor value="0x40FFFFFF"/>
+			</style>
+			<block>
+				<style>
+					<height value="2px"/>
+					<backgroundColor value="0xFFFFFFFF"/>
+				</style>
+				<bind name="style" value="'width'; _progressValue + '%'"/>
+			</block>
+		</block>
+	</block>
 	<block className="ParamsModifierItem">
 		<style>
 			<width value="100%"/>
@@ -7092,25 +7122,10 @@
 		<bind name="watchDH" value="'isSuspended'; ['entityAccount.accountSimple.evSuspendedChanged']; entityAccount.accountSimple.suspended"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'divisionEntranceData'"/>
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'divisionData'"/>
-		<bind name="levelToFeature" value="accountLevel; 19; 'clubBattleFeatureUnLocked'"/>
-		<bind name="watch" value="'isInYourParty'; ((divisionEntranceData.divisionType == 'party') &amp;&amp; (playerInDivision.length &gt; 0)) ? true : false"/>
-		<bind name="watch" value="'isInvitedToYourParty'; ((divisionEntranceData.divisionType == 'party') &amp;&amp; (playerInvitedToDivision.length &gt; 0)) ? true : false"/>
-		<bind name="contains" value="clubMembers; $item == _entityAccountId; 'isClubMember'; false; [_entityAccountId]"/>
-		<bind name="collectionDH" value="CC.club; 'playersClubs'"/>
-		<bind name="collectionDH" value="CC.clubsCommon; 'clubsCommonCollection'"/>
-		<bind name="entityDH" value="'clubsCommonEntity'; clubsCommonCollection[0].id"/>
-		<bind name="watchDH" value="'clubsVoted'; ['clubsCommonEntity.clubsCommon.evClubsVotedChanged']; clubsCommonEntity.clubsCommon.clubsVoted"/>
-		<bind name="watch" value="'isVoteInCurClub';	(clubsVoted[0] == entityClub.club.id) ||
-									(clubsVoted[1] == entityClub.club.id) ||
-									(clubsVoted[2] == entityClub.club.id) ? true : false"/>
-		<bind name="watch" value="'actionDenyReason';	(_playerContext.type == 'inviteToDivision') ?	!(accountOnline)				? 'IDS_INVITE_TO_DIVISION_ACTION_DENY_REASON_OFFLINE' :
-																						isInvitedToDivision 			? 'IDS_INVITE_TO_DIVISION_ACTION_DENY_REASON_ALREADY_INVITED'
-																														: 'no_reason' :
-																						!(accountOnline)				? 'IDS_INVITE_TO_PARTY_ACTION_DENY_REASON_OFFLINE' :
-																						isInvitedToYourParty			? 'IDS_INVITE_TO_PARTY_ACTION_DENY_REASON_ALREADY_INVITED' :
-																						isInYourParty					? 'IDS_INVITE_TO_PARTY_ACTION_DENY_REASON_ALREADY_IN_PARTY'
-																														: 'no_reason'
-																					: 'no_reason'"/>
+		<bind name="watch" value="'actionDenyReason';	(_playerContext.type == 'inviteToDivision') ? 			!(accountOnline)		? 'IDS_INVITE_TO_DIVISION_ACTION_DENY_REASON_OFFLINE' :
+																								isInvitedToDivision 	? 'IDS_INVITE_TO_DIVISION_ACTION_DENY_REASON_ALREADY_INVITED'
+																								: 'no_reason'
+																					: 	'no_reason'"/>
 		<style>
 			<width value="100%"/>
 			<height value="30px"/>
@@ -7153,40 +7168,20 @@
 											(actionDenyReason == 'no_reason') &amp;&amp; 
 											!(isSuspended)
 										)"/>
-			<bind name="var" value="{showBusyIndicator: false, isInvitationSent: false}"/>
-			<bind name="catch" value="'evPlayerInvitationToClub'"/>
-			<bind name="catch" value="'evPlayerInvitationToClubRevoked'"/>
-			<bind name="dispatch" value="'left_click';	((_playerContext.type == 'inviteToClub') &amp;&amp; (actionDenyReason == 'no_reason')) ? 'evPlayerInvitationToClub' : null; {showBusyIndicator: true} "/>
-			<bind name="entityDH" value="'entityClub'; _playerContext.clubEntityId"/>
-			<bind name="watchDH" value="'invitedPlayers'; ['entityClub.club.evInvitedClubmansChanged']; entityClub.club.invitedClubmans"/>
-			<bind name="contains" value="invitedPlayers; ($item.accountEntityId == entityAccount.id); 'isInvitationSent'"/>
-			<bind name="changeDispatch" value="isInvitationSent; 'evPlayerInvitationToClub'; {showBusyIndicator: false}"/>
-			<bind name="watchDH" value="'clubMembers'; ['entityClub.club.evMembersChanged']; entityClub.club.members"/>
+			<bind name="var" value="{showBusyIndicator: false}"/>
 			<bind name="watch" value="'isInvitedToDivision'; entityAccount.playerInvitedToPrebattleInfo != null"/>
 			<bind name="action" value="'left_click';	(isActionEnabled == false)						? '' :
 									(_playerContext.type == 'startPrivateChat')		? 'openChannelForPrivateMessages' :
 									(_playerContext.type == 'inviteToChannel')		? 'sendChannelInvite' :
-									(_playerContext.type == 'inviteToClub')			? 'inviteUserToClub' :
-									(_playerContext.type == 'inviteToParty')		? 'inviteToDivision' :
-									(_playerContext.type == 'inviteToPartyFromClubMembersList')	? 'inviteToDivision' :
 									(_playerContext.type == 'inviteToDivision')		? 'inviteToDivision' :
 									(_playerContext.type == 'inviteToTrainingRoom')	? 'TrainingRoomProxy.sendInvite' :
-									(_playerContext.type == 'clubMembersList')		? 'openChannelForPrivateMessages' :
-									(_playerContext.type == 'contactsClubMembers')	? 'openChannelForPrivateMessages' :
-									(_playerContext.type == 'invitedToClubPlayers')	? 'openChannelForPrivateMessages' :
 									(_playerContext.type == 'channelParticipants')	? 'openChannelForPrivateMessages'
 																					: '';
 									(isActionEnabled == false)						? {} :
 									(_playerContext.type == 'startPrivateChat')		? {dbId: entityAccount.accountSimple.dbId} :
 									(_playerContext.type == 'inviteToChannel')		? {channelId: _playerContext.channelId, inviteDbId: entityAccount.accountSimple.dbId} :
-									(_playerContext.type == 'inviteToClub')			? {clubId: _playerContext.clubId, playerName: entityAccount.accountName.name, userId: entityAccount.accountSimple.dbId} :
-									(_playerContext.type == 'inviteToParty')		? {playerId: entityAccount.accountSimple.dbId, playerName: entityAccount.accountName.name, inviteType: InviteType.COMMON} :
-									(_playerContext.type == 'inviteToPartyFromClubMembersList')	? {playerId: entityAccount.accountSimple.dbId, playerName: entityAccount.accountName.name, inviteType: InviteType.COMMON} :
 									(_playerContext.type == 'inviteToDivision')		? {playerId: entityAccount.accountSimple.dbId, playerName: entityAccount.accountName.name, inviteType: InviteType.COMMON} :
 									(_playerContext.type == 'inviteToTrainingRoom')	? {newAccDBID: entityAccount.accountSimple.dbId, teamId: _teamId} :
-									(_playerContext.type == 'clubMembersList')		? {dbId: entityAccount.accountSimple.dbId} :
-									(_playerContext.type == 'contactsClubMembers')	? {dbId: entityAccount.accountSimple.dbId} :
-									(_playerContext.type == 'invitedToClubPlayers')	? {dbId: entityAccount.accountSimple.dbId} :
 									(_playerContext.type == 'channelParticipants')	? {dbId: entityAccount.accountSimple.dbId}
 																					: {}"/>
 			<block>
@@ -7240,7 +7235,6 @@
 						<bind name="controller" value="lesta.dialogs.controllers.CollectionController; 'playersInvitedToDivision'; 'playersInvitedToDivision'"/>
 						<bind name="watch" value="'isInTrainingRoom'; trainingRoomEntity != null"/>
 						<bind name="watch" value="'freePlaces'; (divisionData.maxPlayersInDivision - playersInDivision.length - playersInvitedToDivision.length)"/>
-						<bind name="watch" value="'isSelfInParty'; ((divisionEntranceData.divisionType == 'party') &amp;&amp; (divisionData.divisionExist)) ? true : false"/>
 						<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'slimClientData'"/>
 						<bind name="watch" value="'isInviteToDivisionBtnVisible'; (	slimClientData.isFull &amp;&amp;
 																	(freePlaces &gt; 0) &amp;&amp;
@@ -7248,12 +7242,7 @@
 																	!(_isShort) &amp;&amp;
 																	!(isInDivision) &amp;&amp;
 																	(dockStateName != 'balancer') &amp;&amp;
-																	(_playerContext.type != 'clubMembersList') &amp;&amp;
-																	(_playerContext.type != 'inviteToClub') &amp;&amp;
 																	(_playerContext.type != 'inviteToTrainingRoom') &amp;&amp;
-																	(_playerContext.type != 'contactsClubMembers') &amp;&amp;
-																	(_playerContext.type != 'inviteToPartyFromClubMembersList') &amp;&amp;
-																	!(isSelfInParty) &amp;&amp;
 																	!(isInTrainingRoom) &amp;&amp;
 																	!(isSuspended) )"/>
 						<block>
@@ -7278,32 +7267,6 @@
 						<style>
 							<flow value="horizontal"/>
 						</style>
-					</block>
-					<bind name="watch" value="'isRevokeInvitationBtnVisible'; 	(_playerContext.type == 'invitedToClubPlayers') &amp;&amp;
-																(_playerContext.invatorDbId == selfPlayerDbId) &amp;&amp;
-																rollOver"/>
-					<block>
-						<bind name="visible" value="isRevokeInvitationBtnVisible"/>
-						<bind name="dispatch" value="'buttonClick'; _playerContext.type == 'invitedToClubPlayers' ? 'evPlayerInvitationToClubRevoked' : null; {showBusyIndicator: true} "/>
-						<block>
-							<bind name="visible" value="!showBusyIndicator"/>
-							<style>
-								<marginTop value="3px"/>
-								<marginRight value="7px"/>
-							</style>
-							<block className="button_cross" type="native">
-								<bind name="tooltip" value="'SimpleTooltip'; {tooltipText: 'IDS_RECALL_INVITATION'}"/>
-								<bind name="action" value="'buttonClick'; 'cancelClubInvitation'; {clubId: _playerContext.clubId, userId: entityAccount.accountSimple.dbId}"/>
-							</block>
-						</block>
-						<block>
-							<bind name="fade" value="showBusyIndicator; 0.15; {alpha: 0}; {alpha: 1}"/>
-							<style>
-								<marginTop value="4px"/>
-								<marginRight value="4px"/>
-							</style>
-							<bind name="instance" value="'BusyIndicator'; showBusyIndicator ? { _showBusyIndicator: showBusyIndicator } : null"/>
-						</block>
 					</block>
 					<style>
 						<flow value="horizontal"/>
@@ -10560,6 +10523,22 @@
 						</style>
 					</block>
 					<block>
+						<bind name="visible" value="data.battleTypes.length != 0"/>
+						<style>
+							<height value="21px"/>
+							<marginRight value="3px"/>
+						</style>
+						<block className="VerticalDivider">
+							<style>
+								<height value="100%"/>
+								<width value="3px"/>
+							</style>
+							<block className="divider_v" type="native">
+								<styleClass value="$Fullsize"/>
+							</block>
+						</block>
+					</block>
+					<block>
 						<bind name="instance" value="'ShipRestrictions'; {_restrictionsEntityId: dogTagEntity.id, _withShipTypeCounters: false}"/>
 					</block>
 					<style>
@@ -10667,30 +10646,21 @@
 	</block>
 	<block className="DogTagBattleTypeRestriction">
 		<bind name="controller" value="lesta.dialogs.controllers.EntitySingletonController; 'rankedBattlesSeason'"/>
-		<block className="icon_battletypes_small" type="native">
-			<style>
-				<marginRight value="6px"/>
-				<width value="25px"/>
-				<height value="25px"/>
-			</style>
-			<bind name="gotoAndStop!" value="	($value == 'PVP')			? 'RandomBattle' :
-								($value == 'COOPERATIVE')	? 'CooperativeBattle':
-								($value == 'RANKED') 		? (rankedBattlesSeason.isJuniorSeason == true) 	? 'RankedBattle_junior'
-																											: 'RankedBattle':
-								($value == 'PVE')			? 'PVEBattle':
-								($value == 'PVE_PREMADE')	? 'PVEBattle_hard':
-								($value == 'CLAN')			? 'ClanBattle'
-															: null "/>
-		</block>
-		<block className="VerticalDivider">
-			<style>
-				<height value="100%"/>
-				<width value="3px"/>
-			</style>
-			<block className="divider_v" type="native">
-				<styleClass value="$Fullsize"/>
-			</block>
-		</block>
+		<bind name="watch" value="'battleTypeIcon';	($value == 'PVP')			? BattleTypes.RANDOM_BATTLE :
+									($value == 'COOPERATIVE') 	? BattleTypes.COOPERATIVE_BATTLE :
+									($value == 'RANKED') 		? (rankedBattlesSeason.isJuniorSeason == true) 	? 'RankedBattle_junior' 
+																												: BattleTypes.RANKED_BATTLE :
+									($value == 'PVE') 			? BattleTypes.PVE_BATTLE :
+									($value == 'PVE_PREMADE') 	? 'PVEBattle_hard' :
+									($value == 'CLAN') 			? BattleTypes.CLAN_BATTLE
+																: BattleTypes.RANDOM_BATTLE"/>
+		<style>
+			<marginRight value="6px"/>
+			<width value="23px"/>
+			<height value="23px"/>
+			<backgroundSize value="cover"/>
+		</style>
+		<bind name="style" value="'backgroundImage'; 'url:../service_kit/battle_types/' + battleTypeIcon + '_tiny.png'"/>
 	</block>
 	<block className="PlayerStereotypeDogTag">
 		<style>
